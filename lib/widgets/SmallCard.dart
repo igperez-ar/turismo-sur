@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:turismo_app/widgets/Stars.dart';
 
 class SmallCard extends StatefulWidget{
-  final String title;
-  final String subtitle;
-  final int clasification;
-  final String imgUrl;
-  final Function route;
+  final String name;
+  final String address;
+  final int category;
+  final String image;
+  final Function onTap;
   final bool liked;
 
   const SmallCard({
     Key key, 
-    @required this.title,
-    @required this.subtitle,
-    @required this.clasification,
-    @required this.imgUrl,
-    @required this.route,
+    @required this.name,
+    @required this.address,
+    @required this.category,
+    @required this.image,
+    @required this.onTap,
     this.liked = false
   }): super(key: key);
 
@@ -71,7 +71,7 @@ class _SmallCardState extends State<SmallCard> {
     
     return (
       GestureDetector(
-        onTap: widget.route,
+        onTap: widget.onTap,
         child: Card(
           margin: EdgeInsets.only(bottom: 15, top: 10, right: 5, left: 5),
           shape: RoundedRectangleBorder(
@@ -91,7 +91,7 @@ class _SmallCardState extends State<SmallCard> {
                       ClipRRect(
                         borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),
                         child: Image.network(
-                          widget.imgUrl,
+                          widget.image != null ? widget.image : 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRVX4RgUYvaDyHQaEiejmjMy0ZbuEPqGkOwsxq9oAmPl3MQJIRC&usqp=CAU',
                           fit: BoxFit.cover
                         ),
                       ),
@@ -119,28 +119,45 @@ class _SmallCardState extends State<SmallCard> {
                 ),
                 Expanded(
                   flex: 6,
-                  child: Container(
-                    padding: EdgeInsets.only(left: 12, top: 10, right: 12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(widget.title, style: TextStyle(
-                          fontSize: 24.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey[600],
-                        ),),
-                        Padding(padding: EdgeInsets.only(top: 10)),
-                        Text(widget.subtitle, style: TextStyle(
-                          fontSize: 15.0,
-                          color: Colors.grey[600],
-                        ),),
-                        Padding(padding: EdgeInsets.only(top: 65)),
-                        Stars(count: 1)
-                      ],
-                    ),
-                  )
+                  child: Padding(
+                    padding: EdgeInsets.all(15),
+                    child: Stack(
+                    children: <Widget>[ 
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(widget.name, 
+                            maxLines: 3, 
+                            overflow: TextOverflow.ellipsis, 
+                            style: TextStyle(
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 5),
+                            child: Text(widget.address, 
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 15.0,
+                                color: Colors.grey[600],
+                                ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Stars(count: widget.category)
+                      )  
+                    ],
+                  ),
                 )
+                ),
               ],
+                
             ),      
           ),
         )

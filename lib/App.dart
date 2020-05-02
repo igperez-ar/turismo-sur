@@ -1,9 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:turismo_app/views/Alojamiento.dart';
 import 'package:turismo_app/views/Explorar.dart';
-import 'package:turismo_app/views/Gastronomico.dart';
 import 'package:turismo_app/views/Mapa.dart';
 import 'package:turismo_app/views/Favoritos.dart';
+
+import 'dart:async'; 
+import 'dart:convert'; 
+import 'package:http/http.dart' as http; 
+import 'package:turismo_app/models/Alojamiento.dart';
+
+
+List<Alojamiento> parseAlojamientos(String responseBody) { 
+   final parsed = json.decode(responseBody).cast<Map<String, dynamic>>(); 
+   return parsed.map<Alojamiento>((json) => Alojamiento.fromJson(json)).toList(); 
+} 
+
+Future<List<Alojamiento>> fetchAlojamientos() async { 
+   final response = await http.get('http://192.168.1.36:3000/alojamientos'); 
+   if (response.statusCode == 200) { 
+      return parseAlojamientos(response.body); 
+   } else { 
+      throw Exception('Unable to fetch products from the REST API'); 
+   } 
+}
 
 class App extends StatefulWidget {
 
@@ -13,14 +31,25 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   int _currentIndex = 0;
-  
-  final List<Widget> _children = [
-    Explorar(),
-    Mapa(
-      places: ['s'],
-    ),
-    Favoritos(),
-  ];
+  List<Widget> _children;
+
+  @override
+  void initState() {
+    super.initState();
+    final alojamientos = fetchAlojamientos();
+
+    setState(() {
+      _children = [
+        Explorar(
+          alojamientos: alojamientos
+        ),
+        Mapa(
+          alojamientos: alojamientos,
+        ),
+        Favoritos(),
+      ];
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +75,7 @@ class _AppState extends State<App> {
             title: Text('Favoritos'),
           ),
         ],
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ), 
     );
   }
 

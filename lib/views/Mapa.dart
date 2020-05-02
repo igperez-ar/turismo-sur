@@ -2,20 +2,21 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 
 import 'package:flutter/material.dart';
-import 'package:turismo_app/views/Alojamiento.dart';
+import 'package:turismo_app/views/Alojamiento.dart' as View;
+import 'package:turismo_app/models/Alojamiento.dart';
 import 'package:turismo_app/views/Filtros.dart';
 import 'package:turismo_app/widgets/SmallCard.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Mapa extends StatefulWidget {
   final String title;
-  final List<String> places;
+  final Future<List<Alojamiento>> alojamientos;
   final bool carrousel;
 
   const Mapa({
     Key key, 
     this.title = 'Mapa',
-    @required this.places,
+    @required this.alojamientos,
     this.carrousel = true
   }): super(key: key);
 
@@ -57,7 +58,7 @@ class MapaState extends State<Mapa> {
     );
   }
 
-  Widget _buildCarrousel(BuildContext context, int carouselIndex) {
+  Widget _buildCarrousel(BuildContext context, items) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -67,8 +68,19 @@ class MapaState extends State<Mapa> {
           child: PageView.builder(
             // store this controller in a State to save the carousel scroll position
             controller: PageController(viewportFraction: 0.9),
-            itemBuilder: (BuildContext context, int itemIndex) {
-              return _buildCarrouselItem(context, carouselIndex, itemIndex);
+            itemBuilder: (BuildContext context, int index) {
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4.0),
+                child: SmallCard(
+                  name: items[index].nombre,
+                  address: items[index].domicilio,
+                  image: items[index].foto,
+                  category: items[index].categoriaId != 6 ? items[index].categoriaId : 0,
+                  onTap: () => Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => View.Alojamiento())
+                  ),
+                ),
+              );
             },
           ),
         )
@@ -76,7 +88,7 @@ class MapaState extends State<Mapa> {
     );
   }
 
-  Widget _buildCarrouselItem(BuildContext context, int carouselIndex, int itemIndex) {
+  /* Widget _buildCarrouselItem(BuildContext context, int itemIndex) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 4.0),
       child: SmallCard(
@@ -85,11 +97,11 @@ class MapaState extends State<Mapa> {
         imgUrl: 'https://suit.tur.ar/archivos/read/366/mdc',
         clasification: 1,
         route: () => Navigator.push(context,
-            MaterialPageRoute(builder: (context) => Alojamiento())
+            MaterialPageRoute(builder: (context) => View.Alojamiento())
         ),
       ),
     );
-  }
+  } */
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +143,14 @@ class MapaState extends State<Mapa> {
                 (widget.carrousel ? 
                   Align(
                     alignment: Alignment.bottomLeft,
-                    child:_buildCarrousel(context, 1),
+                    child: FutureBuilder<List<Alojamiento>>(
+                      future: widget.alojamientos, builder: (context, snapshot) {
+                        if (snapshot.hasError) print(snapshot.error); 
+                        return snapshot.hasData ? _buildCarrousel(context, snapshot.data) 
+                        
+                        : Center(child: CircularProgressIndicator()); 
+                      },
+                    ),
                   )
                   : Container()
                 )
@@ -143,93 +162,3 @@ class MapaState extends State<Mapa> {
     );
   }
 }
-/* import 'dart:async';
-
-import 'package:flutter/material.dart';
-import 'package:turismo_app/views/Alojamiento.dart';
-import 'package:turismo_app/views/Filtros.dart';
-import 'package:turismo_app/widgets/SmallCard.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-
-class Mapa extends StatelessWidget {
-  CameraPosition _initialPosition = CameraPosition(target: LatLng(26.8206, 30.8025));
-  Completer<GoogleMapController> _controller = Completer();
-
-
-  void _onMapCreated(GoogleMapController controller) {
-      _controller.complete(controller);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final Width = MediaQuery.of(context).size.width;
-    final Height = MediaQuery.of(context).size.height;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Mapa', 
-          textAlign: TextAlign.center, 
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.more_vert, color: Colors.white, size: 30.0,), 
-            onPressed: () => Navigator.push(context,
-                MaterialPageRoute(builder: (context) => Filtros())
-            )
-          )
-        ],
-        centerTitle: true,
-        backgroundColor: Colors.teal[300],
-      ),
-      body: Stack(
-        children: <Widget>[
-          GoogleMap(    
-            mapType: MapType.normal,
-            onMapCreated: _onMapCreated,
-            initialCameraPosition: _initialPosition,
-          ),
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: ListView(
-              padding: EdgeInsets.only(top: Height * 0.6, right: 20),
-              scrollDirection: Axis.horizontal,
-              children: <Widget>[
-                SmallCard(
-                  title: 'Hotel Mónaco',
-                  subtitle: 'San Martín 1335',
-                  img_url: 'https://suit.tur.ar/archivos/read/366/mdc',
-                  clasification: 1,
-                  route: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Alojamiento())
-                  ),
-                ),
-                SmallCard(
-                  title: 'Hotel Mónaco',
-                  subtitle: 'San Martín 1335',
-                  img_url: 'https://suit.tur.ar/archivos/read/366/mdc',
-                  clasification: 1,
-                  route: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Alojamiento())
-                  ),
-                ),
-                SmallCard(
-                  title: 'Hotel Mónaco',
-                  subtitle: 'San Martín 1335',
-                  img_url: 'https://suit.tur.ar/archivos/read/366/mdc',
-                  clasification: 1,
-                  route: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Alojamiento())
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-} */

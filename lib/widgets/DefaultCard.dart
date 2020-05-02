@@ -5,19 +5,19 @@ import 'package:turismo_app/widgets/Stars.dart';
 class DefaultCard extends StatefulWidget{
   const DefaultCard({
     Key key, 
-    @required this.title,
-    @required this.subtitle,
-    @required this.clasification,
-    @required this.imgUrl,
-    @required this.route,
+    @required this.name,
+    @required this.address,
+    @required this.category,
+    @required this.image,
+    @required this.onTap,
     this.liked = false
   }): super(key: key);
 
-  final String title;
-  final String subtitle;
-  final int clasification;
-  final String imgUrl;
-  final Function route;
+  final String name;
+  final String address;
+  final int category;
+  final String image;
+  final Function onTap;
   final bool liked;
 
   @override
@@ -68,33 +68,32 @@ class _DefaultCardState extends State<DefaultCard> {
   
   @override
   Widget build(BuildContext context) {
-    final Width = MediaQuery.of(context).size.width;
+    final _width = MediaQuery.of(context).size.width;
 
     return (
       GestureDetector(
-        onTap: widget.route,
+        onTap: widget.onTap,
         child: Card(
           margin: EdgeInsets.only(top: 20),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(10.0))
           ),
-          elevation: 5.0,
+          elevation: 5.0, 
           child: Container(
-            width: Width * 0.90,
-            height: Width * 0.60,
+            width: _width * 0.90,
+            height: _width * 0.65,
             child: Column(
               children: <Widget>[
                 Expanded(
                   flex: 3,
                   child: Stack(
+                    fit: StackFit.expand,
                     children: <Widget> [
                       ClipRRect(
                         borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
                         child: Image.network(
-                          widget.imgUrl,
+                          widget.image != null ? widget.image : 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRVX4RgUYvaDyHQaEiejmjMy0ZbuEPqGkOwsxq9oAmPl3MQJIRC&usqp=CAU',
                           fit: BoxFit.cover,
-                          height: Width * 0.37,
-                          width: Width,
                         ),
                       ),
                       Align(
@@ -105,7 +104,15 @@ class _DefaultCardState extends State<DefaultCard> {
                           margin: EdgeInsets.only(top: 15, right: 15),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(50),
-                            color: Color.fromRGBO(255, 255, 255, 0.85),
+                            color: Color.fromRGBO(255, 255, 255, 0.90),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 3,
+                                spreadRadius: 2, 
+                                offset: Offset(2, 2),
+                              )
+                            ],
                           ),
                           child: IconButton(
                               icon: Icon(
@@ -126,20 +133,26 @@ class _DefaultCardState extends State<DefaultCard> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text(widget.title, style: TextStyle(
+                        Text(widget.name, style: TextStyle(
                           fontSize: 24.0,
                           fontWeight: FontWeight.bold,
                           color: Colors.grey[600],
                         ),),
-                        Text(widget.subtitle, style: TextStyle(
-                          fontSize: 15.0,
-                          color: Colors.grey[600],
-                        ),),
-                        Padding(padding: EdgeInsets.only(top: 8)),
+                        Padding(
+                          padding: EdgeInsets.only(top: 5, bottom: 10),
+                          child: Text(widget.address, 
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 15.0,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                              Stars(count: 1),
+                              Stars(count: widget.category),
                               Row(
                                 children: <Widget>[
                                   Icon(Icons.location_on, color: Colors.teal[300]),

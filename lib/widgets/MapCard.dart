@@ -100,13 +100,13 @@ class _MapCardState extends State<MapCard> {
                       margin: EdgeInsets.only(bottom: 10, right: 10),
                       alignment: Alignment.bottomRight,
                       child: GestureDetector(
-                        onTap: () => Navigator.push(context,
+                        onTap: () => {}/* Navigator.push(context,
                             MaterialPageRoute(builder: (context) => Mapa(
                               title: widget.title,
-                              places: ['s'],
+                              alojamientos: ['s'],
                               carrousel: false,
                             ))
-                        ),
+                        ) */,
                         child: Container (
                           alignment: Alignment.center,
                           width: 100,
