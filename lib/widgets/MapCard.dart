@@ -8,10 +8,14 @@ import 'package:turismo_app/views/Mapa.dart';
 
 class MapCard extends StatefulWidget {
   final String title;
+  final double lat;
+  final double lng;
 
   MapCard({
     Key key, 
-    @required this.title
+    @required this.title,
+    @required this.lat,
+    @required this.lng,
   }): super(key: key);
 
   @override
@@ -19,15 +23,37 @@ class MapCard extends StatefulWidget {
 }
 
 class _MapCardState extends State<MapCard> {
- 
   String _mapStyle;
+  Map<MarkerId, Marker> markers = <MarkerId, Marker>{}; 
 
   @override
   void initState() {
     super.initState();
 
+    _add(widget.lat, widget.lng);
+
     rootBundle.loadString('assets/map_style.txt').then((string) {
       _mapStyle = string;
+    });
+  }
+
+  void _add(double lat, double lng) {
+    var markerIdVal = 'marker';
+    final MarkerId markerId = MarkerId(markerIdVal);
+
+    final Marker marker = Marker(
+      markerId: markerId,
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+      position: LatLng(lat, lng),
+      /* infoWindow: InfoWindow(title: markerIdVal, snippet: address), */
+      onTap: () {
+        /* _onMarkerTapped(markerId); */
+      },
+    );
+
+    setState(() {
+      // adding a new marker to map
+      markers[markerId] = marker;
     });
   }
 
@@ -46,8 +72,9 @@ class _MapCardState extends State<MapCard> {
           controller.setMapStyle(_mapStyle);
           /* _controller.complete(controller); */
         },
+        markers: Set<Marker>.of(markers.values),
         initialCameraPosition: CameraPosition(
-          target: LatLng(-54.8, -68.3), 
+          target: LatLng(widget.lat, widget.lng), 
           zoom: 15.0
         ),
       )

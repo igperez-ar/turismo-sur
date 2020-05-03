@@ -21,9 +21,11 @@ class Explorar extends StatelessWidget {
           address: items[index].domicilio,
           image: items[index].foto,
           category: items[index].categoriaId != 6 ? items[index].categoriaId : 0,
-          onTap: () => MaterialPageRoute( 
-            builder: (context) => View.Alojamiento()
-        )
+          onTap: () => Navigator.push(context,
+            MaterialPageRoute(
+              builder: (context) => View.Alojamiento(alojamiento: items[index])
+            )
+          ),
         ); 
       },
     );

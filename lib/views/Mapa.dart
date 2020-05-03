@@ -26,13 +26,44 @@ class Mapa extends StatefulWidget {
 
 class MapaState extends State<Mapa> {
   String _mapStyle;
+  Map<MarkerId, Marker> markers = <MarkerId, Marker>{}; 
+  
+  void _setMarkers() async {
+    List<Alojamiento> _items = await widget.alojamientos;
+
+    for (var item in _items) {
+      _add(item.nombre, item.domicilio, item.lat, item.lng);
+    }
+  }
 
   @override
   void initState() {
     super.initState();
 
+    _setMarkers();
+
     rootBundle.loadString('assets/map_style.txt').then((string) {
       _mapStyle = string;
+    });
+  }
+
+  void _add(String name, String address, double lat, double lng) {
+    var markerIdVal = name;
+    final MarkerId markerId = MarkerId(markerIdVal);
+
+    final Marker marker = Marker(
+      markerId: markerId,
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+      position: LatLng(lat, lng),
+      infoWindow: InfoWindow(title: markerIdVal, snippet: address),
+      onTap: () {
+        /* _onMarkerTapped(markerId); */
+      },
+    );
+
+    setState(() {
+      // adding a new marker to map
+      markers[markerId] = marker;
     });
   }
 
@@ -50,6 +81,7 @@ class MapaState extends State<Mapa> {
           controller.setMapStyle(_mapStyle);
           /* _controller.complete(controller); */
         },
+        markers: Set<Marker>.of(markers.values),
         initialCameraPosition: CameraPosition(
           target: LatLng(-54.8, -68.3), 
           zoom: 15.0
@@ -59,6 +91,7 @@ class MapaState extends State<Mapa> {
   }
 
   Widget _buildCarrousel(BuildContext context, items) {
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[

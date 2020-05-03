@@ -129,43 +129,50 @@ class _DefaultCardState extends State<DefaultCard> {
                 Expanded(
                   flex: 2,
                   child: Container(
-                    padding: EdgeInsets.only(left: 12, top: 10, right: 12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    child: Stack(
                       children: <Widget>[
-                        Text(widget.name, style: TextStyle(
-                          fontSize: 24.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey[600],
-                        ),),
-                        Padding(
-                          padding: EdgeInsets.only(top: 5, bottom: 10),
-                          child: Text(widget.address, 
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 15.0,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                              Stars(count: widget.category),
-                              Row(
-                                children: <Widget>[
-                                  Icon(Icons.location_on, color: Colors.teal[300]),
-                                  Text('2 km de tu ubicación', style: TextStyle(
-                                    fontSize: 15.0,
-                                    color: Colors.grey[600],
-                                  ),),
-                                ],
-                              )
+                            Text(widget.name, style: TextStyle(
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey[600],
+                            ),),
+                            Padding(
+                              padding: EdgeInsets.only(top: 5, bottom: 10),
+                              child: Text(widget.address, 
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 15.0,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ),
                           ],
+                        ),
+                        Align(
+                          alignment: Alignment.bottomLeft,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                                Stars(count: widget.category),
+                                Row(
+                                  children: <Widget>[
+                                    Icon(Icons.location_on, color: Colors.teal[300]),
+                                    Text('2 km de tu ubicación', style: TextStyle(
+                                      fontSize: 15.0,
+                                      color: Colors.grey[600],
+                                    ),),
+                                  ],
+                                )
+                            ],
+                          )
                         )
-                      ],
-                    ),
+                      ]
+                    )
                   )
                 )
               ],

@@ -120,7 +120,7 @@ class _SmallCardState extends State<SmallCard> {
                 Expanded(
                   flex: 6,
                   child: Padding(
-                    padding: EdgeInsets.all(15),
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     child: Stack(
                     children: <Widget>[ 
                       Column(
