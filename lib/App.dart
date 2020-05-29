@@ -15,13 +15,21 @@ List<Alojamiento> parseAlojamientos(String responseBody) {
 } 
 
 Future<List<Alojamiento>> fetchAlojamientos() async { 
-   final response = await http.get('http://192.168.1.36:3000/alojamientos'); 
+   final response = await http.get('http://192.168.1.34:3000/alojamientos?select=id,nombre,domicilio,lat,lng,foto,clasificacion:clasificaciones(id,nombre),categoria:categoria_id,localidad:localidades(id,nombre)&clasificacion_id=eq.9&order=nombre.desc'); 
    if (response.statusCode == 200) { 
       return parseAlojamientos(response.body); 
    } else { 
       throw Exception('Unable to fetch products from the REST API'); 
    } 
 }
+/* Future<List<Alojamiento>> fetchAlojamientos() async { 
+   final response = await http.get('http://192.168.1.34:3000/alojamientos?order=id.asc'); 
+   if (response.statusCode == 200) { 
+      return parseAlojamientos(response.body); 
+   } else { 
+      throw Exception('Unable to fetch products from the REST API'); 
+   } 
+} */
 
 class App extends StatefulWidget {
 
@@ -60,7 +68,12 @@ class _AppState extends State<App> {
         currentIndex: _currentIndex,
         onTap: changeTabIndex,
         backgroundColor: Colors.white,
-        fixedColor: Colors.teal[400],
+        selectedItemColor: Colors.teal[400],
+        selectedIconTheme: IconThemeData(size: 32),
+        selectedLabelStyle: TextStyle(height: 0),
+        showSelectedLabels: false,
+        unselectedLabelStyle: TextStyle(height: 1.2, fontSize: 13),
+        iconSize: 26,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.search),

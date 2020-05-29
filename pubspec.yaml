@@ -25,10 +25,14 @@ dependencies:
   cupertino_icons: ^0.1.2
 
   http: ^0.12.1
+
+  flutter_bloc: ^4.0.0
   
   google_maps_flutter: ^0.5.5
 
   dashed_container: ^1.0.1
+
+  carousel_slider: ^2.0.0
 
 
 dev_dependencies:

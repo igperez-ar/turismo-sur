@@ -5,7 +5,6 @@ import 'package:turismo_app/views/Filtros.dart';
 
 void main() => runApp(MyApp());
 
-
 class MyApp extends StatelessWidget {
   
   @override
