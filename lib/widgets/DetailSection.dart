@@ -4,12 +4,12 @@ class DetailSection extends StatelessWidget{
   const DetailSection({
     Key key, 
     @required this.title,
-    @required this.content,
+    @required this.child,
     this.margin = true
   }): super(key: key);
 
   final String title;
-  final Widget content;
+  final Widget child;
   final bool margin;
 
   
@@ -29,14 +29,14 @@ class DetailSection extends StatelessWidget{
               )
             ),
           ),
-          Divider(
+          /* Divider(
             color: Colors.grey[400],
             thickness: 1.6,
             endIndent: Width * 0.35,
-          ),
+          ), */
           Padding(
             padding: EdgeInsets.only(top: 5, left: this.margin ? 20 : 0, bottom: 35),
-            child: content,
+            child: child,
           )
         ]
       )

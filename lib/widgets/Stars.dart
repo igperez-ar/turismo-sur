@@ -12,20 +12,39 @@ class Stars extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    final _children = <Widget>[]; 
     
-    for (var i = 1; i <= 5; i++) {
-      if (i <= count) {
-        _children.add(Icon(Icons.star, color: Colors.teal[300], size: this.size));
-      } else {
-        _children.add(Icon(Icons.star_border, color: Colors.teal[300], size: this.size));
-      }
-    }
+    if (this.count == 6) {
+      return Row(
+        children: <Widget>[
+          Icon(
+            Icons.stars, 
+            color: Colors.teal[300], 
+            size: this.size
+          ),
+          Padding(padding: EdgeInsets.only(left:5),),
+          Text("Categoría única", style: TextStyle(
+              fontSize: this.size / 1.65,
+              color: Colors.grey[600],
+            ),
+          ),
+        ]
+      );
+    } 
+    else {
+      final _children = <Widget>[]; 
 
-    return (
-      Row(
+      for (var i = 1; i <= 5; i++) 
+        _children.add(
+          Icon(
+            Icons.star, 
+            color: (i <= count ? Colors.teal[300] : Colors.grey[300]), 
+            size: this.size
+          )
+        );
+
+      return Row(
         children: _children
-      )
-    );
+      );
+    }
   }
 }

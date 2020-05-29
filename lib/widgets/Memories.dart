@@ -19,7 +19,7 @@ class Memories extends StatelessWidget {
     
     return Container(
       alignment: Alignment.topCenter,
-      margin: EdgeInsets.only(left: 20, right: 20, top: 10),
+      margin: EdgeInsets.symmetric(horizontal: 20),
       child: DashedContainer(
         dashColor: Colors.grey[500], 
         strokeWidth: 2,
@@ -51,13 +51,13 @@ class Memories extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Width = MediaQuery.of(context).size.width;
+    final _width = MediaQuery.of(context).size.width;
 
     if (liked) {
       return _getMemories();
 
     } else {
-      return _getEmptyMemories(Width);
+      return _getEmptyMemories(_width);
     }
   }
 }

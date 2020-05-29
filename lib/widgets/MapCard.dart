@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/services.dart';
 
 import 'package:flutter/material.dart';
@@ -7,13 +6,11 @@ import 'package:turismo_app/views/Mapa.dart';
 
 
 class MapCard extends StatefulWidget {
-  final String title;
   final double lat;
   final double lng;
 
   MapCard({
     Key key, 
-    @required this.title,
     @required this.lat,
     @required this.lng,
   }): super(key: key);
@@ -44,15 +41,10 @@ class _MapCardState extends State<MapCard> {
     final Marker marker = Marker(
       markerId: markerId,
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
-      position: LatLng(lat, lng),
-      /* infoWindow: InfoWindow(title: markerIdVal, snippet: address), */
-      onTap: () {
-        /* _onMarkerTapped(markerId); */
-      },
+      position: LatLng(lat, lng)
     );
 
     setState(() {
-      // adding a new marker to map
       markers[markerId] = marker;
     });
   }
@@ -65,9 +57,10 @@ class _MapCardState extends State<MapCard> {
         mapType: MapType.normal,
         scrollGesturesEnabled: false,
         rotateGesturesEnabled: false,
-        tiltGesturesEnabled: false,
-        zoomGesturesEnabled: false,
+        zoomGesturesEnabled: true,
         zoomControlsEnabled: false,
+        mapToolbarEnabled: false,
+        minMaxZoomPreference: MinMaxZoomPreference(12.0, 15.0),
         onMapCreated: (GoogleMapController controller) {
           controller.setMapStyle(_mapStyle);
           /* _controller.complete(controller); */
@@ -75,7 +68,7 @@ class _MapCardState extends State<MapCard> {
         markers: Set<Marker>.of(markers.values),
         initialCameraPosition: CameraPosition(
           target: LatLng(widget.lat, widget.lng), 
-          zoom: 15.0
+          zoom: 12.0
         ),
       )
     );
@@ -83,98 +76,74 @@ class _MapCardState extends State<MapCard> {
   
   @override
   Widget build(BuildContext context) {
-    final Width = MediaQuery.of(context).size.width;
+    final _width = MediaQuery.of(context).size.width;
 
-    return (
-      Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))
-        ),
-        elevation: 5.0,
-        child: Container(
-          width: Width * 0.90,
-          height: Width * 0.60,
-          child: Column(
-            children: <Widget>[
-              Container(
-                decoration: BoxDecoration(
-                  border: Border(bottom: 
-                    BorderSide(
-                      color: Colors.grey,
-                      width: 1
-                    )
-                  ),
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Icon(Icons.location_on, color: Colors.grey[500], size: 30,),
-                    Padding(padding: EdgeInsets.only(left: 5)),
-                    Text(widget.title, style: TextStyle(
-                      fontSize: 18.0,
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(5)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 5,
+            spreadRadius: 1,
+            offset: Offset(3, 3)
+          )
+        ]
+      ),
+      child: Container(
+        width: _width * 0.90,
+        height: _width * 0.60,
+        child: Stack(
+          children: <Widget> [
+            _getMapWidget(_width),
+            Container(
+              margin: EdgeInsets.only(bottom: 10, right: 10),
+              alignment: Alignment.bottomRight,
+              child: GestureDetector(
+                onTap: () => {}/* Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Mapa(
+                      title: widget.title,
+                      alojamientos: ['s'],
+                      carrousel: false,
+                    ))
+                ) */,
+                child: Container (
+                  alignment: Alignment.center,
+                  width: 100,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    border: Border.all(
                       color: Colors.grey[600],
-                      ),
+                      width: 1
                     ),
-                  ],
+                    borderRadius: BorderRadius.circular(50),
+                    color: Colors.white,
+                    boxShadow: [BoxShadow(
+                      color: Color.fromRGBO(100, 100, 100, 0.6),
+                      offset: Offset(3, 3),
+                      blurRadius: 3
+                    )],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(Icons.zoom_in, color: Colors.grey[600]),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 2),
+                        child: Text('Ampliar', style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 15
+                          ), 
+                        ), 
+                      ) 
+                    ],
+                  ) 
                 ),
               ),
-              Expanded(
-                child: Stack(
-                  children: <Widget> [
-                    _getMapWidget(Width),
-                    Container(
-                      margin: EdgeInsets.only(bottom: 10, right: 10),
-                      alignment: Alignment.bottomRight,
-                      child: GestureDetector(
-                        onTap: () => {}/* Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Mapa(
-                              title: widget.title,
-                              alojamientos: ['s'],
-                              carrousel: false,
-                            ))
-                        ) */,
-                        child: Container (
-                          alignment: Alignment.center,
-                          width: 100,
-                          height: 30,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.grey[600],
-                              width: 1
-                            ),
-                            borderRadius: BorderRadius.circular(50),
-                            color: Colors.white,
-                            boxShadow: [BoxShadow(
-                              color: Color.fromRGBO(100, 100, 100, 0.6),
-                              offset: Offset(3, 3),
-                              blurRadius: 3
-                            )],
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(Icons.zoom_in, color: Colors.grey[600]),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 2),
-                                child: Text('Ampliar', style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontSize: 15
-                                  ), 
-                                ), 
-                              ) 
-                            ],
-                          ) 
-                        ),
-                      ),
-                    )
-                  ], 
-                )
-              ),
-            ],
-          ),      
-        ),
-      )
+            )
+          ], 
+        )
+      ),
     );
   }
 }

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:turismo_app/widgets/FavButton.dart';
 import 'package:turismo_app/widgets/Stars.dart';
 
 class SmallCard extends StatefulWidget{
   final String name;
   final String address;
+  final String clasification;
   final int category;
   final String image;
   final Function onTap;
@@ -13,6 +15,7 @@ class SmallCard extends StatefulWidget{
     Key key, 
     @required this.name,
     @required this.address,
+    @required this.clasification,
     @required this.category,
     @required this.image,
     @required this.onTap,
@@ -67,100 +70,131 @@ class _SmallCardState extends State<SmallCard> {
   
   @override
   Widget build(BuildContext context) {
-    final Width = MediaQuery.of(context).size.width;
+    final _width = MediaQuery.of(context).size.width;
     
     return (
       GestureDetector(
         onTap: widget.onTap,
-        child: Card(
-          margin: EdgeInsets.only(bottom: 15, top: 10, right: 5, left: 5),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10.0))
+        child: Container(
+          width: _width * 0.8,
+          height: _width * 0.4,
+          margin: EdgeInsets.symmetric(vertical:10),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 5,
+                spreadRadius: 1,
+                offset: Offset(3, 3)
+              )
+            ]
           ),
-          elevation: 5.0,
-          child: Container(
-            width: Width * 0.8,
-            height: Width * 0.4,
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  flex: 4,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: <Widget> [
-                      ClipRRect(
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),
-                        child: Image.network(
-                          widget.image != null ? widget.image : 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRVX4RgUYvaDyHQaEiejmjMy0ZbuEPqGkOwsxq9oAmPl3MQJIRC&usqp=CAU',
-                          fit: BoxFit.cover
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.bottomLeft,
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          margin: EdgeInsets.only(bottom: 15, left: 15),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50),
-                            color: Color.fromRGBO(255, 255, 255, 0.85),
-                          ),
-                          child: IconButton(
-                              icon: Icon(
-                                liked ? Icons.favorite : Icons.favorite_border, 
-                                color: Colors.teal[300],
-                              ), 
-                              onPressed: _changeFavorite,
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                flex: 4,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: <Widget> [
+                    ClipRRect(
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),
+                      child: Image.network(
+                        widget.image != null ? widget.image : 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRVX4RgUYvaDyHQaEiejmjMy0ZbuEPqGkOwsxq9oAmPl3MQJIRC&usqp=CAU',
+                        filterQuality: FilterQuality.low,
+                        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
+                          if (loadingProgress == null)
+                            return child;
+                          return Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
+                                  : null,
                             ),
+                          );
+                        },
+                        fit: widget.image != null ? BoxFit.cover : BoxFit.contain
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment(-0.8, 0.9),
+                      child: FavButton(
+                        liked: liked,
+                        onPress: _changeFavorite,
+                      )
+                    ),
+                    Align(
+                      alignment: Alignment(-0.8, -0.9),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        /* constraints: BoxConstraints(maxWidth: 130), */
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 5,
+                              spreadRadius: 2, 
+                              offset: Offset(2, 2),
+                            )
+                          ]
+                        ),
+                        child: Text(widget.clasification, style: TextStyle(
+                            color: Colors.teal[400],
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                          maxLines: 2,
                         )
                       )
-                    ], 
-                  ),
+                    )
+                  ], 
                 ),
-                Expanded(
-                  flex: 6,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                    child: Stack(
-                    children: <Widget>[ 
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(widget.name, 
-                            maxLines: 3, 
-                            overflow: TextOverflow.ellipsis, 
+              ),
+              Expanded(
+                flex: 6,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  child: Stack(
+                  children: <Widget>[ 
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(widget.name, 
+                          maxLines: 3, 
+                          overflow: TextOverflow.ellipsis, 
+                          style: TextStyle(
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey[800],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 5),
+                          child: Text(widget.address, 
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: 24.0,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 15.0,
                               color: Colors.grey[600],
-                            ),
+                              ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 5),
-                            child: Text(widget.address, 
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 15.0,
-                                color: Colors.grey[600],
-                                ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Align(
-                        alignment: Alignment.bottomLeft,
-                        child: Stars(count: widget.category)
-                      )  
-                    ],
-                  ),
-                )
+                        ),
+                      ],
+                    ),
+                    Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Stars(count: widget.category)
+                    )  
+                  ],
                 ),
-              ],
-                
-            ),      
+              )
+              ),
+            ],
           ),
-        )
+        ),
       )
     );
   }
