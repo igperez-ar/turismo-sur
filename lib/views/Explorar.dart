@@ -20,7 +20,8 @@ class Explorar extends StatelessWidget {
           name: items[index].nombre,
           address: items[index].domicilio,
           image: items[index].foto,
-          category: items[index].categoriaId != 6 ? items[index].categoriaId : 0,
+          category: items[index].categoria,
+          clasification: items[index].clasificacion.nombre,
           onTap: () => Navigator.push(context,
             MaterialPageRoute(
               builder: (context) => View.Alojamiento(alojamiento: items[index])
@@ -29,56 +30,6 @@ class Explorar extends StatelessWidget {
         ); 
       },
     );
-
-    /* return ListView(
-      padding: EdgeInsets.all(20),
-      children: <Widget>[ 
-        Container(
-          child: Padding(
-            padding: EdgeInsets.only(left: 20, right: 10),
-            child: Row(
-              children: <Widget>[
-                Flexible(
-                  child: TextField(
-                    textCapitalization: TextCapitalization.sentences,
-                    decoration: InputDecoration(
-                      hintText: '¿Qué estás buscando?',
-                      border: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      errorBorder: InputBorder.none,
-                      disabledBorder: InputBorder.none,
-                    ),
-                  )
-                ),
-                IconButton(
-                  icon: Icon(Icons.search, color: Colors.teal[300], size: 30,),
-                  onPressed: null
-                )
-              ],
-            ),
-          ),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: Colors.white,
-          ),
-        ),
-        ListView.builder(
-          itemCount: items.length, 
-          itemBuilder: (context, index) { 
-            return DefaultCard(
-              title: items[index].nombre,
-              subtitle: 'San Martín 1335',
-              imgUrl: 'https://suit.tur.ar/archivos/read/366/mdc',
-              clasification: 1,
-              route: () => MaterialPageRoute( 
-                builder: (context) => View.Alojamiento()
-            )
-            ); 
-          },
-        )
-      ],
-    ); */
   }
 
 
@@ -132,6 +83,14 @@ class Explorar extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey[300],
+                    blurRadius: 5,
+                    spreadRadius: 2, 
+                    offset: Offset(2, 2),
+                  )
+                ],
               ),
             ),
             Expanded(
@@ -146,7 +105,7 @@ class Explorar extends StatelessWidget {
             )
           ],
       ),
-      backgroundColor: Color.fromRGBO(238, 238, 242, 1),
+      backgroundColor: Colors.grey[50],
     );
   }
 }

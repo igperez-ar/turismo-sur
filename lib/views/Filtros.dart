@@ -1,5 +1,56 @@
 import 'package:flutter/material.dart';
 
+import 'dart:async'; 
+import 'dart:convert'; 
+import 'package:http/http.dart' as http;
+import 'package:turismo_app/models/Actividad.dart';
+import 'package:turismo_app/models/Clasificacion.dart';
+import 'package:turismo_app/models/Especialidad.dart';
+import 'package:turismo_app/models/Localidad.dart';
+import 'package:turismo_app/widgets/Chip.dart' as ChipWidget;
+import 'package:turismo_app/widgets/MultiSelect.dart';
+import 'package:turismo_app/widgets/PressedButton.dart';
+
+Future<List<Localidad>> _fetchLocalidades() async { 
+  final response = await http.get('http://192.168.1.34:3000/localidades'); 
+  if (response.statusCode == 200) { 
+    List jsonResponse = json.decode(response.body); 
+    return jsonResponse.map((value) => Localidad.fromJson(value)).toList();
+  } else { 
+    throw Exception('Failed to load Localidades from API.'); 
+  } 
+}
+
+Future<List<Clasificacion>> _fetchClasificaciones() async { 
+   final response = await http.get('http://192.168.1.34:3000/clasificaciones'); 
+   if (response.statusCode == 200) { 
+      List jsonResponse = json.decode(response.body); 
+      return jsonResponse.map((value) => Clasificacion.fromJson(value)).toList(); 
+   } else { 
+      throw Exception('Failed to load Clasificaciones from API.'); 
+   } 
+}
+
+Future<List<Especialidad>> _fetchEspecialidades() async { 
+   final response = await http.get('http://192.168.1.34:3000/especialidades'); 
+   if (response.statusCode == 200) { 
+      List jsonResponse = json.decode(response.body); 
+      return jsonResponse.map((value) => Especialidad.fromJson(value)).toList(); 
+   } else { 
+      throw Exception('Failed to load Especialidades from API.'); 
+   } 
+}
+
+Future<List<Actividad>> _fetchActividades() async { 
+   final response = await http.get('http://192.168.1.34:3000/actividades'); 
+   if (response.statusCode == 200) { 
+      List jsonResponse = json.decode(response.body); 
+      return jsonResponse.map((value) => Actividad.fromJson(value)).toList(); 
+   } else { 
+      throw Exception('Failed to load Actividades from API.'); 
+   } 
+}
+
 class Filtros extends StatefulWidget {
   Filtros({Key key}) : super(key: key);
 
@@ -8,134 +59,105 @@ class Filtros extends StatefulWidget {
 }
 
 class _FiltrosState extends State<Filtros> {
-  String localidad = 'Todas';
-  String categoria = 'Todas';
-  RangeValues clasificacion = RangeValues(0, 5);
-  String actividad = 'Todas';
-  String especialidad = 'Todas';
+
+  final Future<List<Localidad>> localidades = _fetchLocalidades();
+  final Future<List<Clasificacion>> clasificaciones = _fetchClasificaciones();
+  final Future<List<Especialidad>> especialidades = _fetchEspecialidades();
+  final Future<List<Actividad>> actividades = _fetchActividades();
+
+  List<Localidad> _localidades = [];
+  RangeValues _categorias = RangeValues(1, 5);
+  List<Clasificacion> _clasificaciones = [];
+  List<Especialidad> _especialidades = [];
+  List<Actividad> _actividades = [];
 
   bool alojamientos = false;
   bool gastronomia = false;
 
   List<String> _filters = <String>[];
 
-  List<String> _options = <String>[
-      'Ushuaia',
-      'Rio Grande',
-      'Tolhuin',
-      'Esquel',
-      'Bahía Blanca',
- ];
  
-  List<Widget> _optionWidgets() {
-    List<Widget> _children = <Widget>[];
-
-    for (String option in _options) {
-      _children.add(
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 0),
-          child: FilterChip(
-            backgroundColor: Colors.white,
-            elevation: 5,
-            avatar: CircleAvatar(
-              child: Text(option[0].toUpperCase()),
-            ),
-            label: Text(option),
-            showCheckmark: false,
-            selected: _filters.contains(option),
-            onSelected: (bool selected) {
-              setState(() {
-                if (selected) {
-                  _filters.add(option);
-                } else {
-                  _filters.removeWhere((String name) {
-                    return name == option;
-                  });
-                }
+  
+  List<Widget> _getChipsWidgets(items) {
+    return items.map<Widget>((item) {
+      return ChipWidget.Chip(
+        pressed: _filters.contains(item.nombre), 
+        title: item.nombre, 
+        onPress: (bool pressed) {
+          setState(() {
+            if (!pressed) {
+              _filters.add(item.nombre);
+            } else {
+              _filters.removeWhere((String name) {
+                return name == item.nombre;
               });
-            },
-          ),
-        )
+            }
+          });
+        }
       );
-    } 
-
-    return _children;
-  }
-
-  Widget _dropdown(List<String> options, String _value, Function _onChanged) {
-    final _width = MediaQuery.of(context).size.width;
-
-    return Container(
-      width: _width * 0.55,
-      height: 40,
-      padding: EdgeInsets.symmetric(horizontal: 15),
-      margin: EdgeInsets.symmetric(vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(width: 1,color: Colors.grey[400]),
-        borderRadius: BorderRadius.all(Radius.circular(15))
-      ),
-      child: DropdownButton<String>(
-        value: _value,
-        isExpanded: true,
-        underline: SizedBox(),
-        icon: Icon(Icons.keyboard_arrow_down),
-        iconSize: 30,
-        style: TextStyle(
-          color: Colors.grey[600],
-          fontSize: 16
-        ),
-        items: options.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(), 
-        onChanged: _onChanged,
-      )
-    );
+        /* return FilterChip(
+          selectedShadowColor: Colors.white,
+          backgroundColor: Colors.white,
+          elevation: 3.8,
+          pressElevation: 0,
+          avatar: CircleAvatar(
+            child: Text(item.nombre[0].toUpperCase()),
+          ),
+          label: Text(item.nombre),
+          showCheckmark: false,
+          selected: _filters.contains(item.nombre),
+          onSelected: (bool selected) {
+            setState(() {
+              if (selected) {
+                _filters.add(item.nombre);
+              } else {
+                _filters.removeWhere((String name) {
+                  return name == item.nombre;
+                });
+              }
+            });
+          },
+      ); */
+    }).toList();
   }
 
   Widget _filter(String title, Widget _widget) {
     return (
-      Padding(
-        padding: EdgeInsets.only(top: 15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(title, style: TextStyle(
-                color: Colors.grey[700],
-                fontWeight: FontWeight.bold,
-                fontSize: 20
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container (
+            margin: EdgeInsets.only(bottom: 10),
+            child: Text(title, style: TextStyle(
+              color: Colors.grey[700],
+              fontWeight: FontWeight.bold,
+              fontSize: 18
               ),
             ),
-            _widget
-          ],
-        )
+          ),
+          Container(
+            margin: EdgeInsets.only(bottom: 30),
+            child: _widget
+          )
+        ],
       )
     );
   }
 
   Widget _section(String title) {
-    final _width = MediaQuery.of(context).size.width;
-
     return (
-      Padding(
-        padding: EdgeInsets.only(top: 10),
+      Container(
+        margin: EdgeInsets.only(bottom: 10),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(title, style: TextStyle(
-                color: Colors.grey[500],
-                fontSize: 22,
-                fontWeight: FontWeight.bold
-              ),
+            Text(title.toUpperCase(), style: TextStyle(
+                color: Colors.grey[700],
+                fontWeight: FontWeight.bold,
+                fontSize: 21
+              )
             ),
-            Divider(
-              color: Colors.grey[500],
-              thickness: 1.2,
-              indent: _width * 0.15,
-              endIndent: _width * 0.15,
-            )
+            Divider(thickness: 1.5, height: 30, color: Colors.grey[400],),
           ],
         )
       )
@@ -159,7 +181,6 @@ class _FiltrosState extends State<Filtros> {
 
   @override
   Widget build(BuildContext context) {
-    final _width = MediaQuery.of(context).size.width;
     
     return Scaffold(
       appBar: AppBar(
@@ -184,132 +205,101 @@ class _FiltrosState extends State<Filtros> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  child: Text('Mostrar sólo', style: TextStyle(
-                      color: Colors.grey[700],
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20
-                    ),
+                _section('general'),
+                _filter('Mostrar sólo', 
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      PressedButton(
+                        onPress: () => _changeShowOnly('alojamientos'), 
+                        title: "Alojamientos",
+                        pressed: alojamientos,
+                      ),
+                      PressedButton(
+                        onPress: () => _changeShowOnly('gastronomia'), 
+                        title: "Gastronomía",
+                        pressed: gastronomia,
+                      )
+                    ],
                   )
                 ),
-                Row(
-                  children: <Widget>[
-                    GestureDetector(
-                      onTap: () => _changeShowOnly('alojamientos'),
-                      child: Container(
-                        width: _width * 0.45,
-                        height: 40,
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text('Alojamientos', style: TextStyle(
-                              fontSize: 16
-                            ),
-                          ),
-                        ),
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey[500],
-                              blurRadius: 5,
-                              spreadRadius: 0,
-                              offset: Offset(2, 2),
-                            )
-                          ],
-                          borderRadius: BorderRadius.only(topLeft: Radius.circular(15), bottomLeft: Radius.circular(15)),
-                          color: alojamientos ? Colors.grey[400] : Colors.white,
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => _changeShowOnly('gastronomia'),
-                      child: Container(
-                        width: _width * 0.45,
-                        height: 40,
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text('Gastronomía', style: TextStyle(
-                              fontSize: 16
-                            ),
-                          ),
-                        ),
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey[500],
-                              blurRadius: 5,
-                              spreadRadius: 0,
-                              offset: Offset(2, 2),
-                            )
-                          ],
-                          borderRadius: BorderRadius.only(topRight: Radius.circular(15), bottomRight: Radius.circular(15)),
-                          color: gastronomia ? Colors.grey[400] : Colors.white,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                /* _filter(
-                  'Localidad', 
-                  _dropdown(
-                    ['Todas', 'Ushuaia', 'Tolhuin', 'Rio Grande'],
-                    localidad,
-                    (String newValue) {setState(() {localidad = newValue;});}
-                  )
-                ), */
                 _filter(
                   'Localidad', 
-                  Wrap(
-                    children: _optionWidgets()
-                    ),
+                  FutureBuilder<List<Localidad>>(
+                    future: localidades, builder: (context, snapshot) {
+                      if (snapshot.hasError) print(snapshot.error); 
+                      return snapshot.hasData ? 
+                        Wrap(
+                          runSpacing: 10,
+                          spacing: 10,
+                          children: _getChipsWidgets(snapshot.data)
+                        )
+                      
+                      : Center(child: CircularProgressIndicator()); 
+                    },
+                  ),
                 ),
-                _section('Alojamientos'),
+                SizedBox(height: 20,),
+                _section('alojamientos'),
                 _filter(
                   'Categoría', 
-                  _dropdown(
-                    ['Todas', 'Ushuaia', 'Tolhuin', 'Rio Grande'],
-                    categoria,
-                    (String newValue) {setState(() {categoria = newValue;});}
-                  )
-                ),
-                _filter(
-                  'Clasificación',
                   RangeSlider(
-                    values: clasificacion,
-                    min: 0,
+                    values: _categorias,
+                    min: 1,
                     max: 5,
-                    divisions: 5,
-                    labels: RangeLabels(clasificacion.start.toString(), clasificacion.end.toString()),
+                    divisions: 4,
+                    labels: RangeLabels(_categorias.start.ceil().toString(), _categorias.end.ceil().toString()),
                     onChanged: (RangeValues newValues) {
                       setState(() {
-                        clasificacion = newValues;
+                        _categorias = newValues;
                       });
                     },
                   )
                 ),
+                _filter(
+                  'Clasificación',
+                  FutureBuilder<List<Clasificacion>>(
+                    future: clasificaciones, builder: (context, snapshot) {
+                      if (snapshot.hasError) print(snapshot.error); 
+                      return snapshot.hasData ? 
+                        MultiSelect(options: snapshot.data)
+                      
+                      : Center(child: CircularProgressIndicator()); 
+                    },
+                  ),
+                ),
+                SizedBox(height: 20,),
                 _section('Gastronomía'),
                 _filter(
                   'Actividad', 
-                  _dropdown(
-                    ['Todas', 'Ushuaia', 'Tolhuin', 'Rio Grande'],
-                    actividad,
-                    (String newValue) {setState(() {actividad = newValue;});}
-                  )
+                  FutureBuilder<List<Actividad>>(
+                    future: actividades, builder: (context, snapshot) {
+                      if (snapshot.hasError) print(snapshot.error); 
+                      return snapshot.hasData ? 
+                        MultiSelect(options: snapshot.data)
+                      
+                      : Center(child: CircularProgressIndicator()); 
+                    },
+                  ),
                 ),
                 _filter(
                   'Especialidad', 
-                  _dropdown(
-                    ['Todas', 'Ushuaia', 'Tolhuin', 'Rio Grande'],
-                    especialidad,
-                    (String newValue) {setState(() {especialidad = newValue;});}
-                  )
+                  FutureBuilder<List<Especialidad>>(
+                    future: especialidades, builder: (context, snapshot) {
+                      if (snapshot.hasError) print(snapshot.error); 
+                      return snapshot.hasData ? 
+                        MultiSelect(options: snapshot.data)
+                      
+                      : Center(child: CircularProgressIndicator()); 
+                    },
+                  ),
                 ),
               ],
             ),
           ],
         ),
       ),
-      backgroundColor: Color.fromRGBO(238, 238, 242, 1),
+      backgroundColor: Colors.grey[50],
     );
   }
 }

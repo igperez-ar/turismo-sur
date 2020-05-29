@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:turismo_app/widgets/DefaultCard.dart';
+import 'package:turismo_app/widgets/FavButton.dart';
 import 'package:turismo_app/widgets/MapCard.dart';
 import 'package:turismo_app/widgets/Memories.dart';
 import 'package:turismo_app/widgets/Stars.dart';
@@ -68,78 +68,92 @@ class _AlojamientoState extends State<Alojamiento> {
       body: Center(
         child: ListView(
           children: <Widget>[ 
-            Stack(
-              children: <Widget>[
-                ClipRRect(
-                  borderRadius: BorderRadius.only(bottomRight: Radius.circular(50)),
-                  child: Image.network(
-                    widget.alojamiento.foto != null ? 
-                      widget.alojamiento.foto 
-                      :'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRVX4RgUYvaDyHQaEiejmjMy0ZbuEPqGkOwsxq9oAmPl3MQJIRC&usqp=CAU',
-                    fit: BoxFit.cover,
-                    height: _width * 0.8,
-                    width: _width,
-                  ),
-                ),
-                Container(
-                  height: _width * 0.8,
-                  width: _width,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(bottomRight: Radius.circular(50)),
-                    gradient: LinearGradient(
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                      colors: [Color.fromRGBO(10, 10, 10, 0.8), Color.fromRGBO(50, 50, 50, 0.5), Color.fromRGBO(150, 150, 150, 0.05)]
-                    )
-                  ),
-                  child: Container(
-                    alignment: Alignment.bottomLeft,
-                    padding: EdgeInsets.only(left: 20, bottom: 20),
-                    child: Row(
-                      children: <Widget>[
-                        Container(
-                          width: _width * 0.75,
-                          margin: EdgeInsets.only(right: 10),
-                          child: Text(widget.alojamiento.nombre, style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          height: 70,
-                          child: GestureDetector(
-                            onTap: _changeFavorite,
-                            child: Icon(
-                              liked ? Icons.favorite : Icons.favorite_border, 
-                              size: 30, 
-                              color: Colors.grey[500],
-                            )
-                          )
-                        )
-                      ],
+            Container( 
+              height: 450.0,
+              child: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  ClipRRect(
+                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(45)),
+                    child: Image.network(
+                      widget.alojamiento.foto != null ? 
+                        widget.alojamiento.foto 
+                        :'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRVX4RgUYvaDyHQaEiejmjMy0ZbuEPqGkOwsxq9oAmPl3MQJIRC&usqp=CAU',
+                      fit: BoxFit.cover,
+                      height: _width * 0.8,
+                      width: _width,
                     ),
                   ),
-                ),
-                MaterialButton(
-                  height: 70,
-                  minWidth: 70,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50)
+                  /* Container(
+                    height: _width * 0.8,
+                    width: _width,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(bottomLeft: Radius.circular(45)),
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [Color.fromRGBO(10, 10, 10, 0.8), Color.fromRGBO(50, 50, 50, 0.5), Color.fromRGBO(150, 150, 150, 0.05)]
+                      )
+                    ),
+                  ), */
+                  Align(
+                    alignment: Alignment(0.8, 1.15),
+                    child: FavButton(
+                      liked: liked,
+                      size: 60,
+                      onPress: _changeFavorite,
+                    ),
                   ),
-                  child: Icon(Icons.arrow_back, color: Colors.white, size: 35,),
-                  onPressed: () => Navigator.pop(context)
-                )
-              ],
+                  Container(
+                    alignment: Alignment(-1, -0.85),
+                    child: MaterialButton(
+                      height: 20,
+                      child: Icon(Icons.arrow_back, color: Colors.white, size: 35,),
+                      onPressed: () => Navigator.pop(context)
+                    )
+                  )
+                ],
+              ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              padding: EdgeInsets.only(top: 35, right: 20, left: 20),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  DetailSection(
+                  Stars(count: widget.alojamiento.categoria, 
+                    size: 30
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    child: Text(widget.alojamiento.nombre, style: TextStyle(
+                      color: Colors.grey[800],
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.location_on,
+                        size: 30,
+                        color: Colors.grey[600],
+                      ),
+                      SizedBox(width: 5),
+                      Expanded(
+                        flex: 1,
+                        child: Text(widget.alojamiento.domicilio, style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 17
+                          ),
+                          overflow: TextOverflow.clip,
+                        )
+                      )
+                    ]
+                  ),
+                  /* DetailSection(
                     title:'Categoría',
-                    content: Align(
+                    child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text('Hostería', style: TextStyle(
                         color: Colors.grey[600],
@@ -147,37 +161,30 @@ class _AlojamientoState extends State<Alojamiento> {
                         )
                       ),
                     ),
-                  ),
+                  ), */
+                  SizedBox(height: 30),
                   DetailSection(
-                    title: 'Clasificación',
-                    content: Stars(count: widget.alojamiento.categoriaId != 6 ? 
-                      widget.alojamiento.categoriaId : 0, 
-                      size: 35
-                    ), 
-                  ),
-                  DetailSection(
-                    title: 'Ubicación',
-                    content: MapCard(
-                      title: widget.alojamiento.domicilio,
+                    title: "Ubicación:",
+                    margin: false,
+                    child: MapCard(
                       lat: widget.alojamiento.lat,
                       lng: widget.alojamiento.lng,
-                    ), 
-                    margin: false,
+                    )
                   ),
                   (liked ? 
                     DetailSection(
-                      title: 'Recuerdos',
-                      content: Memories(liked: false),
+                      title: 'Recuerdos:',
+                      child: Memories(liked: false),
                       margin: false,
                     )
-                  : Container())
+                  : Container()) 
                 ],
               )
             ),
           ],
         ),
       ),
-      backgroundColor: Color.fromRGBO(238, 238, 242, 1),
+      backgroundColor: Colors.grey[50],
     );
   }
 }

@@ -7,6 +7,7 @@ import 'package:turismo_app/models/Alojamiento.dart';
 import 'package:turismo_app/views/Filtros.dart';
 import 'package:turismo_app/widgets/SmallCard.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class Mapa extends StatefulWidget {
   final String title;
@@ -26,13 +27,29 @@ class Mapa extends StatefulWidget {
 
 class MapaState extends State<Mapa> {
   String _mapStyle;
-  Map<MarkerId, Marker> markers = <MarkerId, Marker>{}; 
-  
+  Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
+  GoogleMapController mapController;
+  CarouselController carouselController = CarouselController();
+
   void _setMarkers() async {
     List<Alojamiento> _items = await widget.alojamientos;
 
     for (var item in _items) {
-      _add(item.nombre, item.domicilio, item.lat, item.lng);
+      MarkerId markerId = MarkerId(item.id.toString());
+
+      Marker marker = Marker(
+        markerId: markerId,
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+        position: LatLng(item.lat, item.lng),
+        onTap: () {carouselController.jumpToPage(
+            _items.indexWhere((element) => element.id == item.id)
+          );
+        }
+      );
+
+      setState(() {
+        markers[markerId] = marker;
+      });
     }
   }
 
@@ -47,28 +64,7 @@ class MapaState extends State<Mapa> {
     });
   }
 
-  void _add(String name, String address, double lat, double lng) {
-    var markerIdVal = name;
-    final MarkerId markerId = MarkerId(markerIdVal);
-
-    final Marker marker = Marker(
-      markerId: markerId,
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
-      position: LatLng(lat, lng),
-      infoWindow: InfoWindow(title: markerIdVal, snippet: address),
-      onTap: () {
-        /* _onMarkerTapped(markerId); */
-      },
-    );
-
-    setState(() {
-      // adding a new marker to map
-      markers[markerId] = marker;
-    });
-  }
-
   Widget _getMapWidget() {
-    /* Completer<GoogleMapController> _controller = Completer(); */
     
     return Container(
       child: GoogleMap(    
@@ -78,8 +74,8 @@ class MapaState extends State<Mapa> {
         mapType: MapType.normal,
         zoomControlsEnabled: false,
         onMapCreated: (GoogleMapController controller) {
-          controller.setMapStyle(_mapStyle);
-          /* _controller.complete(controller); */
+          mapController = controller;
+          mapController.setMapStyle(_mapStyle);
         },
         markers: Set<Marker>.of(markers.values),
         initialCameraPosition: CameraPosition(
@@ -90,17 +86,51 @@ class MapaState extends State<Mapa> {
     );
   }
 
-  Widget _buildCarrousel(BuildContext context, items) {
+  Widget _buildCarousel(BuildContext context,List<Alojamiento> alojamientos) {
+
+    return CarouselSlider(
+        items: alojamientos.map<Widget>((item) {
+          return SmallCard(
+            name: item.nombre,
+            address: item.domicilio,
+            image: item.foto,
+            category: item.categoria,
+            clasification: item.clasificacion.nombre,
+            onTap: () => Navigator.push(context,
+              MaterialPageRoute(
+                builder: (context) => View.Alojamiento(alojamiento: item)
+              )
+            ),
+          );
+          }
+        ).toList(),
+        carouselController: carouselController,
+        options: CarouselOptions(
+          height: 200,
+          autoPlay: false,
+          enlargeCenterPage: true,
+          viewportFraction: 0.8,
+          aspectRatio: 2.0,
+          onPageChanged: (index, reason) {
+            /* if (reason == CarouselPageChangedReason.manual)
+              alojamientos */
+          },
+          initialPage: 0
+        ),
+    );
+  }
+
+  /* Widget _buildCarousel(BuildContext context, items) {
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         SizedBox(
           // you may want to use an aspect ratio here for tablet support
-          height: 190.0,
+          height: 200.0,
           child: PageView.builder(
             // store this controller in a State to save the carousel scroll position
-            controller: PageController(viewportFraction: 0.9),
+            controller: carouselController,
             itemBuilder: (BuildContext context, int index) {
               return Padding(
                 padding: EdgeInsets.symmetric(horizontal: 4.0),
@@ -119,9 +149,9 @@ class MapaState extends State<Mapa> {
         )
       ],
     );
-  }
+  } */
 
-  /* Widget _buildCarrouselItem(BuildContext context, int itemIndex) {
+  /* Widget _buildCarouselItem(BuildContext context, int itemIndex) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 4.0),
       child: SmallCard(
@@ -166,10 +196,9 @@ class MapaState extends State<Mapa> {
         backgroundColor: Colors.teal[300],
       ),
       body: Column(
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Container(
-            height: (widget.carrousel ? _height - 140 : _height - 84),
-            width: _width,
+          Expanded(
             child: Stack(
               children: <Widget>[
                 _getMapWidget(),
@@ -179,7 +208,7 @@ class MapaState extends State<Mapa> {
                     child: FutureBuilder<List<Alojamiento>>(
                       future: widget.alojamientos, builder: (context, snapshot) {
                         if (snapshot.hasError) print(snapshot.error); 
-                        return snapshot.hasData ? _buildCarrousel(context, snapshot.data) 
+                        return snapshot.hasData ? _buildCarousel(context, snapshot.data) 
                         
                         : Center(child: CircularProgressIndicator()); 
                       },
