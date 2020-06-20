@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:turismo_app/views/Explorar.dart';
-import 'package:turismo_app/views/Mapa.dart';
-import 'package:turismo_app/views/Favoritos.dart';
+import 'package:turismo_app/screens/ChatScreen.dart';
+
+import 'package:turismo_app/screens/ExplorarScreen.dart';
+import 'package:turismo_app/screens/MapaScreen.dart';
+import 'package:turismo_app/screens/PerfilScreen.dart';
 
 import 'dart:async'; 
 import 'dart:convert'; 
@@ -15,7 +17,8 @@ List<Alojamiento> parseAlojamientos(String responseBody) {
 } 
 
 Future<List<Alojamiento>> fetchAlojamientos() async { 
-   final response = await http.get('http://192.168.1.34:3000/alojamientos?select=id,nombre,domicilio,lat,lng,foto,clasificacion:clasificaciones(id,nombre),categoria:categoria_id,localidad:localidades(id,nombre)&clasificacion_id=eq.9&order=nombre.desc'); 
+   /* final response = await http.get('http://192.168.1.35:3000/alojamientos?select=id,nombre,domicilio,lat,lng,foto,clasificacion:clasificaciones(id,nombre),categoria:categoria_id,localidad:localidades(id,nombre)&clasificacion_id=eq.4&order=nombre.desc');  */
+   final response = await http.get('http://192.168.1.35:3000/alojamientos?select=id,nombre,domicilio,lat,lng,foto,clasificacion:clasificaciones(id,nombre),categoria:categoria_id,localidad:localidades(id,nombre)'); 
    if (response.statusCode == 200) { 
       return parseAlojamientos(response.body); 
    } else { 
@@ -23,7 +26,7 @@ Future<List<Alojamiento>> fetchAlojamientos() async {
    } 
 }
 /* Future<List<Alojamiento>> fetchAlojamientos() async { 
-   final response = await http.get('http://192.168.1.34:3000/alojamientos?order=id.asc'); 
+   final response = await http.get('http://192.168.1.35:3000/alojamientos?order=id.asc'); 
    if (response.statusCode == 200) { 
       return parseAlojamientos(response.body); 
    } else { 
@@ -48,13 +51,14 @@ class _AppState extends State<App> {
 
     setState(() {
       _children = [
-        Explorar(
+        ExplorarScreen(
           alojamientos: alojamientos
         ),
-        Mapa(
+        MapaScreen(
           alojamientos: alojamientos,
         ),
-        Favoritos(),
+        ChatScreen(),
+        PerfilScreen()
       ];
     });
   }
@@ -64,31 +68,49 @@ class _AppState extends State<App> {
     
     return Scaffold(
       body: _children[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: changeTabIndex,
-        backgroundColor: Colors.white,
-        selectedItemColor: Colors.teal[400],
-        selectedIconTheme: IconThemeData(size: 32),
-        selectedLabelStyle: TextStyle(height: 0),
-        showSelectedLabels: false,
-        unselectedLabelStyle: TextStyle(height: 1.2, fontSize: 13),
-        iconSize: 26,
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            title: Text('Explorar'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            title: Text('Mapa'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            title: Text('Favoritos'),
-          ),
-        ],
-      ), 
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 10,
+              spreadRadius: 2,
+              offset: Offset(0,-1)
+            )
+          ]
+        ),
+        child: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: changeTabIndex,
+          backgroundColor: Theme.of(context).bottomAppBarColor,
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: Theme.of(context).iconTheme.color,
+          selectedIconTheme: IconThemeData(size: 32),
+          selectedLabelStyle: TextStyle(height: 0),
+          showSelectedLabels: false,
+          elevation: 15,
+          unselectedLabelStyle: TextStyle(height: 1.2, fontSize: 13),
+          iconSize: 26,
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.explore),
+              title: Text('Explorar'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.map),
+              title: Text('Mapa'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.chat),
+              title: Text('Chat'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              title: Text('Perfil'),
+            ),
+          ],
+        ), 
+      )
     );
   }
 

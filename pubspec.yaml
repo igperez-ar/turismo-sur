@@ -27,6 +27,8 @@ dependencies:
   http: ^0.12.1
 
   flutter_bloc: ^4.0.0
+
+  flutter_svg: ^0.17.4
   
   google_maps_flutter: ^0.5.5
 
@@ -53,7 +55,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - map_style.txt
+    - normal_map_style.json
+    - dark_map_style.json
+    - assets/profile_pics/
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
