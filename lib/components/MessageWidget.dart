@@ -13,7 +13,7 @@ class MessageWidget extends StatelessWidget {
     this.first=false
   }) : super(key: key);
 
-  Widget _getSelfMessage() {
+  Widget _getSelfMessage(context) {
     return Flex(
       direction: Axis.horizontal,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -24,7 +24,7 @@ class MessageWidget extends StatelessWidget {
             margin: EdgeInsets.only(top: (this.first ? 10 : 3), left: 50),
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.teal[100],
+              color: Theme.of(context).primaryColorDark,
               borderRadius: BorderRadius.only(
                 bottomRight: Radius.circular(10),
                 bottomLeft: Radius.circular(10),
@@ -49,7 +49,7 @@ class MessageWidget extends StatelessWidget {
               height: 10,
               margin: EdgeInsets.only(top: (this.first ? 10 : 3)),
               decoration: BoxDecoration(
-                color: Colors.teal[100],
+                color: Theme.of(context).primaryColorDark,
                 borderRadius: BorderRadius.only(bottomRight: Radius.elliptical(10, 10)),
                 boxShadow: [
                   BoxShadow(
@@ -141,6 +141,6 @@ class MessageWidget extends StatelessWidget {
     if (this.name != null) 
       return this._getMessage(context);
     
-    return this._getSelfMessage();
+    return this._getSelfMessage(context);
   }
 }

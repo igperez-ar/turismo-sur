@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:turismo_app/widgets/CardWidget.dart';
-import 'package:turismo_app/widgets/MapCardWidget.dart';
-import 'package:turismo_app/widgets/CategoryWidget.dart';
-import 'package:turismo_app/widgets/DetailSectionWidget.dart';
+import 'package:turismo_app/components/CardWidget.dart';
+import 'package:turismo_app/components/MapCardWidget.dart';
+import 'package:turismo_app/components/CategoryWidget.dart';
+import 'package:turismo_app/components/DetailSectionWidget.dart';
 
 class Gastronomico extends StatelessWidget {
 

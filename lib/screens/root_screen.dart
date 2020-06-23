@@ -1,32 +1,21 @@
-import 'package:flutter/material.dart';
-import 'package:turismo_app/screens/ChatScreen.dart';
-
-import 'package:turismo_app/screens/ExplorarScreen.dart';
-import 'package:turismo_app/screens/MapaScreen.dart';
-import 'package:turismo_app/screens/PerfilScreen.dart';
-
 import 'dart:async'; 
 import 'dart:convert'; 
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http; 
+
+import 'package:flutter/material.dart';
+import 'package:turismo_app/bloc/alojamiento_bloc.dart';
+
 import 'package:turismo_app/models/Alojamiento.dart';
+import 'package:turismo_app/screens/screens.dart';
 
-
-List<Alojamiento> parseAlojamientos(String responseBody) { 
+/* List<Alojamiento> parseAlojamientos(String responseBody) { 
    final parsed = json.decode(responseBody).cast<Map<String, dynamic>>(); 
    return parsed.map<Alojamiento>((json) => Alojamiento.fromJson(json)).toList(); 
 } 
 
 Future<List<Alojamiento>> fetchAlojamientos() async { 
-   /* final response = await http.get('http://192.168.1.35:3000/alojamientos?select=id,nombre,domicilio,lat,lng,foto,clasificacion:clasificaciones(id,nombre),categoria:categoria_id,localidad:localidades(id,nombre)&clasificacion_id=eq.4&order=nombre.desc');  */
    final response = await http.get('http://192.168.1.35:3000/alojamientos?select=id,nombre,domicilio,lat,lng,foto,clasificacion:clasificaciones(id,nombre),categoria:categoria_id,localidad:localidades(id,nombre)'); 
-   if (response.statusCode == 200) { 
-      return parseAlojamientos(response.body); 
-   } else { 
-      throw Exception('Unable to fetch products from the REST API'); 
-   } 
-}
-/* Future<List<Alojamiento>> fetchAlojamientos() async { 
-   final response = await http.get('http://192.168.1.35:3000/alojamientos?order=id.asc'); 
    if (response.statusCode == 200) { 
       return parseAlojamientos(response.body); 
    } else { 
@@ -34,33 +23,40 @@ Future<List<Alojamiento>> fetchAlojamientos() async {
    } 
 } */
 
-class App extends StatefulWidget {
+class RootScreen extends StatefulWidget {
 
   @override
-  State createState() => _AppState();
+  State createState() => _RootScreenState();
 }
 
-class _AppState extends State<App> {
+class _RootScreenState extends State<RootScreen> {
   int _currentIndex = 0;
   List<Widget> _children;
+  /* AlojamientoBloc _alojamientoBloc; */
+
+  void changeTabIndex(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-    final alojamientos = fetchAlojamientos();
+    /* _alojamientoBloc = BlocProvider.of<AlojamientoBloc>(context); */
 
-    setState(() {
-      _children = [
-        ExplorarScreen(
-          alojamientos: alojamientos
-        ),
-        MapaScreen(
-          alojamientos: alojamientos,
-        ),
-        ChatScreen(),
-        PerfilScreen()
-      ];
-    });
+    _children = [
+      ExplorarScreen(),
+      MapaScreen(),
+      /* ExplorarScreen(
+        alojamientos: alojamientos
+      ),
+      MapaScreen(
+        alojamientos: alojamientos,
+      ), */
+      ChatScreen(),
+      PerfilScreen()
+    ];
   }
 
   @override
@@ -112,11 +108,5 @@ class _AppState extends State<App> {
         ), 
       )
     );
-  }
-
-  void changeTabIndex(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
   }
 }

@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:turismo_app/widgets/FavButtonWidget.dart';
-import 'package:turismo_app/widgets/MapCardWidget.dart';
-import 'package:turismo_app/widgets/MemoriesWidget.dart';
-import 'package:turismo_app/widgets/CategoryWidget.dart';
-import 'package:turismo_app/widgets/DetailSectionWidget.dart';
-import 'package:turismo_app/widgets/ScoreReviewWidget.dart';
+import 'package:turismo_app/components/components.dart';
 
 class AlojamientoScreen extends StatefulWidget {
    final bool liked;

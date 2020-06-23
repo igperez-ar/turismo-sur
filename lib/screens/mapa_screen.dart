@@ -2,23 +2,24 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 
 import 'package:flutter/material.dart';
-import 'package:turismo_app/screens/AlojamientoScreen.dart';
-import 'package:turismo_app/models/Alojamiento.dart';
-import 'package:turismo_app/screens/FiltrosScreen.dart';
-import 'package:turismo_app/widgets/CardSmallWidget.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:turismo_app/bloc/bloc.dart';
+import 'package:turismo_app/screens/screens.dart';
+import 'package:turismo_app/models/models.dart';
+import 'package:turismo_app/components/components.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class MapaScreen extends StatefulWidget {
   final String title;
-  final Future<List<Alojamiento>> alojamientos;
+  /* final Future<List<Alojamiento>> alojamientos; */
   final bool carrousel;
 
   const MapaScreen({
     Key key, 
     this.title = 'Mapa',
-    @required this.alojamientos,
+    /* @required this.alojamientos, */
     this.carrousel = true
   }): super(key: key);
 
@@ -32,8 +33,8 @@ class MapaScreenState extends State<MapaScreen> {
   GoogleMapController mapController;
   CarouselController carouselController = CarouselController();
 
-  void _setMarkers() async {
-    List<Alojamiento> _items = await widget.alojamientos;
+  void _setMarkers(_items) {
+    /* List<Alojamiento> _items = await widget.alojamientos; */
 
     for (var item in _items) {
       MarkerId markerId = MarkerId(item.id.toString());
@@ -42,13 +43,14 @@ class MapaScreenState extends State<MapaScreen> {
         markerId: markerId,
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
         position: LatLng(item.lat, item.lng),
-        onTap: () {carouselController.jumpToPage(
+        onTap: () {
+          carouselController.jumpToPage(
             _items.indexWhere((element) => element.id == item.id)
           );
         }
       );
 
-      setState(() {
+      this.setState(() {
         markers[markerId] = marker;
       });
     }
@@ -58,7 +60,12 @@ class MapaScreenState extends State<MapaScreen> {
   void initState() {
     super.initState();
 
-    _setMarkers();
+    BlocListener<AlojamientoBloc, AlojamientoState>(
+      listener: (context, state) {
+        if (state is AlojamientoSuccess)
+          _setMarkers(state.alojamientos);
+      }
+    );
     rootBundle.loadString('assets/normal_map_style.json').then((string) {
       _normalMapStyle = string;
     });
@@ -115,8 +122,6 @@ class MapaScreenState extends State<MapaScreen> {
           autoPlay: false,
           enlargeCenterPage: true,
           viewportFraction: 0.8,
-
-          /* aspectRatio: 2.0, */
           onPageChanged: (index, reason) {
             /* if (reason == CarouselPageChangedReason.manual)
               alojamientos */
@@ -125,52 +130,6 @@ class MapaScreenState extends State<MapaScreen> {
         ),
     );
   }
-
-  /* Widget _buildCarousel(BuildContext context, items) {
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        SizedBox(
-          // you may want to use an aspect ratio here for tablet support
-          height: 200.0,
-          child: PageView.builder(
-            // store this controller in a State to save the carousel scroll position
-            controller: carouselController,
-            itemBuilder: (BuildContext context, int index) {
-              return Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.0),
-                child: SmallCard(
-                  name: items[index].nombre,
-                  address: items[index].domicilio,
-                  image: items[index].foto,
-                  category: items[index].categoriaId != 6 ? items[index].categoriaId : 0,
-                  onTap: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => View.Alojamiento())
-                  ),
-                ),
-              );
-            },
-          ),
-        )
-      ],
-    );
-  } */
-
-  /* Widget _buildCarouselItem(BuildContext context, int itemIndex) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 4.0),
-      child: SmallCard(
-        title: 'Hotel Mónaco',
-        subtitle: 'San Martín 1335',
-        imgUrl: 'https://suit.tur.ar/archivos/read/366/mdc',
-        clasification: 1,
-        route: () => Navigator.push(context,
-            MaterialPageRoute(builder: (context) => View.Alojamiento())
-        ),
-      ),
-    );
-  } */
 
   @override
   Widget build(BuildContext context) {
@@ -207,9 +166,36 @@ class MapaScreenState extends State<MapaScreen> {
           ),
       ),
       body: Stack(
+        alignment: Alignment.bottomCenter,
         children: <Widget>[
           _getMapWidget(),
-          (widget.carrousel ? 
+          BlocBuilder<AlojamientoBloc, AlojamientoState>(
+            builder: (context, state) {
+              if (state is AlojamientoInitial) {
+                BlocProvider.of<AlojamientoBloc>(context).add(FetchAlojamientos());
+              }
+
+              if (state is AlojamientoFailure) {
+                return Center(
+                  child: Text('failed to fetch alojamientos')
+                );
+              }
+
+              if (state is AlojamientoSuccess) {
+                if (state.alojamientos.isEmpty) {
+                  return Center(
+                    child: Text('alojamientos VACIO')
+                  );
+                }
+                /* _setMarkers(state.alojamientos); */
+                return _buildCarousel(context, state.alojamientos);
+              }
+            
+              return Center(
+                child: CircularProgressIndicator()
+              ); 
+            }
+          /* (widget.carrousel ? 
             Align(
               alignment: Alignment.bottomLeft,
               child: FutureBuilder<List<Alojamiento>>(
@@ -222,6 +208,7 @@ class MapaScreenState extends State<MapaScreen> {
               ),
             )
             : Container()
+          ) */
           )
         ]
       )

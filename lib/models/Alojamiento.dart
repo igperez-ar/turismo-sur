@@ -1,8 +1,5 @@
-// To parse this JSON data, do
-//
-//     final alojamiento = alojamientoFromJson(jsonString);
-
 import 'dart:convert';
+import 'package:equatable/equatable.dart';
 
 Alojamiento alojamientoFromJson(String str) => Alojamiento.fromJson(json.decode(str));
 
@@ -19,51 +16,64 @@ String _parseNombre(String nombre, Clasificacion clasificacion) {
     ).trim();
 }
 
-class Alojamiento {
-    int id;
-    String nombre;
-    String domicilio;
-    double lat;
-    double lng;
-    String foto;
-    int categoria;
-    Clasificacion clasificacion;
-    Clasificacion localidad;
+class Alojamiento extends Equatable{
+    final int id;
+    final String nombre;
+    final String domicilio;
+    final double lat;
+    final double lng;
+    final String foto;
+    final int categoria;
+    final Clasificacion clasificacion;
+    final Clasificacion localidad;
 
     Alojamiento({
-        this.id,
-        this.nombre,
-        this.domicilio,
-        this.lat,
-        this.lng,
-        this.foto,
-        this.categoria,
-        this.clasificacion,
-        this.localidad,
+      this.id,
+      this.nombre,
+      this.domicilio,
+      this.lat,
+      this.lng,
+      this.foto,
+      this.categoria,
+      this.clasificacion,
+      this.localidad,
     });
 
+    @override
+    List<Object> get props => [
+      id,
+      nombre,
+      domicilio,
+      lat,
+      lng,
+      foto,
+      categoria,
+      clasificacion,
+      localidad,
+    ];
+
     factory Alojamiento.fromJson(Map<String, dynamic> json) => Alojamiento(
-        id: json['id'],
-        nombre: _parseNombre(json['nombre'], Clasificacion.fromJson(json['clasificacion'])),
-        domicilio: json['domicilio'],
-        lat: json['lat'].toDouble(),
-        lng: json['lng'].toDouble(),
-        foto: json['foto'],
-        categoria: json['categoria'],
-        clasificacion: Clasificacion.fromJson(json['clasificacion']),
-        localidad: Clasificacion.fromJson(json['localidad']),
+      id: json['id'],
+      nombre: _parseNombre(json['nombre'], Clasificacion.fromJson(json['clasificacion'])),
+      domicilio: json['domicilio'],
+      lat: json['lat'].toDouble(),
+      lng: json['lng'].toDouble(),
+      foto: json['foto'],
+      categoria: json['categoria'],
+      clasificacion: Clasificacion.fromJson(json['clasificacion']),
+      localidad: Clasificacion.fromJson(json['localidad']),
     );
 
     Map<String, dynamic> toJson() => {
-        'id': id,
-        'nombre': nombre,
-        'domicilio': domicilio,
-        'lat': lat,
-        'lng': lng,
-        'foto': foto,
-        'categoria': categoria,
-        'clasificacion': clasificacion.toJson(),
-        'localidad': localidad.toJson(),
+      'id': id,
+      'nombre': nombre,
+      'domicilio': domicilio,
+      'lat': lat,
+      'lng': lng,
+      'foto': foto,
+      'categoria': categoria,
+      'clasificacion': clasificacion.toJson(),
+      'localidad': localidad.toJson(),
     };
 }
 
@@ -72,17 +82,17 @@ class Clasificacion {
     String nombre;
 
     Clasificacion({
-        this.id,
-        this.nombre,
+      this.id,
+      this.nombre,
     });
 
     factory Clasificacion.fromJson(Map<String, dynamic> json) => Clasificacion(
-        id: json['id'],
-        nombre: json['nombre'],
+      id: json['id'],
+      nombre: json['nombre'],
     );
 
     Map<String, dynamic> toJson() => {
-        'id': id,
-        'nombre': nombre,
+      'id': id,
+      'nombre': nombre,
     };
 }

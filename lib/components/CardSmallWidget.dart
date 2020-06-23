@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:turismo_app/widgets/FavButtonWidget.dart';
-import 'package:turismo_app/widgets/CategoryWidget.dart';
+import 'package:turismo_app/components/FavButtonWidget.dart';
+import 'package:turismo_app/components/CategoryWidget.dart';
 
 class SmallCard extends StatefulWidget{
   final String name;

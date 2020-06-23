@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:turismo_app/models/Alojamiento.dart';
 
-import 'package:turismo_app/screens/AlojamientoScreen.dart';
-import 'package:turismo_app/widgets/CardWidget.dart';
-import 'package:turismo_app/widgets/MessageWidget.dart';
+import 'package:turismo_app/components/components.dart';
 
 /* class ChatScreen extends StatelessWidget { */
 
@@ -170,6 +167,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       /* onEditingComplete: _processText, */
                       decoration: InputDecoration(
                         hintText: 'Escribe un mensaje',
+                        hintStyle: TextStyle(color: Colors.grey[800]),
                         border: InputBorder.none,
                         focusedBorder: InputBorder.none,
                         enabledBorder: InputBorder.none,
@@ -181,7 +179,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.send),
+                    icon: Icon(Icons.send, color: Colors.grey[800],),
                     onPressed: _processText,
                   )
                 ]

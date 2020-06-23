@@ -8,7 +8,7 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
 
-  final List<String> iconsIndex = ['265', '266', '268', '270', '272', '274', '276', '277', '278', '279', '280', '281', '282', '283', '284', '285', '286', '287', '288', '289', '290', '291', '292', '293', '294', '295', '296', '297', '298', '299', '300', '301', '302', '303', '304', '305', '306'];
+  final List<String> iconsIndex = ['265', '266', '268', '270', '272', '274', '276', '277', '278', '279', '280', '281', '282', '283', '284', '285', '286', '287', '288', '289', '290', '291', '292', '293', '294', '295', '296', '297', '298', '299', '300', '301', '302', '303', '304', '305'];
 
   List<Widget> _icons() {
     return iconsIndex.map<Widget>((item) {
@@ -47,7 +47,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Seleccionar imagen'),
-          scrollable: true,
+          /* scrollable: true, */
           content: Wrap(
             alignment: WrapAlignment.center,
             runSpacing: 10,

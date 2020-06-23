@@ -1,0 +1,1 @@
+export './alojamiento_provider.dart';

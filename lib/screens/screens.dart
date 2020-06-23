@@ -1,0 +1,10 @@
+export './explorar_screen.dart';
+export './mapa_screen.dart';
+export './chat_screen.dart';
+export './perfil_screen.dart';
+export './editar_perfil_screen.dart';
+export './favoritos_screen.dart';
+export './alojamiento_screen.dart';
+export './gastronomico_screen.dart';
+export './filtros_screen.dart';
+export './root_screen.dart';

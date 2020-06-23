@@ -7,11 +7,7 @@ import 'package:turismo_app/models/Actividad.dart';
 import 'package:turismo_app/models/Clasificacion.dart';
 import 'package:turismo_app/models/Especialidad.dart';
 import 'package:turismo_app/models/Localidad.dart';
-import 'package:turismo_app/widgets/CheckBoxWidget.dart';
-import 'package:turismo_app/widgets/ChipWidget.dart';
-import 'package:turismo_app/widgets/MultiSelectWidget.dart';
-import 'package:turismo_app/widgets/FlatButtonWidget.dart';
-import 'package:turismo_app/widgets/SearchBarWidget.dart';
+import 'package:turismo_app/components/components.dart';
 
 Future<List<Localidad>> _fetchLocalidades() async { 
   final response = await http.get('http://192.168.1.35:3000/localidades'); 
