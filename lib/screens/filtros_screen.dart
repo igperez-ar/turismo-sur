@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:async'; 
 import 'dart:convert'; 
 import 'package:http/http.dart' as http;
-import 'package:turismo_app/models/Actividad.dart';
-import 'package:turismo_app/models/Clasificacion.dart';
-import 'package:turismo_app/models/Especialidad.dart';
-import 'package:turismo_app/models/Localidad.dart';
+import 'package:turismo_app/models/models.dart';
 import 'package:turismo_app/components/components.dart';
 
 Future<List<Localidad>> _fetchLocalidades() async { 
@@ -49,26 +46,26 @@ Future<List<Actividad>> _fetchActividades() async {
    } 
 }
 
-class Filtros extends StatefulWidget {
-  Filtros({Key key}) : super(key: key);
+class FiltrosScreen extends StatefulWidget {
+  FiltrosScreen({Key key}) : super(key: key);
 
   @override
-  _FiltrosState createState() => _FiltrosState();
+  _FiltrosScreenState createState() => _FiltrosScreenState();
 }
 
-class _FiltrosState extends State<Filtros> {
+class _FiltrosScreenState extends State<FiltrosScreen> {
 
   final Future<List<Localidad>> localidades = _fetchLocalidades();
   final Future<List<Clasificacion>> clasificaciones = _fetchClasificaciones();
   final Future<List<Especialidad>> especialidades = _fetchEspecialidades();
   final Future<List<Actividad>> actividades = _fetchActividades();
 
-  List<Localidad> _localidades = [];
   RangeValues _categorias = RangeValues(1, 5);
   bool _catUnica = true;
-  List<Clasificacion> _clasificaciones = [];
+  /* List<Localidad> _localidades = []; */
+  /* List<Clasificacion> _clasificaciones = [];
   List<Especialidad> _especialidades = [];
-  List<Actividad> _actividades = [];
+  List<Actividad> _actividades = []; */
 
   bool alojamientos = false;
   bool gastronomia = false;

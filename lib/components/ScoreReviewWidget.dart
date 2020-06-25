@@ -7,7 +7,7 @@ class ScoreReviewWidget extends StatefulWidget {
 }
 
 class _ScoreReviewWidgetState extends State<ScoreReviewWidget> {
-  bool _open = false;
+  /* bool _open = false; */
 
   final List<Map<String, Object>> iconList = [
     {'name': Icons.sentiment_very_dissatisfied,

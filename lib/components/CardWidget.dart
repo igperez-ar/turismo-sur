@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:turismo_app/components/FavButtonWidget.dart';
-import 'package:turismo_app/components/CategoryWidget.dart';
+
+import 'package:turismo_app/components/components.dart';
+import 'package:turismo_app/models/models.dart';
 
 
 class DefaultCard extends StatefulWidget{
@@ -8,20 +9,28 @@ class DefaultCard extends StatefulWidget{
     Key key, 
     @required this.name,
     @required this.address,
-    @required this.category,
-    @required this.clasification,
     @required this.image,
     @required this.onTap,
-    this.liked = false
+    @required this.type,
+    this.liked = false,
+    this.category,
+    this.clasification,
+    this.specialities,
+    this.activities
   }): super(key: key);
 
   final String name;
   final String address;
-  final int category;
-  final String clasification;
   final String image;
   final Function onTap;
+  final String type;
   final bool liked;
+
+  final int category;
+  final String clasification;
+
+  final List<Especialidad> specialities;
+  final List<Actividad> activities;
 
   @override
   _DefaultCardState createState() => _DefaultCardState(liked: liked);
@@ -94,7 +103,6 @@ class _DefaultCardState extends State<DefaultCard> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[ 
               Container(
-                width: _width,
                 height: _width * 0.4,
                 child: Stack(
                   fit: StackFit.expand,
@@ -143,7 +151,10 @@ class _DefaultCardState extends State<DefaultCard> {
                             )
                           ]
                         ),
-                        child: Text(widget.clasification, 
+                        child: Text(
+                          widget.type == 'ALOJAMIENTO' ? 
+                            widget.clasification 
+                          : widget.activities.map((e) => e.nombre).join(', '), 
                           style: Theme.of(context).accentTextTheme.headline1
                         )
                       )
@@ -166,7 +177,7 @@ class _DefaultCardState extends State<DefaultCard> {
                       ),
                       Container(
                         margin: EdgeInsets.only(top: 5, bottom: 10),
-                        child: Text(widget.address, 
+                        child: Text(widget.address ?? 'Sin direccion', 
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context).textTheme.headline3
@@ -175,7 +186,10 @@ class _DefaultCardState extends State<DefaultCard> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          CategoryWidget(count: widget.category),
+                          ( widget.type == 'ALOJAMIENTO' ?
+                              CategoryWidget(count: widget.category)
+                            : Container()
+                          ),
                           Row(
                             children: <Widget>[
                               Icon(Icons.location_on, color: Theme.of(context).iconTheme.color),

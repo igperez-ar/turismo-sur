@@ -1,31 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:turismo_app/components/FavButtonWidget.dart';
-import 'package:turismo_app/components/CategoryWidget.dart';
+import 'package:turismo_app/components/components.dart';
+import 'package:turismo_app/models/models.dart';
+
 
 class SmallCard extends StatefulWidget{
+  final int id;
+  final String type;
   final String name;
   final String address;
-  final String clasification;
-  final int category;
   final String image;
   final Function onTap;
   final bool liked;
 
+  final String clasification;
+  final int category;
+
+  final List<Especialidad> specialities;
+  final List<Actividad> activities;
+
   const SmallCard({
     Key key, 
+    this.id,
+    @required this.type,
     @required this.name,
     @required this.address,
-    @required this.clasification,
-    @required this.category,
     @required this.image,
     @required this.onTap,
-    this.liked = false
+    this.liked = false,
+    this.clasification,
+    this.category,
+    this.activities,
+    this.specialities
   }): super(key: key);
 
   @override
   _SmallCardState createState() => _SmallCardState(liked: liked);
 }
-
 
 class _SmallCardState extends State<SmallCard> { 
   bool liked;
@@ -142,7 +152,11 @@ class _SmallCardState extends State<SmallCard> {
                       children: <Widget>[
                         Container(
                           margin: EdgeInsets.only(bottom:5),
-                          child: Text(widget.clasification, 
+                          child: Text(
+                            ( widget.type == 'ALOJAMIENTO' ? 
+                                widget.clasification
+                              : widget.activities.map((e) => e.nombre).join(', ')
+                            ), 
                             style: Theme.of(context).accentTextTheme.headline1,
                             maxLines: 1,
                           )
@@ -154,7 +168,7 @@ class _SmallCardState extends State<SmallCard> {
                         ),
                         Padding(
                           padding: EdgeInsets.only(top: 5),
-                          child: Text(widget.address, 
+                          child: Text(widget.address ?? 'Sin dirección', 
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.headline3
@@ -162,10 +176,13 @@ class _SmallCardState extends State<SmallCard> {
                         ),
                       ],
                     ),
-                    Align(
-                      alignment: Alignment.bottomLeft,
-                      child: CategoryWidget(count: widget.category)
-                    )  
+                    ( widget.type == 'ALOJAMIENTO' ?
+                        Align(
+                          alignment: Alignment.bottomLeft,
+                          child: CategoryWidget(count: widget.category)
+                        )
+                      : Container() 
+                    ) 
                   ],
                 ),
               )

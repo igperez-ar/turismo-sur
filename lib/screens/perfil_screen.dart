@@ -6,7 +6,7 @@ import 'package:turismo_app/screens/screens.dart';
 //icons 265-306
 
 class PerfilScreen extends StatelessWidget {
-  final List<String> iconsIndex = ['265', '266', '268', '270', '272', '274', '276', '277', '278', '279', '280', '281', '282', '283', '284', '285', '286', '287', '288', '289', '290', '291', '292', '293', '294', '295', '296', '297', '298', '299', '300', '301', '302', '303', '304', '305', '306'];
+  /* final List<String> iconsIndex = ['265', '266', '268', '270', '272', '274', '276', '277', '278', '279', '280', '281', '282', '283', '284', '285', '286', '287', '288', '289', '290', '291', '292', '293', '294', '295', '296', '297', '298', '299', '300', '301', '302', '303', '304', '305', '306'];
 
   List<Widget> _icons() {
     List<Widget> children = [];
@@ -24,7 +24,7 @@ class PerfilScreen extends StatelessWidget {
     }
 
     return children;
-  }  
+  }   */
 
   @override
   Widget build(BuildContext context) {

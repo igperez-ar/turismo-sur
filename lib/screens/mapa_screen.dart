@@ -1,4 +1,5 @@
-import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/services.dart';
 
 import 'package:flutter/material.dart';
@@ -32,20 +33,29 @@ class MapaScreenState extends State<MapaScreen> {
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   GoogleMapController mapController;
   CarouselController carouselController = CarouselController();
+  List<Alojamiento> alojamientos = [];
+  List<Gastronomico> gastronomicos = [];
+  List<SmallCard> _cards = [];
+  int counter;
 
-  void _setMarkers(_items) {
-    /* List<Alojamiento> _items = await widget.alojamientos; */
 
+  void _setMarkers(List _items, double marker_color, String marker_type) {
     for (var item in _items) {
-      MarkerId markerId = MarkerId(item.id.toString());
+      MarkerId markerId = MarkerId(counter.toString());
 
       Marker marker = Marker(
         markerId: markerId,
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+        icon: BitmapDescriptor.defaultMarkerWithHue(marker_color),
         position: LatLng(item.lat, item.lng),
         onTap: () {
+          var numer = _cards.indexWhere((element) { 
+            return element.id == item.id && element.type == marker_type;
+          });
           carouselController.jumpToPage(
-            _items.indexWhere((element) => element.id == item.id)
+            numer
+            /* type == 1 ?
+              _items.indexWhere((element) => element.id == item.id)
+            : _items.lastIndexWhere((element) => element.id == item.id) */
           );
         }
       );
@@ -53,6 +63,8 @@ class MapaScreenState extends State<MapaScreen> {
       this.setState(() {
         markers[markerId] = marker;
       });
+
+      counter++;
     }
   }
 
@@ -60,12 +72,6 @@ class MapaScreenState extends State<MapaScreen> {
   void initState() {
     super.initState();
 
-    BlocListener<AlojamientoBloc, AlojamientoState>(
-      listener: (context, state) {
-        if (state is AlojamientoSuccess)
-          _setMarkers(state.alojamientos);
-      }
-    );
     rootBundle.loadString('assets/normal_map_style.json').then((string) {
       _normalMapStyle = string;
     });
@@ -74,48 +80,90 @@ class MapaScreenState extends State<MapaScreen> {
     });
   }
 
+  void _onMapCreated(GoogleMapController controller) {
+    this.setState(() {
+      mapController = controller;
+    });
+
+    counter = 0;
+    _setMarkers(alojamientos, BitmapDescriptor.hueOrange, 'ALOJAMIENTO');
+    _setMarkers(gastronomicos, BitmapDescriptor.hueAzure, 'GASTRONOMICO');
+  }
+
   Widget _getMapWidget() {
-    
-    return Container(
-      child: GoogleMap(    
-        mapToolbarEnabled: false,
-        myLocationButtonEnabled: true,
-        myLocationEnabled: true,
-        mapType: MapType.normal,
-        zoomControlsEnabled: false,
-        onMapCreated: (GoogleMapController controller) {
-          this.setState(() {
-            mapController = controller;
-          });
-          /* mapController.setMapStyle(_normalMapStyle); */
-        },
-        markers: Set<Marker>.of(markers.values),
-        initialCameraPosition: CameraPosition(
-          target: LatLng(-54.8, -68.3), 
-          zoom: 15.0
-        ),
-      )
+    return GoogleMap(    
+      mapToolbarEnabled: false,
+      myLocationButtonEnabled: true,
+      myLocationEnabled: true,
+      mapType: MapType.normal,
+      zoomControlsEnabled: false,
+      onMapCreated: _onMapCreated,
+      markers: markers.values.toSet(),
+      initialCameraPosition: CameraPosition(
+        target: LatLng(-54.8, -68.3), 
+        zoom: 15.0
+      ),
     );
   }
 
-  Widget _buildCarousel(BuildContext context,List<Alojamiento> alojamientos) {
+  Widget _buildCarousel() {
+    final int count = max(alojamientos.length, gastronomicos.length);
 
-    return CarouselSlider(
-        items: alojamientos.map<Widget>((item) {
-          return SmallCard(
-            name: item.nombre,
-            address: item.domicilio,
-            image: item.foto,
-            category: item.categoria,
-            clasification: item.clasificacion.nombre,
+    for (var index = 0; index < count; index++) {
+      if (index < alojamientos.length) 
+        _cards.add(
+          SmallCard(
+            type: 'ALOJAMIENTO',
+            id: alojamientos[index].id,
+            name: alojamientos[index].nombre,
+            address: alojamientos[index].domicilio,
+            image: alojamientos[index].foto,
+            category: alojamientos[index].categoria,
+            clasification: alojamientos[index].clasificacion.nombre,
             onTap: () => Navigator.push(context,
               MaterialPageRoute(
-                builder: (context) => AlojamientoScreen(alojamiento: item)
+                builder: (context) => AlojamientoScreen(alojamiento: alojamientos[index])
               )
             ),
-          );
+          )
+        );
+
+      if (index < gastronomicos.length) 
+        _cards.add(
+          SmallCard(
+            type: 'GASTRONOMICO',
+            id: gastronomicos[index].id,
+            name: gastronomicos[index].nombre,
+            address: gastronomicos[index].domicilio,
+            image: gastronomicos[index].foto,
+            activities: gastronomicos[index].actividades,
+            specialities: gastronomicos[index].especialidades,
+            onTap: () {/* => Navigator.push(context,
+              MaterialPageRoute(
+                builder: (context) => gastronomicoscreen(alojamiento: gastronomicos[index])
+              )
+            ) */},
+          )
+        );
+    }
+
+    return CarouselSlider(
+        items: _cards,/* alojamientos.map<Widget>((item) {
+            return SmallCard(
+              type: 'ALOJAMIENTO',
+              name: item.nombre,
+              address: item.domicilio,
+              image: item.foto,
+              category: item.categoria,
+              clasification: item.clasificacion.nombre,
+              onTap: () => Navigator.push(context,
+                MaterialPageRoute(
+                  builder: (context) => AlojamientoScreen(alojamiento: item)
+                )
+              ),
+            );
           }
-        ).toList(),
+        ).toList(), */
         carouselController: carouselController,
         options: CarouselOptions(
           height: 200,
@@ -158,7 +206,9 @@ class MapaScreenState extends State<MapaScreen> {
               IconButton(
                 icon: Icon(Icons.filter_list, color: Colors.white, size: 30.0,), 
                 onPressed: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => Filtros())
+                  MaterialPageRoute(
+                    builder: (context) => FiltrosScreen()
+                  )
                 )
               )
             ]
@@ -169,26 +219,21 @@ class MapaScreenState extends State<MapaScreen> {
         alignment: Alignment.bottomCenter,
         children: <Widget>[
           _getMapWidget(),
-          BlocBuilder<AlojamientoBloc, AlojamientoState>(
+          BlocBuilder<EstablecimientosBloc, EstablecimientosState>(
             builder: (context, state) {
-              if (state is AlojamientoInitial) {
-                BlocProvider.of<AlojamientoBloc>(context).add(FetchAlojamientos());
+              if (state is EstablecimientosInitial) {
+                BlocProvider.of<EstablecimientosBloc>(context).add(FetchEstablecimientos());
               }
 
-              if (state is AlojamientoFailure) {
-                return Center(
-                  child: Text('failed to fetch alojamientos')
-                );
+              if (state is EstablecimientosFailure) {
+                return Container();
               }
 
-              if (state is AlojamientoSuccess) {
-                if (state.alojamientos.isEmpty) {
-                  return Center(
-                    child: Text('alojamientos VACIO')
-                  );
-                }
-                /* _setMarkers(state.alojamientos); */
-                return _buildCarousel(context, state.alojamientos);
+              if (state is EstablecimientosSuccess) {
+                alojamientos = state.alojamientos;
+                gastronomicos = state.gastronomicos;
+
+                return _buildCarousel();
               }
             
               return Center(

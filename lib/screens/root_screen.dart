@@ -1,12 +1,5 @@
-import 'dart:async'; 
-import 'dart:convert'; 
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart' as http; 
-
 import 'package:flutter/material.dart';
-import 'package:turismo_app/bloc/alojamiento_bloc.dart';
 
-import 'package:turismo_app/models/Alojamiento.dart';
 import 'package:turismo_app/screens/screens.dart';
 
 /* List<Alojamiento> parseAlojamientos(String responseBody) { 

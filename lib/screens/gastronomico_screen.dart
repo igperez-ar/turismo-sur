@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:turismo_app/components/CardWidget.dart';
-import 'package:turismo_app/components/MapCardWidget.dart';
-import 'package:turismo_app/components/CategoryWidget.dart';
-import 'package:turismo_app/components/DetailSectionWidget.dart';
+import 'package:turismo_app/components/components.dart';
 
-class Gastronomico extends StatelessWidget {
+class Gastronomicos extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Width = MediaQuery.of(context).size.width;
-    final Height = MediaQuery.of(context).size.height;
+    final _width = MediaQuery.of(context).size.width;
     
     return Scaffold(
       body: Center(
@@ -22,13 +18,13 @@ class Gastronomico extends StatelessWidget {
                   child: Image.network(
                     'https://suit.tur.ar/archivos/read/366/mdc',
                     fit: BoxFit.cover,
-                    height: Width * 0.8,
-                    width: Width,
+                    height: _width * 0.8,
+                    width: _width,
                   ),
                 ),
                 Container(
-                  height: Width * 0.8,
-                  width: Width,
+                  height: _width * 0.8,
+                  width: _width,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(bottomRight: Radius.circular(50)),
                     gradient: LinearGradient(
@@ -43,7 +39,7 @@ class Gastronomico extends StatelessWidget {
                     child: Row(
                       children: <Widget>[
                         Container(
-                          width: Width * 0.75,
+                          width: _width * 0.75,
                           margin: EdgeInsets.only(right: 10),
                           child: Text('137 Pizza & Pasta', style: TextStyle(
                             color: Colors.white,

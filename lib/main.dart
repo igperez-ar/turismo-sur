@@ -1,13 +1,25 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:turismo_app/bloc/alojamiento_bloc.dart';
+import 'package:turismo_app/bloc/bloc.dart';
 import 'package:turismo_app/providers/providers.dart';
 import 'package:turismo_app/repositories/repository.dart';
-import 'package:turismo_app/theme/style.dart';
+
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
+
+import 'package:turismo_app/theme/style.dart';
 import 'package:turismo_app/screens/screens.dart';
 
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext context) {
+    return super.createHttpClient(context)
+        ..maxConnectionsPerHost = 5;
+  }
+}
 
 class SimpleBlocDelegate extends BlocDelegate {
   @override
@@ -18,27 +30,32 @@ class SimpleBlocDelegate extends BlocDelegate {
 }
 
 void main() { 
+  // Soluciona error de carga de NetworkImages
+  // limitando las peticiones simultáneas
+  HttpOverrides.global = MyHttpOverrides();
+
   BlocSupervisor.delegate = SimpleBlocDelegate();
 
-  final AlojamientoRepository repository = AlojamientoRepository(
+  final EstablecimientosRepository repository = EstablecimientosRepository(
     alojamientoProvider: AlojamientoProvider(
       httpClient: 
         http.Client(),
-      ),
+    ),
+    gastronomicoProvider: GastronomicoProvider.create()
   );
 
   runApp(App(
     repository: repository,
   ));
-  
 }
 
 class App extends StatelessWidget {
-  final AlojamientoRepository repository;
+  final EstablecimientosRepository repository;
 
-  App({Key key, @required this.repository})
-    : assert(repository != null),
-      super(key: key);
+  App({
+    Key key, 
+    @required this.repository,
+  }) : super(key: key);
   
   @override
   Widget build(BuildContext context) {
@@ -48,15 +65,10 @@ class App extends StatelessWidget {
       themeMode: ThemeMode.dark,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      home: Scaffold(
-        body: BlocProvider(
-          create: (context) => AlojamientoBloc(repository: repository),
-          child: RootScreen(),
-        )
-      ),
-      /* routes: <String, WidgetBuilder>{
-        '/': (BuildContext context) => RootScreen(),
-      }, */
+      home: BlocProvider(
+        create: (context) => EstablecimientosBloc(repository: repository),
+        child: RootScreen(),
+      )
     );
   }
 }
