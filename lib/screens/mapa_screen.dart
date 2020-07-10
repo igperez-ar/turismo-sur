@@ -14,13 +14,11 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 class MapaScreen extends StatefulWidget {
   final String title;
-  /* final Future<List<Alojamiento>> alojamientos; */
   final bool carrousel;
 
   const MapaScreen({
     Key key, 
     this.title = 'Mapa',
-    /* @required this.alojamientos, */
     this.carrousel = true
   }): super(key: key);
 
@@ -30,39 +28,31 @@ class MapaScreen extends StatefulWidget {
 
 class MapaScreenState extends State<MapaScreen> {
   String _normalMapStyle, _darkMapStyle;
-  Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   GoogleMapController mapController;
   CarouselController carouselController = CarouselController();
-  List<Alojamiento> alojamientos = [];
-  List<Gastronomico> gastronomicos = [];
-  List<SmallCard> _cards = [];
-  int counter;
 
 
-  void _setMarkers(List _items, double marker_color, String marker_type) {
-    for (var item in _items) {
+  void _setMarkers(int counter, List items, markers, double markerColor, 
+    Establecimiento markerType, List<SmallCard> cards) {
+
+    for (var item in items) {
       MarkerId markerId = MarkerId(counter.toString());
 
       Marker marker = Marker(
         markerId: markerId,
-        icon: BitmapDescriptor.defaultMarkerWithHue(marker_color),
+        icon: BitmapDescriptor.defaultMarkerWithHue(markerColor),
         position: LatLng(item.lat, item.lng),
         onTap: () {
-          var numer = _cards.indexWhere((element) { 
-            return element.id == item.id && element.type == marker_type;
+          var numer = cards.indexWhere((element) { 
+            return element.establecimiento.id == item.id && element.type == markerType;
           });
           carouselController.jumpToPage(
             numer
-            /* type == 1 ?
-              _items.indexWhere((element) => element.id == item.id)
-            : _items.lastIndexWhere((element) => element.id == item.id) */
           );
         }
       );
 
-      this.setState(() {
-        markers[markerId] = marker;
-      });
+      markers[markerId] = marker;
 
       counter++;
     }
@@ -80,90 +70,40 @@ class MapaScreenState extends State<MapaScreen> {
     });
   }
 
-  void _onMapCreated(GoogleMapController controller) {
-    this.setState(() {
-      mapController = controller;
-    });
+  Set<Marker> _getMarkers(Map<MarkerId, Marker> markers, List<Alojamiento> aloj, 
+    List<Gastronomico> gast, List<SmallCard> cards) {
+    
+    _setMarkers(0, aloj, markers, BitmapDescriptor.hueOrange, Establecimiento.alojamiento, cards);
+    _setMarkers(aloj.length, gast, markers, BitmapDescriptor.hueAzure, Establecimiento.gastronomico, cards);
 
-    counter = 0;
-    _setMarkers(alojamientos, BitmapDescriptor.hueOrange, 'ALOJAMIENTO');
-    _setMarkers(gastronomicos, BitmapDescriptor.hueAzure, 'GASTRONOMICO');
+    return markers.values.toSet();
   }
 
-  Widget _getMapWidget() {
-    return GoogleMap(    
-      mapToolbarEnabled: false,
-      myLocationButtonEnabled: true,
-      myLocationEnabled: true,
-      mapType: MapType.normal,
-      zoomControlsEnabled: false,
-      onMapCreated: _onMapCreated,
-      markers: markers.values.toSet(),
-      initialCameraPosition: CameraPosition(
-        target: LatLng(-54.8, -68.3), 
-        zoom: 15.0
-      ),
-    );
-  }
+  Widget _buildCarousel(List<SmallCard> cards, List<Alojamiento> aloj, 
+    List<Gastronomico> gast, Map<MarkerId, Marker> markers) {
 
-  Widget _buildCarousel() {
-    final int count = max(alojamientos.length, gastronomicos.length);
+    final int count = max(aloj.length, gast.length);
 
     for (var index = 0; index < count; index++) {
-      if (index < alojamientos.length) 
-        _cards.add(
+      if (index < aloj.length) 
+        cards.add(
           SmallCard(
-            type: 'ALOJAMIENTO',
-            id: alojamientos[index].id,
-            name: alojamientos[index].nombre,
-            address: alojamientos[index].domicilio,
-            image: alojamientos[index].foto,
-            category: alojamientos[index].categoria,
-            clasification: alojamientos[index].clasificacion.nombre,
-            onTap: () => Navigator.push(context,
-              MaterialPageRoute(
-                builder: (context) => AlojamientoScreen(alojamiento: alojamientos[index])
-              )
-            ),
+            type: Establecimiento.alojamiento,
+            establecimiento: aloj[index],
           )
         );
 
-      if (index < gastronomicos.length) 
-        _cards.add(
+      if (index < gast.length) 
+        cards.add(
           SmallCard(
-            type: 'GASTRONOMICO',
-            id: gastronomicos[index].id,
-            name: gastronomicos[index].nombre,
-            address: gastronomicos[index].domicilio,
-            image: gastronomicos[index].foto,
-            activities: gastronomicos[index].actividades,
-            specialities: gastronomicos[index].especialidades,
-            onTap: () {/* => Navigator.push(context,
-              MaterialPageRoute(
-                builder: (context) => gastronomicoscreen(alojamiento: gastronomicos[index])
-              )
-            ) */},
+            type: Establecimiento.gastronomico,
+            establecimiento: gast[index],
           )
         );
     }
 
     return CarouselSlider(
-        items: _cards,/* alojamientos.map<Widget>((item) {
-            return SmallCard(
-              type: 'ALOJAMIENTO',
-              name: item.nombre,
-              address: item.domicilio,
-              image: item.foto,
-              category: item.categoria,
-              clasification: item.clasificacion.nombre,
-              onTap: () => Navigator.push(context,
-                MaterialPageRoute(
-                  builder: (context) => AlojamientoScreen(alojamiento: item)
-                )
-              ),
-            );
-          }
-        ).toList(), */
+        items: cards,
         carouselController: carouselController,
         options: CarouselOptions(
           height: 200,
@@ -171,11 +111,42 @@ class MapaScreenState extends State<MapaScreen> {
           enlargeCenterPage: true,
           viewportFraction: 0.8,
           onPageChanged: (index, reason) {
-            /* if (reason == CarouselPageChangedReason.manual)
-              alojamientos */
+            if (reason == CarouselPageChangedReason.manual) {
+              final mark = markers[MarkerId(index.toString())];
+              mapController.animateCamera(CameraUpdate.newLatLngZoom(mark.position, 16.0));
+            }
           },
           initialPage: 0
         ),
+    );
+  }
+
+  Widget _buildContent(aloj, gast) {
+    Map<MarkerId, Marker> markers = {};
+    List<SmallCard> cards = [];
+
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: <Widget>[
+        GoogleMap(    
+          mapToolbarEnabled: false,
+          myLocationButtonEnabled: true,
+          myLocationEnabled: true,
+          mapType: MapType.normal,
+          zoomControlsEnabled: false,
+          onMapCreated: (controller) {
+            setState(() {
+              mapController = controller;
+            });
+          },
+          markers: _getMarkers(markers, aloj, gast, cards),
+          initialCameraPosition: CameraPosition(
+            target: LatLng(-54.8, -68.3), 
+            zoom: 15.0
+          ),
+        ),
+        _buildCarousel(cards, aloj, gast, markers),
+      ]
     );
   }
 
@@ -205,57 +176,34 @@ class MapaScreenState extends State<MapaScreen> {
             <Widget>[
               IconButton(
                 icon: Icon(Icons.filter_list, color: Colors.white, size: 30.0,), 
-                onPressed: () => Navigator.push(context,
-                  MaterialPageRoute(
-                    builder: (context) => FiltrosScreen()
-                  )
-                )
+                onPressed: () => Navigator.pushNamed(context, '/filtros'),
               )
             ]
             : null
           ),
       ),
-      body: Stack(
-        alignment: Alignment.bottomCenter,
-        children: <Widget>[
-          _getMapWidget(),
-          BlocBuilder<EstablecimientosBloc, EstablecimientosState>(
-            builder: (context, state) {
-              if (state is EstablecimientosInitial) {
-                BlocProvider.of<EstablecimientosBloc>(context).add(FetchEstablecimientos());
-              }
+      body: BlocBuilder<EstablecimientosBloc, EstablecimientosState>(
+        builder: (context, state) {
+          if (state is EstablecimientosInitial) {
+            BlocProvider.of<EstablecimientosBloc>(context).add(FetchEstablecimientos());
+          }
 
-              if (state is EstablecimientosFailure) {
-                return Container();
-              }
+          if (state is EstablecimientosFailure) {
+            return Container();
+          }
 
-              if (state is EstablecimientosSuccess) {
-                alojamientos = state.alojamientos;
-                gastronomicos = state.gastronomicos;
+          if (state is EstablecimientosSuccess) {
 
-                return _buildCarousel();
-              }
-            
-              return Center(
-                child: CircularProgressIndicator()
-              ); 
-            }
-          /* (widget.carrousel ? 
-            Align(
-              alignment: Alignment.bottomLeft,
-              child: FutureBuilder<List<Alojamiento>>(
-                future: widget.alojamientos, builder: (context, snapshot) {
-                  if (snapshot.hasError) print(snapshot.error); 
-                  return snapshot.hasData ? _buildCarousel(context, snapshot.data) 
-                  
-                  : Center(child: CircularProgressIndicator()); 
-                },
-              ),
-            )
-            : Container()
-          ) */
-          )
-        ]
+            return _buildContent(
+              state.filteredAlojamientos, 
+              state.filteredGastronomicos
+            );
+          }
+        
+          return Center(
+            child: CircularProgressIndicator()
+          ); 
+        }
       )
     );
   }

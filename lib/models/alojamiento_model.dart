@@ -25,7 +25,7 @@ class Alojamiento extends Equatable{
   final double lat;
   final double lng;
   final String foto;
-  final int categoria;
+  final Categoria categoria;
   final Clasificacion clasificacion;
   final Localidad localidad;
 
@@ -61,7 +61,7 @@ class Alojamiento extends Equatable{
     lat: json['lat'].toDouble(),
     lng: json['lng'].toDouble(),
     foto: json['foto'],
-    categoria: json['categoria'],
+    categoria: Categoria.fromJson(json['categoria']),
     clasificacion: Clasificacion.fromJson(json['clasificacion']),
     localidad: Localidad.fromJson(json['localidad']),
   );
@@ -73,7 +73,7 @@ class Alojamiento extends Equatable{
     'lat': lat,
     'lng': lng,
     'foto': foto,
-    'categoria': categoria,
+    'categoria': categoria.toJson(),
     'clasificacion': clasificacion.toJson(),
     'localidad': localidad.toJson(),
   };

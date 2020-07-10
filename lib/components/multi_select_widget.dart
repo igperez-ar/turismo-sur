@@ -1,26 +1,31 @@
 import 'package:flutter/material.dart';
 
+ 
 class MultiSelect extends StatefulWidget {
   const MultiSelect({
     Key key, 
     @required this.options,
-    this.onChange,
+    @required this.selected,
   }): super(key: key);
 
   final List options;
-  final Function onChange;
+  final List selected;
 
   @override
   _MultiSelectState createState() => _MultiSelectState();
 }
 
 class _MultiSelectState extends State<MultiSelect> {
-  bool open;
+  bool open = false;
   List _selected = [];
-            
 
-  _MultiSelectState({this.open = false});
+  @override
+  void initState() {
+    super.initState();
 
+    _selected = widget.selected;
+  }
+  
   Widget _checkBox(item, bool checked) {
     final _width = MediaQuery.of(context).size.width;
 
@@ -30,15 +35,12 @@ class _MultiSelectState extends State<MultiSelect> {
         children: <Widget>[
           GestureDetector(
             onTap: () {
-              setState(() {
-                if (!checked) {
-                  _selected.add(item.id);
-                } else {
-                  _selected.removeWhere((id) {
-                    return id == item.id;
-                  });
-                }
-              });
+              if (!checked) {
+                setState(() {_selected.add(item);});
+
+              } else {
+                setState(() {_selected.remove(item);});
+              }
             },
             child: Container(
               width: 25,
@@ -150,10 +152,7 @@ class _MultiSelectState extends State<MultiSelect> {
                         child: ListView(
                           scrollDirection: Axis.horizontal,
                           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                          children: _selected.map<Widget>((id) {
-                            final index = widget.options.indexWhere((item) => item.id == id);
-                            return _chip(widget.options[index].nombre);
-                          }).toList(),
+                          children: _selected.map<Widget>((item) => _chip(item.nombre)).toList(),
                         )
                       )
                     ),
@@ -182,9 +181,9 @@ class _MultiSelectState extends State<MultiSelect> {
               child: Wrap(
                 runSpacing: 12,
                 spacing: 10,
-                children: widget.options.map<Widget>((item) {
-                  return _checkBox(item, _selected.contains(item.id));
-                }).toList()
+                children: widget.options.map<Widget>(
+                  (item) => _checkBox(item, _selected.contains(item))
+                ).toList()
               )
             )
           ),

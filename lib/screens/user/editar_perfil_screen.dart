@@ -30,7 +30,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }).toList();
   }
 
-  Map<String, Object> datos = {
+  Map<String, String> datos = {
     'name': 'Ignacio Perez',
     'username': 'igperez.ar',
     'image': '270',
@@ -47,7 +47,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Seleccionar imagen'),
-          /* scrollable: true, */
           content: Wrap(
             alignment: WrapAlignment.center,
             runSpacing: 10,

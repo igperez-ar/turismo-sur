@@ -3,7 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:turismo_app/bloc/bloc.dart';
+import 'package:turismo_app/models/models.dart';
 
 import 'package:turismo_app/screens/screens.dart';
 import 'package:turismo_app/components/components.dart';
@@ -14,79 +16,56 @@ class ExplorarScreen extends StatefulWidget {
 }
 
 class _ExplorarScreenState extends State<ExplorarScreen> {
+  EstablecimientosBloc _establecimientoBloc;
+  FavoritosBloc _favoritoBloc;
+  Position userPosition;
 
-  Widget _getCardList(List alojamientos, List gastronomicos) {
-    /* final int count = max(alojamientos.length, gastronomicos.length);
-    List<Widget> _cards = [];
+  Future<String> _getDistance(double lat, double lng) async {
+    String distance;
 
-    for (var index = 0; index < count; index++) {
-      if (index < alojamientos.length)
-        _cards.add(
-          DefaultCard(
-            type: 'ALOJAMIENTO',
-            name: alojamientos[index].nombre,
-            address: alojamientos[index].domicilio,
-            image: alojamientos[index].foto,
-            category: alojamientos[index].categoria,
-            clasification: alojamientos[index].clasificacion.nombre,
-            onTap: () => Navigator.push(context,
-              MaterialPageRoute(
-                builder: (context) => AlojamientoScreen(alojamiento: alojamientos[index])
-              )
-            )
-          )
-        );
-                
-        if (index < gastronomicos.length)
-          _cards.add(
-            DefaultCard(
-              type: 'GASTRONOMICO',
-              name: gastronomicos[index].nombre,
-              address: gastronomicos[index].domicilio,
-              image: gastronomicos[index].foto,
-              activities: gastronomicos[index].actividades,
-              specialities: gastronomicos[index].especialidades,
-              onTap: () {}
-            )
-          );  
+    if (userPosition == null) { 
+      Position newPosition = await Geolocator().getCurrentPosition();
+
+      if (this.mounted)
+        this.setState(() {
+          userPosition = newPosition;
+        });
     }
 
-    return ListView(
-      padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-      children: _cards,
-    ); */
+    if (userPosition != null) 
+      distance = await Geolocator().distanceBetween(
+        userPosition.latitude, userPosition.longitude, 
+        lat, lng
+      ).then((value) {
+          if (value.round() >= 1000) 
+            return ((value / 1000).toStringAsFixed(1).replaceFirst('.0', '') + ' km de tu ubicación');
 
+          return (value.round().toString().replaceFirst('.0', '') + ' m de tu ubicación'); 
+        });
+
+    return distance;
+  }
+
+  Widget _getCardList(List<Alojamiento> alojamientos, List<Gastronomico> gastronomicos) {
     return ListView.builder(
         padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
         itemCount: max(alojamientos.length, gastronomicos.length), 
         itemBuilder: (context, index) { 
           return Column(
             children: <Widget>[
-              ( index < alojamientos.length ?
-                  DefaultCard(
-                    type: 'ALOJAMIENTO',
-                    name: alojamientos[index].nombre,
-                    address: alojamientos[index].domicilio,
-                    image: alojamientos[index].foto,
-                    category: alojamientos[index].categoria,
-                    clasification: alojamientos[index].clasificacion.nombre,
-                    onTap: () => Navigator.push(context,
-                      MaterialPageRoute(
-                        builder: (context) => AlojamientoScreen(alojamiento: alojamientos[index])
-                      )
-                    )
+              ( index < alojamientos.length 
+                ? DefaultCard(
+                    type: Establecimiento.alojamiento,
+                    establecimiento: alojamientos[index],
+                    distance: _getDistance(alojamientos[index].lat, alojamientos[index].lng),
                   )
                 : Container()
               ),
-              ( index < gastronomicos.length ?
-                  DefaultCard(
-                    type: 'GASTRONOMICO',
-                    name: gastronomicos[index].nombre,
-                    address: gastronomicos[index].domicilio,
-                    image: gastronomicos[index].foto,
-                    activities: gastronomicos[index].actividades,
-                    specialities: gastronomicos[index].especialidades,
-                    onTap: () {}
+              ( index < gastronomicos.length 
+                ? DefaultCard(
+                    type: Establecimiento.gastronomico,
+                    establecimiento: gastronomicos[index],
+                    distance: _getDistance(gastronomicos[index].lat, gastronomicos[index].lng),
                   )
                 : Container()
               )
@@ -94,6 +73,14 @@ class _ExplorarScreenState extends State<ExplorarScreen> {
           ); 
         },
       );
+  }
+
+  @override 
+  void initState() {
+    super.initState();
+
+    _establecimientoBloc = BlocProvider.of<EstablecimientosBloc>(context);
+    _favoritoBloc = BlocProvider.of<FavoritosBloc>(context);
   }
 
   @override
@@ -111,11 +98,7 @@ class _ExplorarScreenState extends State<ExplorarScreen> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.filter_list, color: Colors.white, size: 30.0,), 
-            onPressed: () => Navigator.push(context,
-              MaterialPageRoute(
-                builder: (context) => FiltrosScreen()
-              )
-            )
+            onPressed: () => Navigator.pushNamed(context, '/filtros'),
           )
         ],
       ),
@@ -123,8 +106,8 @@ class _ExplorarScreenState extends State<ExplorarScreen> {
         child: BlocBuilder<EstablecimientosBloc, EstablecimientosState>(
           builder: (context, state) {
             if (state is EstablecimientosInitial) {
-              BlocProvider.of<EstablecimientosBloc>(context)
-                .add(FetchEstablecimientos());
+              _establecimientoBloc.add(FetchEstablecimientos());
+              _favoritoBloc.add(FetchFavoritos());
             }
 
             if (state is EstablecimientosFailure) {
@@ -135,8 +118,8 @@ class _ExplorarScreenState extends State<ExplorarScreen> {
 
             if (state is EstablecimientosSuccess) {
               return _getCardList(
-                state.alojamientos, 
-                state.gastronomicos
+                state.filteredAlojamientos, 
+                state.filteredGastronomicos
               );
             }
           
@@ -144,75 +127,7 @@ class _ExplorarScreenState extends State<ExplorarScreen> {
               child: CircularProgressIndicator()
             ); 
           }
-        ),
-        /* Query(
-          options: QueryOptions(
-            documentNode: gql(gastronomicosQuery),
-            pollInterval: 10,
-          ),
-          builder: (QueryResult result, 
-            { VoidCallback refetch, FetchMore fetchMore }) {
-            if (result.hasException) {
-                return Text(result.exception.toString());
-            }
-
-            if (result.loading) {
-              return Center(
-                child: CircularProgressIndicator()
-              ); 
-            }
-
-            List gastronomicos = result.data['gastronomicos'];
-
-            return Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                itemCount: gastronomicos.length,
-                itemBuilder: (context, index) {
-                  return DefaultCard(
-                    type: 'GASTRONOMICO',
-                    name: gastronomicos[index]['nombre'],
-                    address: gastronomicos[index]['domicilio'] ?? 'Sin dirección',
-                    image: gastronomicos[index]['foto'],
-                    onTap: null
-                  );
-                }
-              )
-            );
-          },
-        ),
-        BlocBuilder<AlojamientoBloc, AlojamientoState>(
-          builder: (context, state) {
-            if (state is AlojamientoInitial) {
-              BlocProvider.of<AlojamientoBloc>(context).add(FetchAlojamientos());
-            }
-
-            if (state is AlojamientoFailure) {
-              return Center(
-                child: Text('failed to fetch alojamientos')
-              );
-            }
-
-            if (state is AlojamientoSuccess) {
-              if (state.alojamientos.isEmpty) {
-                return Center(
-                  child: Text('alojamientos VACIO')
-                );
-              }
-
-              return Expanded(
-                child: _getCardList(state.alojamientos)
-              );
-            }
-          
-            return Center(
-              child: CircularProgressIndicator()
-            ); 
-          }
-        ), 
-      ]
-    )
-    */
+        )
       )
     );
   }

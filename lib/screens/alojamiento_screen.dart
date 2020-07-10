@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/* import 'package:flutter/material.dart';
 import 'package:turismo_app/components/components.dart';
 
 class AlojamientoScreen extends StatefulWidget {
@@ -68,7 +68,7 @@ class _AlojamientoScreenState extends State<AlojamientoScreen> {
               height: 450.0,
               /* color: Theme.of(context).cardColor, */
               child: Stack(
-                fit: StackFit.expand,
+                fit: StackFit.loose,
                 children: <Widget>[
                   ClipRRect(
                     borderRadius: BorderRadius.only(bottomLeft: Radius.circular(45)),
@@ -77,27 +77,15 @@ class _AlojamientoScreenState extends State<AlojamientoScreen> {
                         widget.alojamiento.foto 
                         :'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRVX4RgUYvaDyHQaEiejmjMy0ZbuEPqGkOwsxq9oAmPl3MQJIRC&usqp=CAU',
                       fit: BoxFit.cover,
-                      height: _width * 0.8,
+                      height: 425,
                       width: _width,
                     ),
                   ),
-                  /* Container(
-                    height: _width * 0.8,
-                    width: _width,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(bottomLeft: Radius.circular(45)),
-                      gradient: LinearGradient(
-                        begin: Alignment.bottomCenter,
-                        end: Alignment(0, 0),
-                        colors: [Colors.grey[50], Color.fromRGBO(150, 150, 150, 0.01)]
-                      )
-                    ),
-                  ), */
                   Align(
-                    alignment: Alignment(0.8, 1.15),
+                    alignment: Alignment(0.8, 1),
                     child: FavButtonWidget(
                       liked: liked,
-                      size: 60,
+                      size: Size.big,
                       onPress: _changeFavorite,
                     ),
                   ),
@@ -113,7 +101,7 @@ class _AlojamientoScreenState extends State<AlojamientoScreen> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: 35, right: 15, left: 15),
+              padding: EdgeInsets.only(right: 15, left: 15),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -157,7 +145,7 @@ class _AlojamientoScreenState extends State<AlojamientoScreen> {
                   SizedBox(height: 40),
                   DetailSectionWidget(
                     title: "Ubicación:",
-                    margin: false,
+                    /* margin: false, */
                     child: MapCardWidget(
                       lat: widget.alojamiento.lat,
                       lng: widget.alojamiento.lng,
@@ -165,14 +153,14 @@ class _AlojamientoScreenState extends State<AlojamientoScreen> {
                   ),
                   DetailSectionWidget(
                     title: "Calificaciones y reseñas:",
-                    margin: false,
+                    /* margin: false, */
                     child: ScoreReviewWidget()
                   ),
                   (liked ? 
                     DetailSectionWidget(
                       title: 'Recuerdos:',
-                      child: Memories(liked: false),
-                      margin: false,
+                      child: MemoriesWidget(liked: false),
+                      /* margin: false, */
                     )
                   : Container()) 
                 ],
@@ -184,3 +172,19 @@ class _AlojamientoScreenState extends State<AlojamientoScreen> {
     );
   }
 }
+
+
+
+
+/* Container(
+  height: _width * 0.8,
+  width: _width,
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(45)),
+    gradient: LinearGradient(
+      begin: Alignment.bottomCenter,
+      end: Alignment(0, 0),
+      colors: [Colors.grey[50], Color.fromRGBO(150, 150, 150, 0.01)]
+    )
+  ),
+), */ */

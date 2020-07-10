@@ -25,6 +25,7 @@ dependencies:
   cupertino_icons: ^0.1.2
   flutter_svg: ^0.17.4
   dashed_container: ^1.0.1
+  carousel_slider: ^2.0.0
 
   http: ^0.12.1
   graphql_flutter: ^3.0.1
@@ -35,9 +36,10 @@ dependencies:
   equatable: ^1.0.0
   
   google_maps_flutter: ^0.5.5
-  carousel_slider: ^2.0.0
-  camera: ^0.5.8+2
-
+  geolocator: ^5.3.2+2
+  
+  gallery_saver: ^2.0.1
+  image_picker: ^0.6.7+2
 
 dev_dependencies:
   flutter_test:
@@ -60,6 +62,7 @@ flutter:
     - normal_map_style.json
     - dark_map_style.json
     - assets/profile_pics/
+    - assets/images/
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

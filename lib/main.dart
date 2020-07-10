@@ -17,7 +17,7 @@ class MyHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext context) {
     return super.createHttpClient(context)
-        ..maxConnectionsPerHost = 5;
+        ..maxConnectionsPerHost = 50;
   }
 }
 
@@ -59,15 +59,26 @@ class App extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Turismo App',
-      debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.dark,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      home: BlocProvider(
-        create: (context) => EstablecimientosBloc(repository: repository),
-        child: RootScreen(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => EstablecimientosBloc(repository: repository),
+        ),
+        BlocProvider(
+          create: (context) => FavoritosBloc(),
+        )
+      ],
+      child: MaterialApp(
+        title: 'Turismo App',
+        debugShowCheckedModeBanner: false,
+        themeMode: ThemeMode.light,
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        initialRoute: '/',
+        routes: <String, WidgetBuilder>{
+          '/': (BuildContext context) => RootScreen(),
+          '/filtros': (BuildContext context) => FiltrosScreen()
+        },
       )
     );
   }

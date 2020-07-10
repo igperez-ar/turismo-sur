@@ -13,7 +13,7 @@ class CategoryWidget extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     
-    if (this.count == 6) {
+    if (this.count == 0) {
       return Row(
         children: <Widget>[
           Icon(

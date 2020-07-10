@@ -47,7 +47,8 @@ class AppTheme {
         fontSize: 18,
         color: Colors.grey[800]
       ),
-    )
+    ),
+    accentColor: Colors.teal
   );
 
   static final ThemeData darkTheme = ThemeData(

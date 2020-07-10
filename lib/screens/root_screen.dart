@@ -1,20 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:location_permissions/location_permissions.dart';
 
 import 'package:turismo_app/screens/screens.dart';
 
-/* List<Alojamiento> parseAlojamientos(String responseBody) { 
-   final parsed = json.decode(responseBody).cast<Map<String, dynamic>>(); 
-   return parsed.map<Alojamiento>((json) => Alojamiento.fromJson(json)).toList(); 
-} 
-
-Future<List<Alojamiento>> fetchAlojamientos() async { 
-   final response = await http.get('http://192.168.1.35:3000/alojamientos?select=id,nombre,domicilio,lat,lng,foto,clasificacion:clasificaciones(id,nombre),categoria:categoria_id,localidad:localidades(id,nombre)'); 
-   if (response.statusCode == 200) { 
-      return parseAlojamientos(response.body); 
-   } else { 
-      throw Exception('Unable to fetch products from the REST API'); 
-   } 
-} */
 
 class RootScreen extends StatefulWidget {
 
@@ -24,8 +13,12 @@ class RootScreen extends StatefulWidget {
 
 class _RootScreenState extends State<RootScreen> {
   int _currentIndex = 0;
-  List<Widget> _children;
-  /* AlojamientoBloc _alojamientoBloc; */
+  final List<Widget> _children =[
+    ExplorarScreen(),
+    MapaScreen(),
+    ChatScreen(),
+    PerfilScreen()
+  ];
 
   void changeTabIndex(int index) {
     setState(() {
@@ -33,23 +26,66 @@ class _RootScreenState extends State<RootScreen> {
     });
   }
 
+  void _locationConfig() async {
+    final PermissionStatus permissionStatus = await LocationPermissions().checkPermissionStatus();
+    print(permissionStatus);
+
+    final ServiceStatus serviceStatus = await LocationPermissions().checkServiceStatus();
+    print(serviceStatus);
+
+    if (permissionStatus != PermissionStatus.granted ||
+        permissionStatus != PermissionStatus.restricted) {
+      final PermissionStatus newPermissionStatus = await LocationPermissions()
+        .requestPermissions(permissionLevel: LocationPermissionLevel.location);
+      print(newPermissionStatus);
+    }
+
+    /* if (serviceStatus != ServiceStatus.enabled) {
+      final isOpen = await LocationPermissions().openAppSettings();
+      print(isOpen);
+    } */
+  }
+
   @override
   void initState() {
     super.initState();
-    /* _alojamientoBloc = BlocProvider.of<AlojamientoBloc>(context); */
+    
+    /* this._locationConfig(); */
+  }
 
-    _children = [
-      ExplorarScreen(),
-      MapaScreen(),
-      /* ExplorarScreen(
-        alojamientos: alojamientos
+  Widget _getTabItem(int id, IconData icon, String title) {
+
+    if (_currentIndex == id) 
+      return IconButton(
+        padding: EdgeInsets.zero,
+        icon: Icon(
+          icon, 
+          size: 35, 
+          color: Colors.teal
+        ),
+        onPressed: () => this.changeTabIndex(id),
+      );
+
+    return IconButton(
+      padding: EdgeInsets.zero,
+      icon: Column(
+        children: <Widget>[
+          Icon(
+            icon,
+            size: 26, 
+            color: Colors.grey[600]
+          ),
+          Text(
+            title, 
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontSize: 13
+            ),
+          ),
+        ]
       ),
-      MapaScreen(
-        alojamientos: alojamientos,
-      ), */
-      ChatScreen(),
-      PerfilScreen()
-    ];
+      onPressed: () => this.changeTabIndex(id),
+    );
   }
 
   @override
@@ -57,6 +93,11 @@ class _RootScreenState extends State<RootScreen> {
     
     return Scaffold(
       body: _children[_currentIndex],
+      /* floatingActionButton: FloatingActionButton(
+        onPressed: (){}, 
+        backgroundColor: (_currentIndex == 4 ? Colors.teal : Colors.grey[600]),
+        child: Icon(Icons.favorite, size: 33),),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked, */
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [
@@ -68,7 +109,34 @@ class _RootScreenState extends State<RootScreen> {
             )
           ]
         ),
-        child: BottomNavigationBar(
+        child: /* BottomAppBar(
+          child: Container(
+            height: 58,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+              this._getTabItem(0, Icons.explore, 'Explorar'),
+              this._getTabItem(1, Icons.map, 'Mapa'),
+              SizedBox(width: 40),
+              // Nombre al botón del medio
+              /* Container(
+                margin: EdgeInsets.only(top: 20),
+                child: Text(
+                  'Favoritos', 
+                  style: TextStyle(
+                    fontSize: 13, 
+                    color: Colors.grey[600]
+                  )
+                )
+              ), */
+              this._getTabItem(2, Icons.chat, 'Chat'),
+              this._getTabItem(3, Icons.person, 'Perfil'),
+            ],
+            ),
+          ),
+          shape: CircularNotchedRectangle(),
+        ) */
+        BottomNavigationBar(
           currentIndex: _currentIndex,
           onTap: changeTabIndex,
           backgroundColor: Theme.of(context).bottomAppBarColor,
@@ -76,6 +144,7 @@ class _RootScreenState extends State<RootScreen> {
           selectedItemColor: Theme.of(context).iconTheme.color,
           selectedIconTheme: IconThemeData(size: 32),
           selectedLabelStyle: TextStyle(height: 0),
+          
           showSelectedLabels: false,
           elevation: 15,
           unselectedLabelStyle: TextStyle(height: 1.2, fontSize: 13),

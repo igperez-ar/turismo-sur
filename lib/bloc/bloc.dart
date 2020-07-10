@@ -1,2 +1,3 @@
-export './alojamiento_bloc.dart';
-export './establecimientos_bloc.dart';
+/* export './filtros_bloc.dart'; */
+export './establecimientos/establecimientos_bloc.dart';
+export './favoritos/favoritos_bloc.dart';

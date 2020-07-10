@@ -1,18 +1,35 @@
 import 'package:flutter/material.dart';
 
 class SearchBar extends StatefulWidget {
+
+  final List<String> words;
+
+  const SearchBar({
+    Key key,
+    @required this.words
+  }) : super(key: key);
+
   @override
   _SearchBarState createState() => _SearchBarState();
 }
 
 class _SearchBarState extends State<SearchBar> {
 
-  List<String> _words = [];
+  List<String> _words;
   TextEditingController _textEditingController = TextEditingController();
 
-  Widget _littleChip(String title, Function event) {
+  @override 
+  void initState() {
+    super.initState();
+
+    _words = widget.words;
+  }
+
+  Widget _littleChip(String title) {
     return GestureDetector(
-      onTap: event,
+      onTap: () {
+        setState(() => _words.remove(title));
+      },
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -117,7 +134,7 @@ class _SearchBarState extends State<SearchBar> {
                     runSpacing: 5,
                     spacing: 5,
                     children: _words.map<Widget>(
-                      (word) => _littleChip(word.trim(), () => setState(() => _words.removeWhere((e) => e == word)))
+                      (word) => _littleChip(word.trim())
                     ).toList()
                   )
                 )

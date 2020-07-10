@@ -10,3 +10,12 @@ class FetchEstablecimientos extends EstablecimientosEvent {
   @override
   List<Object> get props => [];
 }
+
+class FilterEstablecimientos extends EstablecimientosEvent {
+  final Map<String, Object> filters;
+
+  const FilterEstablecimientos(this.filters);
+
+  @override
+  List<Object> get props => [filters];
+}

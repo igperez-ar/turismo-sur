@@ -25,7 +25,7 @@ class FlatButtonWidget extends StatelessWidget {
           alignment: Alignment.center,
           child: Text(this.title, style: TextStyle(
               fontSize: 16,
-              color: this.pressed ? Colors.teal[400] : Colors.grey[700],
+              color: this.pressed ? Colors.teal[400] : Colors.grey,
               fontWeight: this.pressed ? FontWeight.bold : FontWeight.normal,
             ),
             maxLines: 1,

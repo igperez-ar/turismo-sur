@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:turismo_app/components/ReviewWidget.dart';
+import 'package:turismo_app/components/components.dart';
 
 class ScoreReviewWidget extends StatefulWidget {
   @override
