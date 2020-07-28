@@ -28,42 +28,36 @@ class FavButtonWidget extends StatefulWidget {
   _FavButtonWidgetState createState() => _FavButtonWidgetState();
 }
 
-class _FavButtonWidgetState extends State<FavButtonWidget> {
+class _FavButtonWidgetState extends State<FavButtonWidget> with TickerProviderStateMixin {
   FavoritosBloc _favoritoBloc;
+
+  var squareScale = 1.0;
+  AnimationController _animationController;
+
 
   @override
   void initState() {
+    _animationController = AnimationController(
+      vsync: this,
+      value: 1.0,
+      lowerBound: 1.0,
+      upperBound: 1.5,
+      duration: Duration(milliseconds: 130));
+    _animationController.addListener(() {
+      setState(() {
+        squareScale = _animationController.value;
+      });
+    });
     super.initState();
 
     _favoritoBloc = BlocProvider.of<FavoritosBloc>(context);
   }
 
-  /* bool _isFav() {
-    if (_favoritoBloc.state is FavoritosSuccess) {
-      return (
-        (_favoritoBloc.state as FavoritosSuccess)
-          .favoritos
-          .any((element) => (element.id == widget.id 
-                          && element.tipo == widget.type)
-          )
-      );
-    }
-    return false;
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
-
-  bool _hasMemories() {
-    if (_favoritoBloc.state is FavoritosSuccess) {
-      return (
-        (_favoritoBloc.state as FavoritosSuccess)
-          .favoritos
-          .firstWhere((element) => (element.id == widget.id 
-                          && element.tipo == widget.type))
-          .recuerdos
-          .length > 0
-      );
-    }
-    return true;
-  } */
 
   void _changeFavorite(Favorito favorito) {
 
@@ -98,6 +92,8 @@ class _FavButtonWidgetState extends State<FavButtonWidget> {
         _favoritoBloc.add(RemoveFavorito(favorito));
       }
     } else {
+      _animationController.forward().whenComplete(() => _animationController.reverse());
+
       _favoritoBloc.add(AddFavorito(
         Favorito(
           id: widget.id, 
@@ -157,16 +153,19 @@ class _FavButtonWidgetState extends State<FavButtonWidget> {
 
               return Positioned(
                 top: -5,
-                child: IconButton(
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.zero,
-                  splashColor: Colors.transparent,
-                  icon: Icon(
-                    favorito != null ? Icons.favorite : Icons.favorite_border, 
-                    color: (favorito != null ? Theme.of(context).iconTheme.color : Colors.grey[400]),
-                    size: (widget.size == Size.small ? 45/1.5 : 40)
-                  ),
-                  onPressed: () => _changeFavorite(favorito)
+                child: Transform.scale(
+                  scale: squareScale,
+                  child: IconButton(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.zero,
+                    splashColor: Colors.transparent,
+                    icon: Icon(
+                      favorito != null ? Icons.favorite : Icons.favorite_border, 
+                      color: (favorito != null ? Theme.of(context).iconTheme.color : Colors.grey[400]),
+                      size: (widget.size == Size.small ? 45/1.5 : 40)
+                    ),
+                    onPressed: () => _changeFavorite(favorito)
+                  )
                 )
               );
             }

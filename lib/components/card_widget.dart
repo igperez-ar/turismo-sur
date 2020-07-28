@@ -1,86 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:turismo_app/bloc/bloc.dart';
-
 import 'package:turismo_app/components/components.dart';
 import 'package:turismo_app/models/models.dart';
 import 'package:turismo_app/screens/screens.dart';
 
 
 class DefaultCard extends StatefulWidget{
-  const DefaultCard({
-    Key key, 
-    /* @required this.name,
-    @required this.address,
-    @required this.image, */
-    @required this.establecimiento,
-    /* @required this.onTap, */
-    @required this.type,
-    /* this.liked = false, */
-    /* this.category,
-    this.clasification,
-    this.specialities,
-    this.activities, */
-    this.distance
-    /* this.lat,
-    this.lng,
-    this.userPosition */
-  }): super(key: key);
-
-  /* final String name;
-  final String address;
-  final String image; */
-  final establecimiento;
-  /* final Function onTap; */
-  final Establecimiento type;
-  /* final bool liked; */
-
-  /* final int category;
-  final String clasification; */
-
-  /* final double lat;
-  final double lng; */
   
+  final establecimiento;
+  final Establecimiento type;
   final Future<String> distance;
 
-  /* final List<Especialidad> specialities;
-  final List<Actividad> activities; */
+  const DefaultCard({
+    Key key, 
+    @required this.establecimiento,
+    @required this.type,
+    this.distance
+  }): super(key: key);
 
   @override
-  _DefaultCardState createState() => _DefaultCardState(/* liked: liked */);
+  _DefaultCardState createState() => _DefaultCardState();
 }
 
 
 class _DefaultCardState extends State<DefaultCard> {
   bool liked;
   String distance;
-  /* FavoritosBloc _favoritoBloc; */
-
-  /* _DefaultCardState({this.liked}); */
 
   @override
   void initState() {
     super.initState();
-
-    /* _favoritoBloc = BlocProvider.of<FavoritosBloc>(context);
-
-    if (_favoritoBloc.state is FavoritosSuccess) {
-      if ((_favoritoBloc.state as FavoritosSuccess)
-            .favoritos
-            .any((element) => element.id == widget.establecimiento.id 
-                          && element.tipo == widget.type
-            )
-      ){
-        this.setState(() {
-          liked = true;
-        });
-                
-      } else {
-        this.setState(() {
-          liked = false;
-        }); 
-      }      
-    } */
 
     _updateDistance();
   }
@@ -88,55 +36,11 @@ class _DefaultCardState extends State<DefaultCard> {
   void _updateDistance() async {
     String newDistance = await widget.distance;
 
-    if (this.mounted)
-      this.setState(() {
-        this.distance = newDistance;
+    if (mounted)
+      setState(() {
+        distance = newDistance;
       });
   }
-
-  /* void _changeFavorite() {
-    final Favorito _favorito = Favorito(
-      id: widget.establecimiento.id, 
-      tipo: widget.type,
-      recuerdos: []
-    );
-
-    /* También validar si tiene recuerdos */
-    if (liked) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Confirmar'),
-            content: Text('Esta acción eliminará los recuerdos añadidos a este lugar.'),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("Cancel"),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              FlatButton(
-                child: Text("Aceptar"),
-                onPressed: () {
-                  _favoritoBloc.add(RemoveFavorito(_favorito));
-                  setState(() {
-                    liked = false;
-                  });
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      _favoritoBloc.add(AddFavorito(_favorito));
-      setState(() {
-        liked = true;
-      });
-    }
-  } */
 
   Widget _getWidget() {
     Widget _getChip(child) => Container(
@@ -248,15 +152,14 @@ class _DefaultCardState extends State<DefaultCard> {
                         },
                         fit: widget.establecimiento.foto != null ? BoxFit.cover : BoxFit.contain
                       ),
-                      ),
                     ),
+                  ),
                   Align(
                     alignment: Alignment(0.95, -1),
                     child: FavButtonWidget(
-                        id: widget.establecimiento.id,
-                        type: widget.type,
-                      )
-                    
+                      id: widget.establecimiento.id,
+                      type: widget.type,
+                    )
                   ),
                   _getWidget()
                 ]
@@ -295,7 +198,6 @@ class _DefaultCardState extends State<DefaultCard> {
                             Icon(Icons.location_on, color: Theme.of(context).iconTheme.color),
                             Padding(padding: EdgeInsets.only(left:5)),
                             Text(
-                              /* '2 km de tu ubicación', */ 
                               distance ?? 'Cargando...',
                               style: Theme.of(context).textTheme.headline3
                             ),

@@ -1,121 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:turismo_app/bloc/bloc.dart';
 import 'package:turismo_app/components/components.dart';
 import 'package:turismo_app/models/models.dart';
 import 'package:turismo_app/screens/screens.dart';
 
 
 class SmallCard extends StatefulWidget{
-  /* final int id; */
+
   final Establecimiento type;
   final establecimiento;
-  /* final String name;
-  final String address;
-  final String image;
-  final Function onTap;
-  final bool liked;
-
-  final String clasification;
-  final int category;
-
-  final List<Especialidad> specialities;
-  final List<Actividad> activities; */
 
   const SmallCard({
     Key key, 
-    /* this.id, */
     @required this.type,
     @required this.establecimiento,
-    /* @required this.name,
-    @required this.address,
-    @required this.image,
-    @required this.onTap,
-    this.liked = false,
-    this.clasification,
-    this.category,
-    this.activities,
-    this.specialities */
   }): super(key: key);
 
   @override
-  _SmallCardState createState() => _SmallCardState(/* liked: liked */);
+  _SmallCardState createState() => _SmallCardState();
 }
 
 class _SmallCardState extends State<SmallCard> { 
-  /* FavoritosBloc _favoritoBloc; */
-  bool liked;
-
-  /* _SmallCardState({this.liked}); */
-
-  @override 
-  void initState() {
-    super.initState();
-
-    /* _favoritoBloc = BlocProvider.of<FavoritosBloc>(context);
-
-    if (_favoritoBloc.state is FavoritosSuccess) {
-      if ((_favoritoBloc.state as FavoritosSuccess)
-            .favoritos
-            .any((element) => element.id == widget.establecimiento.id 
-                          && element.tipo == widget.type
-            )
-      ){
-        this.setState(() {
-          liked = true;
-        });
-                
-      } else {
-        this.setState(() {
-          liked = false;
-        }); 
-      }       
-    }*/
-  }
-
-  /* void _changeFavorite() {
-    final Favorito _favorito = Favorito(
-      id: widget.establecimiento.id, 
-      tipo: widget.type,
-      recuerdos: []
-    );
-    
-    if (liked) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Confirmar'),
-            content: Text('Esta acción eliminará los recuerdos añadidos a este lugar.'),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("Cancelar"),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              FlatButton(
-                padding: EdgeInsets.only(right: 20),
-                child: Text("Aceptar"),
-                onPressed: () {
-                  _favoritoBloc.add(RemoveFavorito(_favorito));
-                  setState(() {
-                    liked = false;
-                  });
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      _favoritoBloc.add(AddFavorito(_favorito));
-      setState(() {
-        liked = true;
-      });
-    }
-  } */
 
   Widget _getWidget() {
     if (widget.type == Establecimiento.alojamiento)
@@ -145,7 +49,6 @@ class _SmallCardState extends State<SmallCard> {
   
   @override
   Widget build(BuildContext context) {
-    final _width = MediaQuery.of(context).size.width;
     
     return GestureDetector(
       onTap: () => Navigator.push(context,
@@ -157,18 +60,17 @@ class _SmallCardState extends State<SmallCard> {
         )
       ),
       child: Container(
-        width: _width * 0.85,
-        height: _width * 0.4,
-        margin: EdgeInsets.symmetric(vertical:10),
+        height: 150,
+        margin: EdgeInsets.only(bottom: 15),
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black26,
+              color: Colors.black12,
               blurRadius: 5,
               spreadRadius: 1,
-              offset: Offset(3, 3)
+              offset: Offset(2, 2)
             )
           ]
         ),
@@ -206,8 +108,6 @@ class _SmallCardState extends State<SmallCard> {
                     child: FavButtonWidget(
                       id: widget.establecimiento.id,
                       type: widget.type,
-                      /* liked: liked,
-                      onPress: _changeFavorite, */
                     )
                   ),
                 ], 
