@@ -6,7 +6,7 @@ import 'package:meta/meta.dart';
 import 'package:turismo_app/models/models.dart';
 
 class AlojamientoProvider {
-  final _baseUrl = 'http://192.168.1.37:3000';
+  final _baseUrl = 'http://192.168.1.36:3000';
   final http.Client httpClient;
 
   AlojamientoProvider({

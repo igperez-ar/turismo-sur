@@ -25,21 +25,59 @@ class MemoriesWidget extends StatefulWidget {
   _MemoriesWidgetState createState() => _MemoriesWidgetState();
 }
 
-class _MemoriesWidgetState extends State<MemoriesWidget> {
+class _MemoriesWidgetState extends State<MemoriesWidget> with TickerProviderStateMixin {
+  var squareRotation = 0.0;
+  AnimationController _controllerA;
+  bool _deleting = false;
+  List<String> _toDelete = [];
+
   FavoritosBloc _favoritoBloc;
-  /* File _image; */
   List<String> _images;
   final picker = ImagePicker();
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
+    _controllerA = AnimationController(
+      vsync: this,
+      value: 0.0,
+      lowerBound: -0.05,
+      upperBound: 0.05,
+      duration: Duration(milliseconds: 130));
+    _controllerA.addListener(() {
+      setState(() {
+        squareRotation = _controllerA.value;
+      });
+    });
     super.initState();
 
     _favoritoBloc = BlocProvider.of<FavoritosBloc>(context);
   }
 
+  @override
+  void dispose() {
+    _controllerA.dispose();
+    super.dispose();
+  }
+
+  void _changeDeleting({bool value}) {
+    setState(() {
+      _deleting = value ?? !_deleting;
+    });
+
+    if (_deleting) {
+      _controllerA.repeat(reverse: true);
+    } else {
+      _controllerA.animateTo(0.0);
+      setState(() {
+        _toDelete.clear();
+      });
+    }
+  }
+
   Future _getCameraImage(Favorito favorito) async {
+    _changeDeleting(value: false);
+
     final pickedFile = await picker.getImage(source: ImageSource.camera);
     
     if (pickedFile != null) {
@@ -49,7 +87,7 @@ class _MemoriesWidgetState extends State<MemoriesWidget> {
         _images.add(pickedFile.path);
       });
 
-      _favoritoBloc.add(UpdateRecuerdos(favorito));
+      _favoritoBloc.add(UpdateRecuerdos(favorito, _images));
 
       SchedulerBinding.instance.addPostFrameCallback((_) {
         if (_scrollController.hasClients)
@@ -63,6 +101,8 @@ class _MemoriesWidgetState extends State<MemoriesWidget> {
   }
 
   Future _getGalleryImage(Favorito favorito) async {
+    _changeDeleting(value: false);
+
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
     if (pickedFile != null){
@@ -70,7 +110,7 @@ class _MemoriesWidgetState extends State<MemoriesWidget> {
         _images.add(pickedFile.path);
       });
 
-      _favoritoBloc.add(UpdateRecuerdos(favorito));
+      _favoritoBloc.add(UpdateRecuerdos(favorito, _images));
 
       SchedulerBinding.instance.addPostFrameCallback((_) {
         if (_scrollController.hasClients)
@@ -83,30 +123,86 @@ class _MemoriesWidgetState extends State<MemoriesWidget> {
     }
   }
 
-  Widget _getMemories() {
+  Widget _getMemories(Favorito favorito) {
 
-    return Container(
-      height: 120,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        reverse: true,
-        shrinkWrap: true,
-        controller: _scrollController,
-        children:
-          _images.map<Widget>((path) => Padding(
-            padding: EdgeInsets.only(right: 10),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.file(
-                File(path),
-                fit: BoxFit.cover,
-                width: 120,
-                height: 120,
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _deleting
+          ? Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text('${_toDelete.length} elementos seleccionados.'),
+                  FlatButton(
+                    onPressed: () {
+                      _images.removeWhere((element) => _toDelete.contains(element));
+                      _changeDeleting(value: false);
+                      _favoritoBloc.add(UpdateRecuerdos(favorito, _images));
+                    }, 
+                    child: Text('Confirmar'), 
+                    textColor: Colors.teal[400]
+                  )
+                ]
+              )
             )
+          : Container(),
+        Container(
+          height: 120,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            reverse: true,
+            shrinkWrap: true,
+            controller: _scrollController,
+            children:
+              _images.map<Widget>((path) { 
+                final bool _selected = _toDelete.contains(path);
+
+                return Padding(
+                  padding: EdgeInsets.only(right: 10),
+                  child: GestureDetector(
+                    onTap: () {
+                      if (_deleting) {
+                        if (_selected) {
+                          _toDelete.remove(path);
+                        } else {
+                          _toDelete.add(path);
+                        }
+                      } 
+                    },
+                    child: Transform.rotate(
+                      angle: squareRotation,
+                      child: Container(
+                        width: 120,
+                        height: 120,
+                        decoration: BoxDecoration( 
+                          borderRadius: BorderRadius.circular(10),
+                          /* color: _selected ? Colors.red[300] : Colors.transparent, */
+                          image: DecorationImage(
+                            /* colorFilter: _selected 
+                              ? ColorFilter.mode(Colors.black.withOpacity(0.4), BlendMode.dstATop)
+                              : null, */
+                            image: FileImage(File(path)),
+                            fit: BoxFit.cover
+                          ),
+                        ),
+                        child: _selected
+                          ? Container(
+                              decoration: BoxDecoration(
+                                color: Colors.red[300].withOpacity(0.5),
+                                borderRadius: BorderRadius.circular(10)
+                              ),
+                            )
+                          : Container()
+                      )
+                    )
+                  )
+                );
+              }
+            ).toList()
           )
-        ).toList()
-      )
+        )
+      ],
     );
   }
 
@@ -159,7 +255,7 @@ class _MemoriesWidgetState extends State<MemoriesWidget> {
           );
 
           if (_favorito != null) {
-            _images = _favorito.recuerdos;
+            _images = List.from(_favorito.recuerdos);
 
             return DetailSectionWidget(
               title: 'Recuerdos',
@@ -170,12 +266,14 @@ class _MemoriesWidgetState extends State<MemoriesWidget> {
                 {'icon': Icons.photo_library,
                 'onPressed': () => _getGalleryImage(_favorito),
                 },
-                {'icon': Icons.edit,
-                'onPressed': () {},
-                },
+                _images.isNotEmpty 
+                  ? {'icon': _deleting ? Icons.delete_forever : Icons.delete,
+                     'onPressed': () => _changeDeleting(),
+                    }
+                  : {}
               ],
               child: ( _favorito.recuerdos.isNotEmpty 
-                ? _getMemories()
+                ? _getMemories(_favorito)
                 : _getEmptyMemories(context)
               )
             );

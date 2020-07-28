@@ -15,17 +15,20 @@ class DetailSectionWidget extends StatelessWidget{
   /* final bool margin; */
 
   Widget _getAction(Map<String, Object> action) {
-    return IconButton(
-      splashColor: Colors.transparent,
-      padding: EdgeInsets.zero,
-      icon: Icon(
-        action['icon'],
-        size: 26,
-        color: Colors.grey[400],
-      ),
-      alignment: Alignment.centerRight,
-      onPressed: action['onPressed'],
-    );
+    if (action.isNotEmpty)
+      return IconButton(
+        splashColor: Colors.transparent,
+        padding: EdgeInsets.zero,
+        icon: Icon(
+          action['icon'],
+          size: 26,
+          color: Colors.grey[400],
+        ),
+        alignment: Alignment.centerRight,
+        onPressed: action['onPressed'],
+      );
+    
+    return Container();
   }
 
   

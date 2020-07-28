@@ -1,5 +1,4 @@
 export './card_widget.dart';
-export './card_fav_widget.dart';
 export './card_small_widget.dart';
 export './category_widget.dart';
 export './chip_widget.dart';
@@ -7,6 +6,7 @@ export './detail_section_widget.dart';
 export './fav_button_widget.dart';
 export './flat_button_widget.dart';
 export './map_card_widget.dart';
+export './map_carousel.dart';
 export './memories_widget.dart';
 export './message_widget.dart';
 export './multi_select_widget.dart';

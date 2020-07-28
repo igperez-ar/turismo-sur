@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
  
@@ -15,17 +17,16 @@ class MultiSelect extends StatefulWidget {
   _MultiSelectState createState() => _MultiSelectState();
 }
 
-class _MultiSelectState extends State<MultiSelect> {
+class _MultiSelectState extends State<MultiSelect> with TickerProviderStateMixin {
   bool open = false;
   List _selected = [];
 
   @override
   void initState() {
     super.initState();
-
     _selected = widget.selected;
   }
-  
+
   Widget _checkBox(item, bool checked) {
     final _width = MediaQuery.of(context).size.width;
 
@@ -161,23 +162,29 @@ class _MultiSelectState extends State<MultiSelect> {
                     width: 50,
                     height: 40,
                     child: IconButton(
-                      padding: EdgeInsets.only(bottom:5),
+                      padding: EdgeInsets.zero,
                       icon: Icon(
-                        (open ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down),
+                        open ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
                         size: 40,
                         color: Colors.grey,
                       ),
                       onPressed: _changeOpen
-                    )
+                    ),
                   )
                 ],
               )
             ),
           ),
-          Visibility(
-            visible: open,
-            child: Padding(
+          AnimatedSize(
+            vsync: this,
+            curve: Curves.fastOutSlowIn,
+            duration: Duration(milliseconds: 200),
+            child: Container(
               padding: EdgeInsets.only(bottom: 15),
+              constraints: ( open 
+                ? BoxConstraints(maxHeight: double.infinity)
+                : BoxConstraints(maxHeight: 0.0)
+              ),
               child: Wrap(
                 runSpacing: 12,
                 spacing: 10,
@@ -186,7 +193,7 @@ class _MultiSelectState extends State<MultiSelect> {
                 ).toList()
               )
             )
-          ),
+          )
         ]
       )
     );
