@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:turismo_app/bloc/configuracion/configuracion_bloc.dart';
 
 class EditProfileScreen extends StatefulWidget {
   @override
@@ -7,8 +9,17 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+  bool darkMode;
+  ConfiguracionBloc _configuracionBloc;
 
   final List<String> iconsIndex = ['265', '266', '268', '270', '272', '274', '276', '277', '278', '279', '280', '281', '282', '283', '284', '285', '286', '287', '288', '289', '290', '291', '292', '293', '294', '295', '296', '297', '298', '299', '300', '301', '302', '303', '304', '305'];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _configuracionBloc = BlocProvider.of<ConfiguracionBloc>(context);
+  }
 
   List<Widget> _icons() {
     return iconsIndex.map<Widget>((item) {
@@ -34,11 +45,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     'name': 'Ignacio Perez',
     'username': 'igperez.ar',
     'image': '270',
-    'bio': 'pocket scientist lie however trunk',
+    'bio': 'Work hard in silence. Let your success be the noise.',
     'email': 'fikuse@odsov.mx',
-    'phone': '(601) 256-4824',
-    'birth_date': '8/13/2109',
-    'address': '1436 Fafdu Highway',
   };
 
   _selectImage() {
@@ -116,7 +124,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Editar perfil', 
+        title: Text('Cuenta', 
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -172,9 +180,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           _getField('Nombre', datos['name']),
           _getField('Bio', datos['bio']),
           _getField('Correo', datos['email']),
-          _getField('Teléfono', datos['phone']),
-          _getField('Dirección', datos['address']),
-          ],
+        ],
       ),
     );
   }

@@ -46,33 +46,44 @@ class _ExplorarScreenState extends State<ExplorarScreen> {
     return distance;
   }
 
-  Widget _getCardList(List<Alojamiento> alojamientos, List<Gastronomico> gastronomicos) {
+  Widget _getCardList(List<Alojamiento> alojamientos, List<Gastronomico> gastronomicos, int filtered) {
+
     return ListView.builder(
-        padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-        itemCount: max(alojamientos.length, gastronomicos.length), 
-        itemBuilder: (context, index) { 
-          return Column(
-            children: <Widget>[
-              ( index < alojamientos.length 
-                ? DefaultCard(
-                    type: Establecimiento.alojamiento,
-                    establecimiento: alojamientos[index],
-                    distance: _getDistance(alojamientos[index].lat, alojamientos[index].lng),
+      padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
+      itemCount: max(alojamientos.length, gastronomicos.length), 
+      itemBuilder: (context, index) { 
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            ( index == 0 && filtered > 0
+              ? Container(
+                  padding: EdgeInsets.only(top: 15),
+                  child: Text('Se filtraron $filtered establecimientos.',
+                    style: Theme.of(context).textTheme.headline3,
                   )
-                : Container()
-              ),
-              ( index < gastronomicos.length 
-                ? DefaultCard(
-                    type: Establecimiento.gastronomico,
-                    establecimiento: gastronomicos[index],
-                    distance: _getDistance(gastronomicos[index].lat, gastronomicos[index].lng),
-                  )
-                : Container()
-              )
-            ]
-          ); 
-        },
-      );
+                )
+              : Container()
+            ),
+            ( index < alojamientos.length 
+              ? DefaultCard(
+                  type: Establecimiento.alojamiento,
+                  establecimiento: alojamientos[index],
+                  distance: _getDistance(alojamientos[index].lat, alojamientos[index].lng),
+                )
+              : Container()
+            ),
+            ( index < gastronomicos.length 
+              ? DefaultCard(
+                  type: Establecimiento.gastronomico,
+                  establecimiento: gastronomicos[index],
+                  distance: _getDistance(gastronomicos[index].lat, gastronomicos[index].lng),
+                )
+              : Container()
+            )
+          ]
+        ); 
+      },
+    );
   }
 
   @override 
@@ -107,6 +118,9 @@ class _ExplorarScreenState extends State<ExplorarScreen> {
           builder: (context, state) {
             if (state is EstablecimientosInitial) {
               _establecimientoBloc.add(FetchEstablecimientos());
+            }
+
+            if (_favoritoBloc.state is FavoritosInitial) {
               _favoritoBloc.add(FetchFavoritos());
             }
 
@@ -119,7 +133,8 @@ class _ExplorarScreenState extends State<ExplorarScreen> {
             if (state is EstablecimientosSuccess) {
               return _getCardList(
                 state.filteredAlojamientos, 
-                state.filteredGastronomicos
+                state.filteredGastronomicos,
+                state.activeFilters['filtrados']
               );
             }
           

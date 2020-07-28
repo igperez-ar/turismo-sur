@@ -32,15 +32,16 @@ class MapaScreenState extends State<MapaScreen> {
   CarouselController carouselController = CarouselController();
 
 
-  void _setMarkers(int counter, List items, markers, double markerColor, 
+  void _setMarkers(List items, markers, double markerColor, 
     Establecimiento markerType, List<SmallCard> cards) {
 
     for (var item in items) {
-      MarkerId markerId = MarkerId(counter.toString());
+      MarkerId markerId = MarkerId(UniqueKey().toString());
 
       Marker marker = Marker(
         markerId: markerId,
         icon: BitmapDescriptor.defaultMarkerWithHue(markerColor),
+        infoWindow: InfoWindow.noText,
         position: LatLng(item.lat, item.lng),
         onTap: () {
           var numer = cards.indexWhere((element) { 
@@ -53,8 +54,6 @@ class MapaScreenState extends State<MapaScreen> {
       );
 
       markers[markerId] = marker;
-
-      counter++;
     }
   }
 
@@ -73,15 +72,13 @@ class MapaScreenState extends State<MapaScreen> {
   Set<Marker> _getMarkers(Map<MarkerId, Marker> markers, List<Alojamiento> aloj, 
     List<Gastronomico> gast, List<SmallCard> cards) {
     
-    _setMarkers(0, aloj, markers, BitmapDescriptor.hueOrange, Establecimiento.alojamiento, cards);
-    _setMarkers(aloj.length, gast, markers, BitmapDescriptor.hueAzure, Establecimiento.gastronomico, cards);
+    _setMarkers(aloj, markers, BitmapDescriptor.hueOrange, Establecimiento.alojamiento, cards);
+    _setMarkers(gast, markers, BitmapDescriptor.hueAzure, Establecimiento.gastronomico, cards);
 
     return markers.values.toSet();
   }
 
-  Widget _buildCarousel(List<SmallCard> cards, List<Alojamiento> aloj, 
-    List<Gastronomico> gast, Map<MarkerId, Marker> markers) {
-
+  Widget _buildCarousel(List<SmallCard> cards, List<Alojamiento> aloj, List<Gastronomico> gast) {
     final int count = max(aloj.length, gast.length);
 
     for (var index = 0; index < count; index++) {
@@ -106,14 +103,16 @@ class MapaScreenState extends State<MapaScreen> {
         items: cards,
         carouselController: carouselController,
         options: CarouselOptions(
-          height: 200,
+          height: 190,
           autoPlay: false,
           enlargeCenterPage: true,
           viewportFraction: 0.8,
           onPageChanged: (index, reason) {
             if (reason == CarouselPageChangedReason.manual) {
-              final mark = markers[MarkerId(index.toString())];
-              mapController.animateCamera(CameraUpdate.newLatLngZoom(mark.position, 16.0));
+              final item = cards[index].establecimiento;
+              mapController.animateCamera(
+                CameraUpdate.newLatLngZoom(LatLng(item.lat, item.lng), 20.0)
+              );
             }
           },
           initialPage: 0
@@ -141,11 +140,12 @@ class MapaScreenState extends State<MapaScreen> {
           },
           markers: _getMarkers(markers, aloj, gast, cards),
           initialCameraPosition: CameraPosition(
-            target: LatLng(-54.8, -68.3), 
+            /* -54.8, -68.3 */
+            target: markers.values.first.position, 
             zoom: 15.0
           ),
         ),
-        _buildCarousel(cards, aloj, gast, markers),
+        _buildCarousel(cards, aloj, gast),
       ]
     );
   }

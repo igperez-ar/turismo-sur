@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:turismo_app/bloc/bloc.dart';
 import 'package:turismo_app/models/models.dart';
 import 'package:turismo_app/components/components.dart';
+import 'package:turismo_app/screens/favoritos_screen.dart';
 
 
 class FiltrosScreen extends StatefulWidget {
@@ -280,6 +281,7 @@ class _FiltrosScreenState extends State<FiltrosScreen> {
               textAlign: TextAlign.center,
             ),
             onPressed: () {
+              _establecimientoBloc.add(ResetFiltros());
               Navigator.pop(context);
             }
           ),
