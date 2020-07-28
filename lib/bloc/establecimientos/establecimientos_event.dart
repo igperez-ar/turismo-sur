@@ -19,3 +19,10 @@ class FilterEstablecimientos extends EstablecimientosEvent {
   @override
   List<Object> get props => [filters];
 }
+
+class ResetFiltros extends EstablecimientosEvent {
+  const ResetFiltros();
+
+  @override
+  List<Object> get props => [];
+}

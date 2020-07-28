@@ -63,20 +63,36 @@ class EstablecimientosBloc extends Bloc<EstablecimientosEvent, EstablecimientosS
   Stream<EstablecimientosState> mapEventToState(
     EstablecimientosEvent event
   ) async* {
+
     if (event is FetchEstablecimientos) {
       yield* _mapEstablecimientosLoadedToState();
     } else if (event is FilterEstablecimientos) {
       yield* _mapEstablecimientoFilteredToState(event);
-    } /* else if (event is TodoUpdated) {
-      yield* _mapTodoUpdatedToState(event);
-    } else if (event is TodoDeleted) {
-      yield* _mapTodoDeletedToState(event);
-    } else if (event is ToggleAll) {
-      yield* _mapToggleAllToState();
-    } else if (event is ClearCompleted) {
-      yield* _mapClearCompletedToState();
-    } */
+    } else if (event is ResetFiltros) {
+      yield* _mapFiltrosResetToState(event);
+    }
   }
+
+  Stream<EstablecimientosState> _mapFiltrosResetToState(
+    ResetFiltros event
+  ) async* {
+
+    if (state is EstablecimientosSuccess) {
+      final _state = (state as EstablecimientosSuccess);
+      final Map<String, Object> resetActiveFilters = {
+        'filtrados': 0,
+        'palabras': List<String>(),
+        'mostrar': Establecimiento.ambos,
+        'localidades': List<Localidad>(),
+        'clasificaciones': List<Clasificacion>(),
+        'categorias': List<Categoria>.from(_state.filterData['categorias']),
+        'actividades': List<Actividad>(),
+        'especialidades': List<Especialidad>()
+      }; 
+
+      this.add(FilterEstablecimientos(resetActiveFilters));
+    }
+  }  
 
   Stream<EstablecimientosState> _mapEstablecimientosLoadedToState() async* {
     yield EstablecimientosFetching();
@@ -122,88 +138,83 @@ class EstablecimientosBloc extends Bloc<EstablecimientosEvent, EstablecimientosS
       List<Gastronomico> _newGastronomicos;
       Map _filters = event.filters;
 
-      /* try { */
-        if ( _filters['mostrar'] == Establecimiento.alojamiento ||
-             _filters['mostrar'] == Establecimiento.ambos ){
-          _newAlojamientos = _state
-            .alojamientos
-            .where((element) => (
-                (_filters['clasificaciones'].isNotEmpty 
-                  ? _filters['clasificaciones'].contains(element.clasificacion)
-                  : true
-                )
-              &&(_filters['categorias'].isNotEmpty 
-                  ? _filters['categorias'].contains(element.categoria)
-                  : true
-                )
-              &&(_filters['localidades'].isNotEmpty
-                  ? _filters['localidades'].contains(element.localidad)
-                  : true
-                )
-              &&(_filters['palabras'].isNotEmpty
-                  ? _filters['palabras'].any(
+      if ( _filters['mostrar'] == Establecimiento.alojamiento ||
+            _filters['mostrar'] == Establecimiento.ambos ){
+        _newAlojamientos = _state
+          .alojamientos
+          .where((element) => (
+              (_filters['clasificaciones'].isNotEmpty 
+                ? _filters['clasificaciones'].contains(element.clasificacion)
+                : true
+              )
+            &&(_filters['categorias'].isNotEmpty 
+                ? _filters['categorias'].contains(element.categoria)
+                : true
+              )
+            &&(_filters['localidades'].isNotEmpty
+                ? _filters['localidades'].contains(element.localidad)
+                : true
+              )
+            &&(_filters['palabras'].isNotEmpty
+                ? _filters['palabras'].any(
                     (word) => (element.nombre
-                        .toLowerCase()
-                        .contains(word.toLowerCase()))
+                      .split(' ')
+                      .any((e) => e.toLowerCase()
+                                    .contains(word.toLowerCase()))
                     )
-                  : true
-                )
-            ))
-            .toList();
-        } else {
-          _newAlojamientos = [];
-        }
+                  )
+                : true
+              )
+          ))
+          .toList();
+      } else {
+        _newAlojamientos = [];
+      }
 
-        if ( _filters['mostrar'] == Establecimiento.gastronomico || 
-             _filters['mostrar'] == Establecimiento.ambos){
-          _newGastronomicos = _state
-            .gastronomicos
-            .where((element) => (
-                (_filters['actividades'].isNotEmpty 
-                  ? _filters['actividades'].any((act) => element.actividades.contains(act)) 
-                  : true
-                )
-              &&(_filters['especialidades'].isNotEmpty
-                  ? _filters['especialidades'].any((esp) => element.especialidades.contains(esp))
-                  : true
-                )
-              &&(_filters['localidades'].isNotEmpty
-                  ? _filters['localidades'].contains(element.localidad)
-                  : true
-                )
-              &&(_filters['palabras'].isNotEmpty
-                  ? _filters['palabras'].any(
-                      (word) => (word
-                        .toString()
-                        .toLowerCase()
-                        .contains(element.nombre.toLowerCase())))
-                  : true
-                )
-            ))
-            .toList();
-        } else {
-          _newGastronomicos = [];
-        }
+      if ( _filters['mostrar'] == Establecimiento.gastronomico || 
+            _filters['mostrar'] == Establecimiento.ambos){
+        _newGastronomicos = _state
+          .gastronomicos
+          .where((element) => (
+              (_filters['actividades'].isNotEmpty 
+                ? _filters['actividades'].any((act) => element.actividades.contains(act)) 
+                : true
+              )
+            &&(_filters['especialidades'].isNotEmpty
+                ? _filters['especialidades'].any((esp) => element.especialidades.contains(esp))
+                : true
+              )
+            &&(_filters['localidades'].isNotEmpty
+                ? _filters['localidades'].contains(element.localidad)
+                : true
+              )
+            &&(_filters['palabras'].isNotEmpty
+                ? _filters['palabras'].any(
+                    (word) => (element.nombre
+                      .split(' ')
+                      .any((e) => e.toLowerCase()
+                                    .contains(word.toLowerCase()))
+                    )
+                  )
+                : true
+              )
+          ))
+          .toList();
+      } else {
+        _newGastronomicos = [];
+      }
 
-        _filters['filtrados'] = (_state.alojamientos.length + _state.gastronomicos.length)
-                              - (_newAlojamientos.length + _newGastronomicos.length);
+      _filters['filtrados'] = (_state.alojamientos.length + _state.gastronomicos.length)
+                            - (_newAlojamientos.length + _newGastronomicos.length);
 
-        yield EstablecimientosSuccess(
-          alojamientos: _state.alojamientos,
-          gastronomicos: _state.gastronomicos,
-          filterData: _state.filterData,
-          filteredAlojamientos: _newAlojamientos,
-          filteredGastronomicos: _newGastronomicos,
-          activeFilters: _filters
-        );
-
-      /* } catch (e) {
-        print(e); */
-        /* yield EstablecimientosFailure(); */
-      /* } */
-      
-        
-      
+      yield EstablecimientosSuccess(
+        alojamientos: _state.alojamientos,
+        gastronomicos: _state.gastronomicos,
+        filterData: _state.filterData,
+        filteredAlojamientos: _newAlojamientos,
+        filteredGastronomicos: _newGastronomicos,
+        activeFilters: _filters
+      );
     }
   } 
 }

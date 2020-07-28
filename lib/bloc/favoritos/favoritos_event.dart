@@ -31,9 +31,10 @@ class RemoveFavorito extends FavoritosEvent {
 
 class UpdateRecuerdos extends FavoritosEvent {
   final Favorito favorito;
+  final List<String> recuerdos;
 
-  const UpdateRecuerdos(this.favorito);
+  const UpdateRecuerdos(this.favorito, this.recuerdos);
 
   @override
-  List<Object> get props => [favorito];
+  List<Object> get props => [favorito, recuerdos];
 }

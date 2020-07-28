@@ -23,17 +23,18 @@ class Favorito extends Equatable{
   List<Object> get props => [
     id,
     tipo,
+    recuerdos
   ];
 
   factory Favorito.fromJson(Map<String, dynamic> json) => Favorito(
     id: json['id'],
-    tipo: json['tipo'],
-    recuerdos: json['recuerdos']
+    tipo: Establecimiento.values[json['tipo']],
+    recuerdos: jsonDecode(json['recuerdos']).map<String>((e) => e.toString()).toList() 
   );
 
   Map<String, dynamic> toJson() => {
     'id': id,
-    'tipo': tipo,
-    'recuerdos': recuerdos,
+    'tipo': tipo.index,
+    'recuerdos': jsonEncode(recuerdos),
   };
 }

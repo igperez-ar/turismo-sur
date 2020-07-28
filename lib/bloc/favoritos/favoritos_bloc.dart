@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 
-import 'package:bloc/bloc.dart';
+/* import 'package:bloc/bloc.dart'; */
 import 'package:equatable/equatable.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:turismo_app/bloc/bloc.dart';
 
 import 'package:turismo_app/models/models.dart';
 import 'package:turismo_app/repositories/repository.dart';
@@ -10,9 +13,38 @@ import 'package:turismo_app/repositories/repository.dart';
 part 'favoritos_event.dart';
 part 'favoritos_state.dart';
 
-class FavoritosBloc extends Bloc<FavoritosEvent, FavoritosState> {
+class FavoritosBloc extends HydratedBloc<FavoritosEvent, FavoritosState> {
   @override
-  FavoritosState get initialState => FavoritosInitial();
+  FavoritosState get initialState {
+    return super.initialState ?? FavoritosInitial();
+  }
+
+  @override
+  FavoritosState fromJson(Map<String, dynamic> json) {
+    try {
+      print('HydratedFavorites loaded!');
+      final List favoritos = json['favoritos'];
+      return FavoritosSuccess(
+        favoritos.map((e) => Favorito.fromJson(jsonDecode(e))).toList()
+      );
+      
+    } catch (_) {
+      print(_);
+      return null;
+    }
+  }
+
+  @override
+  Map<String,dynamic> toJson(FavoritosState state) {
+    if (state is FavoritosSuccess) {
+      print('HydratedFavorites saved!');
+      return {'favoritos': state.favoritos.map((e) => jsonEncode(e.toJson())).toList()};
+
+    } else {
+      return null;
+    }
+  }
+
 
   @override
   Stream<FavoritosState> mapEventToState(
@@ -58,10 +90,11 @@ class FavoritosBloc extends Bloc<FavoritosEvent, FavoritosState> {
     RemoveFavorito event
   ) async* {
     if (state is FavoritosSuccess) {
-      final List<Favorito> updatedFavoritos = (state as FavoritosSuccess).favoritos
+      final List<Favorito> updatedFavoritos = (state as FavoritosSuccess)
+        .favoritos
         .where((element) => !(element.id == event.favorito.id
-                           && element.tipo == event.favorito.tipo)
-        ).toList();
+                         && element.tipo == event.favorito.tipo))
+        .toList();
 
       yield FavoritosSuccess(updatedFavoritos);
     }
@@ -71,10 +104,21 @@ class FavoritosBloc extends Bloc<FavoritosEvent, FavoritosState> {
     UpdateRecuerdos event
   ) async* {
     if (state is FavoritosSuccess){
-      final List<Favorito> updatedFavoritos = (state as FavoritosSuccess).favoritos;
+      final List<Favorito> updatedFavoritos = List.from((state as FavoritosSuccess).favoritos);
+       /*  .map((favorito) { 
+          return (favorito.id == event.favorito.id 
+             && favorito.tipo == event.favorito.tipo)
+            ? event.favorito
+            : favorito;})
+        .toList(); */
       final index = updatedFavoritos.indexOf(event.favorito);
+      final favorito = Favorito(
+        id: event.favorito.id,
+        tipo: event.favorito.tipo,
+        recuerdos: event.recuerdos
+      );
 
-      updatedFavoritos[index] = event.favorito;
+      updatedFavoritos[index] = favorito;
         
       yield FavoritosSuccess(updatedFavoritos);
     }
