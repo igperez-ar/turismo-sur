@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -55,15 +56,6 @@ class _ExplorarScreenState extends State<ExplorarScreen> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            ( index == 0 && filtered > 0
-              ? Container(
-                  padding: EdgeInsets.only(top: 15),
-                  child: Text('Se filtraron $filtered establecimientos.',
-                    style: Theme.of(context).textTheme.headline3,
-                  )
-                )
-              : Container()
-            ),
             ( index < alojamientos.length 
               ? DefaultCard(
                   type: Establecimiento.alojamiento,
@@ -113,50 +105,65 @@ class _ExplorarScreenState extends State<ExplorarScreen> {
           )
         ],
       ),
-      body: Container(
-        child: BlocBuilder<EstablecimientosBloc, EstablecimientosState>(
-          builder: (context, state) {
-            if (state is EstablecimientosInitial) {
-              _establecimientoBloc.add(FetchEstablecimientos());
-            }
-
-            if (_favoritoBloc.state is FavoritosInitial) {
-              _favoritoBloc.add(FetchFavoritos());
-            }
-
-            if (state is EstablecimientosFailure) {
-              return EmptyWidget(
-                title: 'Ocurrió un problema inesperado. Intente nuevamente más tarde.',
-                uri: 'assets/images/undraw_server_down.svg',
-              );
-            }
-
-            if (state is EstablecimientosSuccess) {
-
-              if (state.filteredAlojamientos.isEmpty && 
-                 state.filteredGastronomicos.isEmpty) {
-                return EmptyWidget(
-                  title: 'No se encontraron favoritos para los filtros seleccionados.',
-                  uri: 'assets/images/undraw_taken.svg',
-                  button: {
-                    'title': 'Ir a filtros',
-                    'action': () => Navigator.pushNamed(context, '/filtros')
-                  },
-                );
-              }
-
-              return _getCardList(
-                state.filteredAlojamientos, 
-                state.filteredGastronomicos,
-                state.activeFilters['filtrados']
-              );
-            }
-          
-            return Center(
-              child: CircularProgressIndicator()
-            ); 
+      body: BlocBuilder<EstablecimientosBloc, EstablecimientosState>(
+        builder: (context, state) {
+          if (state is EstablecimientosInitial) {
+            _establecimientoBloc.add(FetchEstablecimientos());
           }
-        )
+
+          if (_favoritoBloc.state is FavoritosInitial) {
+            _favoritoBloc.add(FetchFavoritos());
+          }
+
+          if (state is EstablecimientosFailure) {
+            return EmptyWidget(
+              title: 'Ocurrió un problema inesperado. Intente nuevamente más tarde.',
+              uri: 'assets/images/undraw_server_down.svg',
+            );
+          }
+
+          if (state is EstablecimientosSuccess) {
+
+            if (state.filteredAlojamientos.isEmpty && 
+                state.filteredGastronomicos.isEmpty) {
+              return EmptyWidget(
+                title: 'No se encontraron favoritos para los filtros seleccionados.',
+                uri: 'assets/images/undraw_taken.svg',
+                button: {
+                  'title': 'Ir a filtros',
+                  'action': () => Navigator.pushNamed(context, '/filtros')
+                },
+              );
+            }
+
+            int filtrados = state.activeFilters['filtrados'];
+            return Column(
+              children: [
+                ( filtrados > 0
+                  ? SnackBarWidget(
+                      message: ( filtrados == 1 
+                        ? 'Se filtró 1 establecimiento.' 
+                        : 'Se filtraron $filtrados establecimientos.'
+                      ), 
+                      type: SnackType.success,
+                    )
+                  : Container()
+                ),
+                Expanded(
+                  child: _getCardList(
+                    state.filteredAlojamientos, 
+                    state.filteredGastronomicos,
+                    state.activeFilters['filtrados']
+                  )
+                )
+              ],
+            );
+          }
+        
+          return Center(
+            child: CircularProgressIndicator()
+          ); 
+        }
       )
     );
   }

@@ -1,18 +1,11 @@
-import 'dart:math';
 import 'dart:ui';
 
-import 'package:dashed_container/dashed_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:turismo_app/bloc/bloc.dart';
-import 'package:turismo_app/bloc/configuracion/configuracion_bloc.dart';
-import 'package:turismo_app/components/components.dart';
-import 'package:turismo_app/models/models.dart';
-import 'package:turismo_app/screens/helper.dart';
 
+import 'package:turismo_app/bloc/configuracion/configuracion_bloc.dart';
 import 'package:turismo_app/screens/screens.dart';
-import 'package:turismo_app/screens/user/ingreso_screen.dart';
 
 //icons 265-306
 

@@ -1,8 +1,5 @@
-import 'package:dashed_container/dashed_container.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 
 import 'package:turismo_app/bloc/bloc.dart';
 import 'package:turismo_app/components/components.dart';
@@ -17,38 +14,6 @@ class FavoritosScreen extends StatefulWidget {
 
 class _FavoritosScreenState extends State<FavoritosScreen> {
   bool showMap = false;
-
-  Widget _emptyFavs() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 30,vertical: 30),
-      child: DashedContainer(
-        dashColor: Colors.grey[400], 
-        strokeWidth: 2,
-        dashedLength: 10,
-        blankLength: 10,
-        borderRadius: 20,
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 50),
-          height: 200,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Icon(Icons.sentiment_dissatisfied, size: 55, color: Colors.grey[600],),
-              Padding(padding: EdgeInsets.only(top: 10)),
-              Text('marca contenidos como favoritos para que aparezcan aquí'.toUpperCase(),
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
-        ),
-      )
-    );
-  }
 
   List<SmallCard> _getFavoritos(
     List<Favorito> favoritos, List<Alojamiento> alojamientos, List<Gastronomico> gastronomicos
@@ -78,49 +43,6 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
 
     return _children;
   }
-
-  /* Widget _favsNotFound() {
-    return Center(
-      child: Container(
-        padding: EdgeInsets.only(left: 40, right: 40, top: 70),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Flexible(
-              child: SvgPicture.asset('assets/images/undraw_taken.svg',
-                fit: BoxFit.contain,
-              )
-            ),
-            Expanded(
-              child: Column(
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(top: 30, bottom: 50, left: 30, right: 30),
-                    child: Text(
-                      'No se encontraron favoritos para los filtros seleccionados.',
-                      style: Theme.of(context).textTheme.headline4,
-                      textAlign: TextAlign.center,
-                      
-                    )
-                  ),
-                  RaisedButton(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 30),
-                    onPressed: () => Navigator.pushNamed(context, '/filtros'), 
-                    child: Text('Ir a filtros', style: TextStyle(color: Colors.white),)
-                  )
-                ],
-              )
-            )
-          ],
-        )
-      )
-    );
-  } */
 
   @override
   Widget build(BuildContext context) {
@@ -188,23 +110,25 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                         );
                       }
 
-                      int countFiltered = favState.favoritos.length - cardsFavoritos.length;
+                      int filtrados = favState.favoritos.length - cardsFavoritos.length;
 
-                      return ListView(
-                        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                      return Column(
                         children: <Widget>[
-                          (countFiltered > 0
-                            ? Container(
-                                child: Text( countFiltered == 1 
-                                  ? 'Se filtró 1 establecimiento.'
-                                  : 'Se filtraron $countFiltered establecimientos.',
-                                  style: Theme.of(context).textTheme.headline3,
-                                )
+                          (filtrados > 0
+                            ? SnackBarWidget(
+                                message: ( filtrados == 1 
+                                  ? 'Se filtró 1 favorito.' 
+                                  : 'Se filtraron $filtrados favoritos.'
+                                ), 
+                                type: SnackType.success,
                               )
                             : Container()
                           ),
-                          Column(
-                            children: cardsFavoritos,
+                          Expanded(
+                            child: ListView(
+                              padding: EdgeInsets.only(left: 15, right: 15, bottom: 15, top: 5),
+                              children: cardsFavoritos,
+                            )
                           )
                         ],
                       );

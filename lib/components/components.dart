@@ -14,3 +14,4 @@ export './review_widget.dart';
 export './score_review_widget.dart';
 export './search_bar_widget.dart';
 export './empty_widget.dart';
+export './snack_bar_widget.dart';
