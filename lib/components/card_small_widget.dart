@@ -61,7 +61,7 @@ class _SmallCardState extends State<SmallCard> {
       ),
       child: Container(
         height: 150,
-        margin: EdgeInsets.only(bottom: 15),
+        margin: EdgeInsets.only(top: 15),
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.all(Radius.circular(10.0)),

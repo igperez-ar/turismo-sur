@@ -125,12 +125,26 @@ class _ExplorarScreenState extends State<ExplorarScreen> {
             }
 
             if (state is EstablecimientosFailure) {
-              return Center(
-                child: Text('failed to fetch content')
+              return EmptyWidget(
+                title: 'Ocurrió un problema inesperado. Intente nuevamente más tarde.',
+                uri: 'assets/images/undraw_server_down.svg',
               );
             }
 
             if (state is EstablecimientosSuccess) {
+
+              if (state.filteredAlojamientos.isEmpty && 
+                 state.filteredGastronomicos.isEmpty) {
+                return EmptyWidget(
+                  title: 'No se encontraron favoritos para los filtros seleccionados.',
+                  uri: 'assets/images/undraw_taken.svg',
+                  button: {
+                    'title': 'Ir a filtros',
+                    'action': () => Navigator.pushNamed(context, '/filtros')
+                  },
+                );
+              }
+
               return _getCardList(
                 state.filteredAlojamientos, 
                 state.filteredGastronomicos,

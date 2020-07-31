@@ -268,11 +268,6 @@ class _FiltrosScreenState extends State<FiltrosScreen> {
           }
         ),
         actions: <Widget>[
-          /* IconButton(
-            padding: EdgeInsets.only(right:10),
-            icon: Icon(Icons.close, color: Colors.white, size: 32), 
-            onPressed: () => Navigator.pop(context)
-          ), */
           FlatButton(
             child: Text('RESET', style: TextStyle(
                 color: Colors.white,
@@ -295,8 +290,9 @@ class _FiltrosScreenState extends State<FiltrosScreen> {
           }
 
           if (state is EstablecimientosFailure) {
-            return Center(
-              child: Text('failed to fetch content')
+            return EmptyWidget(
+              title: 'Ocurrió un problema inesperado. Intenta nuevamente más tarde.',
+              uri: 'assets/images/undraw_server_down.svg',
             );
           }
 

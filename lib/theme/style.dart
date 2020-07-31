@@ -48,7 +48,8 @@ class AppTheme {
         color: Colors.grey[800]
       ),
     ),
-    accentColor: Colors.teal
+    accentColor: Colors.teal,
+    buttonColor: Colors.teal[300]
   );
 
   static final ThemeData darkTheme = ThemeData(
@@ -90,7 +91,8 @@ class AppTheme {
         color: Colors.grey[300]
       ),
     ),
-    accentColor: Colors.teal
+    accentColor: Colors.teal,
+    buttonColor: Colors.teal[700]
   );
 
 }

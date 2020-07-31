@@ -315,6 +315,7 @@ class _EstablecimientoScreenState extends State<EstablecimientoScreen> {
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                       child: MapCardWidget(
+                        type: widget.type,
                         lat: widget.establecimiento.lat,
                         lng: widget.establecimiento.lng
                       )

@@ -70,10 +70,14 @@ class MapCarouselState extends State<MapCarousel> {
   Widget _buildCarousel() {
 
     return CarouselSlider(
-        items: widget.cards,
+        items: widget.cards.map((e) => Padding(
+            padding: EdgeInsets.only(bottom: 15),
+            child: e,
+          ) 
+        ).toList(),
         carouselController: carouselController,
         options: CarouselOptions(
-          height: 200,
+          height: 210,
           autoPlay: false,
           enlargeCenterPage: true,
           viewportFraction: 0.8,
@@ -81,17 +85,13 @@ class MapCarouselState extends State<MapCarousel> {
             if (reason == CarouselPageChangedReason.manual) {
               final item = widget.cards[index].establecimiento;
               mapController.animateCamera(
-                CameraUpdate.newLatLngZoom(LatLng(item.lat, item.lng), 21.0)
+                CameraUpdate.newLatLngZoom(LatLng(item.lat, item.lng), 17.0)
               );
             }
           },
           initialPage: 0
         ),
     );
-  }
-
-  Widget _buildContent() {
-   
   }
 
   @override

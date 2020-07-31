@@ -139,7 +139,7 @@ class EstablecimientosBloc extends Bloc<EstablecimientosEvent, EstablecimientosS
       Map _filters = event.filters;
 
       if ( _filters['mostrar'] == Establecimiento.alojamiento ||
-            _filters['mostrar'] == Establecimiento.ambos ){
+           _filters['mostrar'] == Establecimiento.ambos ){
         _newAlojamientos = _state
           .alojamientos
           .where((element) => (

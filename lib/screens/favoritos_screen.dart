@@ -1,12 +1,13 @@
 import 'package:dashed_container/dashed_container.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
+
 import 'package:turismo_app/bloc/bloc.dart';
-import 'package:turismo_app/components/card_fav_widget.dart';
 import 'package:turismo_app/components/components.dart';
 import 'package:turismo_app/components/map_carousel.dart';
 import 'package:turismo_app/models/models.dart';
-import 'package:turismo_app/screens/screens.dart';
 
 
 class FavoritosScreen extends StatefulWidget {
@@ -19,11 +20,11 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
 
   Widget _emptyFavs() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 30),
+      margin: EdgeInsets.symmetric(horizontal: 30,vertical: 30),
       child: DashedContainer(
         dashColor: Colors.grey[400], 
         strokeWidth: 2,
-        dashedLength: 11,
+        dashedLength: 10,
         blankLength: 10,
         borderRadius: 20,
         child: Container(
@@ -78,6 +79,49 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
     return _children;
   }
 
+  /* Widget _favsNotFound() {
+    return Center(
+      child: Container(
+        padding: EdgeInsets.only(left: 40, right: 40, top: 70),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              child: SvgPicture.asset('assets/images/undraw_taken.svg',
+                fit: BoxFit.contain,
+              )
+            ),
+            Expanded(
+              child: Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(top: 30, bottom: 50, left: 30, right: 30),
+                    child: Text(
+                      'No se encontraron favoritos para los filtros seleccionados.',
+                      style: Theme.of(context).textTheme.headline4,
+                      textAlign: TextAlign.center,
+                      
+                    )
+                  ),
+                  RaisedButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 30),
+                    onPressed: () => Navigator.pushNamed(context, '/filtros'), 
+                    child: Text('Ir a filtros', style: TextStyle(color: Colors.white),)
+                  )
+                ],
+              )
+            )
+          ],
+        )
+      )
+    );
+  } */
+
   @override
   Widget build(BuildContext context) {
 
@@ -108,6 +152,13 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
       body: BlocBuilder<EstablecimientosBloc, EstablecimientosState>(
         builder: (context, estState) {
 
+            if (estState is EstablecimientosFailure) {
+              return EmptyWidget(
+                title: 'Ocurrió un problema inesperado. Intenta nuevamente más tarde.',
+                uri: 'assets/images/undraw_server_down.svg',
+              );
+            }
+
             if (estState is EstablecimientosSuccess) {
               return BlocBuilder<FavoritosBloc, FavoritosState>(
                 builder: (context, favState) {
@@ -121,15 +172,32 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                     
                     if (!showMap) {
                       if (favState.favoritos.isEmpty)
-                        return _emptyFavs();
+                        return EmptyWidget(
+                          title: 'Marca contenidos como favoritos para que aparezcan aquí.',
+                          uri: 'assets/images/undraw_empty.svg',
+                        );
+
+                      if (cardsFavoritos.isEmpty) {
+                        return EmptyWidget(
+                          title: 'No se encontraron favoritos para los filtros seleccionados.',
+                          uri: 'assets/images/undraw_taken.svg',
+                          button: {
+                            'title': 'Ir a filtros',
+                            'action': () => Navigator.pushNamed(context, '/filtros')
+                          },
+                        );
+                      }
+
+                      int countFiltered = favState.favoritos.length - cardsFavoritos.length;
 
                       return ListView(
                         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                         children: <Widget>[
-                          (cardsFavoritos.length != favState.favoritos.length
+                          (countFiltered > 0
                             ? Container(
-                                child: Text(
-                                  'Se filtraron ${favState.favoritos.length - cardsFavoritos.length} establecimientos.',
+                                child: Text( countFiltered == 1 
+                                  ? 'Se filtró 1 establecimiento.'
+                                  : 'Se filtraron $countFiltered establecimientos.',
                                   style: Theme.of(context).textTheme.headline3,
                                 )
                               )
