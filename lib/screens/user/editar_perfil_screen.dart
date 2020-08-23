@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:turismo_app/bloc/autenticacion/autenticacion_bloc.dart';
 import 'package:turismo_app/bloc/configuracion/configuracion_bloc.dart';
+import 'package:turismo_app/screens/forms/forms.dart';
 
 class EditProfileScreen extends StatefulWidget {
   @override
@@ -10,6 +12,7 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   bool darkMode;
+  AutenticacionBloc _autenticacionBloc;
   ConfiguracionBloc _configuracionBloc;
 
   final List<String> iconsIndex = ['265', '266', '268', '270', '272', '274', '276', '277', '278', '279', '280', '281', '282', '283', '284', '285', '286', '287', '288', '289', '290', '291', '292', '293', '294', '295', '296', '297', '298', '299', '300', '301', '302', '303', '304', '305'];
@@ -18,6 +21,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void initState() {
     super.initState();
 
+    _autenticacionBloc = BlocProvider.of<AutenticacionBloc>(context);
     _configuracionBloc = BlocProvider.of<ConfiguracionBloc>(context);
   }
 
@@ -132,55 +136,74 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
         centerTitle: true,
       ),
-      body: ListView(
-        children: <Widget>[
-          Container(
-            alignment: Alignment.center,
-            margin: EdgeInsets.only(top: 30),
-            height: 150,
-            width: 150,
-            child: Stack(
-              alignment: Alignment.bottomRight,
-              children: <Widget>[
-                Container(  
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 5,
-                        spreadRadius: 2,
-                        offset: Offset(2,3)
-                      )
-                    ]
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Container(
+              alignment: Alignment.center,
+              margin: EdgeInsets.only(top: 30),
+              height: 150,
+              width: 150,
+              child: Stack(
+                alignment: Alignment.bottomRight,
+                children: <Widget>[
+                  Container(  
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 5,
+                          spreadRadius: 2,
+                          offset: Offset(2,3)
+                        )
+                      ]
+                    ),
+                    child: SvgPicture.asset(
+                      'assets/profile_pics/pic_' + datos['image'] + '.svg',
+                      height: 150,
+                      width: 150,
+                    )
                   ),
-                  child: SvgPicture.asset(
-                    'assets/profile_pics/pic_' + datos['image'] + '.svg',
-                    height: 150,
-                    width: 150,
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.teal[300],
+                      shape: BoxShape.circle
+                    ),
+                    child: IconButton(
+                      icon: Icon(Icons.camera_alt), 
+                      iconSize: 28,
+                      color: Colors.white,
+                      onPressed: _selectImage
+                    ),
                   )
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.teal[300],
-                    shape: BoxShape.circle
-                  ),
-                  child: IconButton(
-                    icon: Icon(Icons.camera_alt), 
-                    iconSize: 28,
-                    color: Colors.white,
-                    onPressed: _selectImage
-                  ),
-                )
-              ]
+                ]
+              ),
             ),
-          ),
-          SizedBox(height: 10),
-          _getField('Usuario', datos['username']),
-          _getField('Nombre', datos['name']),
-          _getField('Bio', datos['bio']),
-          _getField('Correo', datos['email']),
-        ],
+            SizedBox(height: 10),
+            EditUserForm(autenticacionBloc: _autenticacionBloc),
+            _getField('Usuario', datos['username']),
+            _getField('Nombre', datos['name']),
+            _getField('Bio', datos['bio']),
+            _getField('Correo', datos['email']),
+            RaisedButton(
+              onPressed: () {
+                _autenticacionBloc.add(LoggedOut());
+                Navigator.pop(context);
+              }, 
+              textColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20)
+              ),
+              child: Container(
+                width: 150,
+                height: 40,
+                alignment: Alignment.center,
+                child: Text('Cerrar sesión', style: TextStyle(fontSize: 16),)
+              )
+            ),
+          ],
+        )
       ),
     );
   }

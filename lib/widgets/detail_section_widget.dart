@@ -4,15 +4,15 @@ class DetailSectionWidget extends StatelessWidget{
   const DetailSectionWidget({
     Key key, 
     @required this.title,
+    this.subtitle,
     @required this.child,
     this.actions
-    /* this.margin = false */
   }): super(key: key);
 
   final String title;
+  final String subtitle;
   final Widget child;
   final List<Map<String, Object>> actions;
-  /* final bool margin; */
 
   Widget _getAction(Map<String, Object> action) {
     if (action.isNotEmpty)
@@ -37,18 +37,6 @@ class DetailSectionWidget extends StatelessWidget{
      return Container(
       margin: EdgeInsets.only(bottom: 10),
       padding: EdgeInsets.all(15),
-      /* decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 5,
-            spreadRadius: 1,
-            offset: Offset(2, 2)
-          )
-        ]
-      ), */
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -57,7 +45,7 @@ class DetailSectionWidget extends StatelessWidget{
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(title, style: TextStyle(
-                  color: Colors.grey[400],
+                  color: Colors.grey[700],
                   fontSize: 20,
                   fontWeight: FontWeight.bold
                 )
@@ -74,8 +62,13 @@ class DetailSectionWidget extends StatelessWidget{
               )
             ]
           ),
+          SizedBox(height: 10),
+          ( subtitle != null 
+            ? Text(subtitle)
+            : Container()
+          ),
           Padding(
-            padding: EdgeInsets.only(top: 15, left: /* this.margin ? 20 : */ 0, bottom: 10),
+            padding: EdgeInsets.only(top: 15, left: 0, bottom: 10),
             child: child,
           )
         ]

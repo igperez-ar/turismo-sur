@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:turismo_app/components/components.dart';
+import 'package:turismo_app/widgets/widgets.dart';
 import 'package:turismo_app/models/models.dart';
 import 'package:turismo_app/screens/screens.dart';
 

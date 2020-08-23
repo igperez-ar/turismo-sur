@@ -3,6 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:location_permissions/location_permissions.dart';
 
 import 'package:turismo_app/screens/screens.dart';
+import 'package:turismo_app/screens/user/ingreso_screen.dart';
 
 
 class RootScreen extends StatefulWidget {
@@ -12,13 +13,16 @@ class RootScreen extends StatefulWidget {
 }
 
 class _RootScreenState extends State<RootScreen> {
+  bool _showSplash = true;
   int _currentIndex = 0;
   final List<Widget> _children =[
     ExplorarScreen(),
     MapaScreen(),
     ChatScreen(),
-    PerfilScreen()
+    PerfilScreen(),
   ];
+
+
 
   void changeTabIndex(int index) {
     setState(() {
@@ -90,85 +94,71 @@ class _RootScreenState extends State<RootScreen> {
 
   @override
   Widget build(BuildContext context) {
-    
-    return Scaffold(
-      body: _children[_currentIndex],
-      /* floatingActionButton: FloatingActionButton(
-        onPressed: (){}, 
-        backgroundColor: (_currentIndex == 4 ? Colors.teal : Colors.grey[600]),
-        child: Icon(Icons.favorite, size: 33),),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked, */
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 10,
-              spreadRadius: 2,
-              offset: Offset(0,-1)
-            )
-          ]
-        ),
-        child: /* BottomAppBar(
-          child: Container(
-            height: 58,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-              this._getTabItem(0, Icons.explore, 'Explorar'),
-              this._getTabItem(1, Icons.map, 'Mapa'),
-              SizedBox(width: 40),
-              // Nombre al botón del medio
-              /* Container(
-                margin: EdgeInsets.only(top: 20),
-                child: Text(
-                  'Favoritos', 
-                  style: TextStyle(
-                    fontSize: 13, 
-                    color: Colors.grey[600]
-                  )
-                )
-              ), */
-              this._getTabItem(2, Icons.chat, 'Chat'),
-              this._getTabItem(3, Icons.person, 'Perfil'),
-            ],
-            ),
+
+    if (_showSplash) {
+      return SplashScreen(
+        onDismiss: () {
+          this.changeTabIndex(0);
+          this.setState(() {
+            _showSplash = false;
+          });
+        },
+        onSignup: () {
+          this.changeTabIndex(3);
+          this.setState(() {
+            _showSplash = false;
+          });
+        } 
+      );
+
+    } else { 
+      return Scaffold(
+        body: _children[_currentIndex],
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 10,
+                spreadRadius: 2,
+                offset: Offset(0,-1)
+              )
+            ]
           ),
-          shape: CircularNotchedRectangle(),
-        ) */
-        BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: changeTabIndex,
-          backgroundColor: Theme.of(context).bottomAppBarColor,
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: Theme.of(context).iconTheme.color,
-          selectedIconTheme: IconThemeData(size: 32),
-          selectedLabelStyle: TextStyle(height: 0),
-          
-          showSelectedLabels: false,
-          elevation: 15,
-          unselectedLabelStyle: TextStyle(height: 1.2, fontSize: 13),
-          iconSize: 26,
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.explore),
-              title: Text('Explorar'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.map),
-              title: Text('Mapa'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.chat),
-              title: Text('Chat'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              title: Text('Perfil'),
-            ),
-          ],
-        ), 
-      )
-    );
+          child: BottomNavigationBar(
+            currentIndex: _currentIndex,
+            onTap: changeTabIndex,
+            backgroundColor: Theme.of(context).bottomAppBarColor,
+            type: BottomNavigationBarType.fixed,
+            selectedItemColor: Theme.of(context).iconTheme.color,
+            selectedIconTheme: IconThemeData(size: 32),
+            selectedLabelStyle: TextStyle(height: 0),
+            
+            showSelectedLabels: false,
+            elevation: 15,
+            unselectedLabelStyle: TextStyle(height: 1.2, fontSize: 13),
+            iconSize: 26,
+            items: <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.explore),
+                title: Text('Explorar'),
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.map),
+                title: Text('Mapa'),
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.chat),
+                title: Text('Chat'),
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person),
+                title: Text('Perfil'),
+              ),
+            ],
+          ), 
+        )
+      );
+    }
   }
 }

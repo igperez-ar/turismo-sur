@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:turismo_app/bloc/bloc.dart';
-import 'package:turismo_app/components/components.dart';
-import 'package:turismo_app/components/map_carousel.dart';
+import 'package:turismo_app/widgets/widgets.dart';
 import 'package:turismo_app/models/models.dart';
 
 
@@ -114,7 +113,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
 
                       return Column(
                         children: <Widget>[
-                          (filtrados > 0
+                          /* (filtrados > 0
                             ? SnackBarWidget(
                                 message: ( filtrados == 1 
                                   ? 'Se filtró 1 favorito.' 
@@ -123,7 +122,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                                 type: SnackType.success,
                               )
                             : Container()
-                          ),
+                          ), */
                           Expanded(
                             child: ListView(
                               padding: EdgeInsets.only(left: 15, right: 15, bottom: 15, top: 5),

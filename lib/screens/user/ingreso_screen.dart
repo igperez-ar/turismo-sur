@@ -1,68 +1,93 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:turismo_app/bloc/autenticacion/autenticacion_bloc.dart';
+import 'package:turismo_app/screens/forms/forms.dart';
+import 'package:turismo_app/screens/forms/signup_form.dart';
+import 'package:turismo_app/widgets/widgets.dart';
 
 class IngresoScreen extends StatefulWidget {
+  final int selectedTab;
+
+  const IngresoScreen({
+    Key key,
+    this.selectedTab = 0
+  }) : super(key: key);
+
   @override
   _IngresoScreenState createState() => _IngresoScreenState();
 }
 
 class _IngresoScreenState extends State<IngresoScreen> {
-  TextEditingController _usuarioController;
-  TextEditingController _contrasenaController;
+  AutenticacionBloc _autenticacionBloc;
+  int _selectedTab;
 
-  Widget _getField(String title, String data) {
-    TextEditingController _textEditingController = TextEditingController();
-    _textEditingController.text = data;
+  @override 
+  void initState() {
+    super.initState();
 
-    return Container(
-      margin: EdgeInsets.only(top: 10),
-      padding: EdgeInsets.symmetric(horizontal: 30),
-      child: Column(
-        children: <Widget>[ 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Flexible(
-                fit: FlexFit.loose,
-                flex: 1,
-                child: Text(title, style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 18
-                  )
-                ),
-              ),
-              Flexible(
-                fit: FlexFit.tight,
-                flex: 3,
-                child: TextField(
-                  textAlign: TextAlign.right,
-                  textCapitalization: TextCapitalization.sentences,
-                  controller: _textEditingController,
-                  /* onEditingComplete: _processText, */ 
-                  decoration: InputDecoration( 
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    errorBorder: InputBorder.none,
-                    disabledBorder: InputBorder.none,
+    _autenticacionBloc = BlocProvider.of<AutenticacionBloc>(context);
+    _selectedTab = widget.selectedTab;
+  }
+
+  Widget _renderSignup() {
+    if (this._selectedTab != 0) 
+      return Container();
+
+    return BlocBuilder<AutenticacionBloc,AutenticacionState>(
+      builder: (context, state) {
+        return Column(
+          children: [
+            SignUpForm(autenticacionBloc: _autenticacionBloc),
+            SizedBox(height: 10),
+            GestureDetector(
+              onTap: () => this.setState(() {
+                this._selectedTab = 1;
+              }),
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 20),
+                child: Text('Ya tienes una cuenta? Inicia sesión!', 
+                  style: TextStyle(
+                    color: Colors.grey[600]
                   ),
-                ),
-              ),
-            ],
-          ),
-          Divider(thickness: 2, color: Colors.grey[200],)
-        ]
-      )
+                )
+              )
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _renderSignin() {
+    if (this._selectedTab != 1) 
+      return Container();
+
+    return Column(
+      children: [
+        SignInForm(autenticacionBloc: _autenticacionBloc),
+        SizedBox(height: 15),
+        GestureDetector(
+          onTap: () => this.setState(() {
+            this._selectedTab = 0;
+          }),
+          child: Text('No tienes una cuenta? Registrate!', 
+            style: TextStyle(
+              color: Colors.grey[600]
+            ),
+          )
+        )
+      ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    double _height = MediaQuery.of(context).size.height;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bienvenid@!', 
+        title: Text(this._selectedTab == 1 ? 'Iniciar sesión' : 'Registrarse', 
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -70,20 +95,41 @@ class _IngresoScreenState extends State<IngresoScreen> {
         ),
         centerTitle: true,
       ),
-      body: Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 30),
-              height: 100,
-            child: SvgPicture.asset(
-              'assets/images/undraw_sign_in_e6hj.svg',
-              color: Theme.of(context).scaffoldBackgroundColor,
-              colorBlendMode: isDark ? BlendMode.lighten : BlendMode.softLight,
-              /* width: 55, */
-            )
+      body: SafeArea(
+        child: Center(
+          child: BlocBuilder<AutenticacionBloc, AutenticacionState>(
+            builder: (context, state) {
+              if (state is AutenticacionUnauthenticated)
+                SnackBarWidget.show(context, state.error, SnackType.danger);
+
+              return SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      height: this._selectedTab == 1 ? null : 0,
+                      padding: EdgeInsets.symmetric(horizontal: 30),
+                      child: SvgPicture.asset(
+                        'assets/images/undraw_sign_in.svg',
+                        height: _height * 0.3,
+                      )
+                    ),
+                    Container(
+                      height: this._selectedTab == 0 ? null : 0,
+                      padding: EdgeInsets.symmetric(horizontal: 30),
+                      child: SvgPicture.asset(
+                        'assets/images/undraw_register.svg',
+                        height: _height * 0.3,
+                      )
+                    ),
+                    SizedBox(height: 10),
+                    _renderSignin(),
+                    _renderSignup()
+                  ]
+                )
+              );
+            },
           )
-        ]
+        )
       )
     );
   }

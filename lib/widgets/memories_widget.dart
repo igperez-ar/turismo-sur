@@ -7,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:turismo_app/bloc/bloc.dart';
-import 'package:turismo_app/components/components.dart';
+import 'package:turismo_app/widgets/widgets.dart';
 import 'package:turismo_app/models/models.dart';
 
 

@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:turismo_app/bloc/bloc.dart';
 import 'package:turismo_app/models/models.dart';
-import 'package:turismo_app/components/components.dart';
+import 'package:turismo_app/widgets/widgets.dart';
 import 'package:turismo_app/screens/favoritos_screen.dart';
 
 

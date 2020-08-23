@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
-import 'package:turismo_app/components/components.dart';
+import 'package:turismo_app/widgets/widgets.dart';
 
 /* class ChatScreen extends StatelessWidget { */
 

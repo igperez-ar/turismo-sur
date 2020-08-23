@@ -15,3 +15,5 @@ export './score_review_widget.dart';
 export './search_bar_widget.dart';
 export './empty_widget.dart';
 export './snack_bar_widget.dart';
+export './calificacion_widget.dart';
+export './input_validated_widget.dart';

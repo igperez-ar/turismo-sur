@@ -2,7 +2,7 @@ import 'package:dashed_container/dashed_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:turismo_app/bloc/bloc.dart';
-import 'package:turismo_app/components/components.dart';
+import 'package:turismo_app/widgets/widgets.dart';
 import 'package:turismo_app/models/models.dart';
 
 class EstablecimientoScreen extends StatefulWidget {
@@ -321,10 +321,7 @@ class _EstablecimientoScreenState extends State<EstablecimientoScreen> {
                       )
                     ),
                     SizedBox(height: 40),
-                    DetailSectionWidget(
-                      title: "Calificaciones y reseñas:",
-                      child: ScoreReviewWidget(),
-                    ),
+                    ScoreReviewWidget(),
                     MemoriesWidget(
                       id: widget.establecimiento.id,
                       type: widget.type,

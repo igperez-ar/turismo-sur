@@ -1,15 +1,13 @@
 import 'dart:math';
 
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:geolocator/geolocator.dart';
+
 import 'package:turismo_app/bloc/bloc.dart';
 import 'package:turismo_app/models/models.dart';
-
-import 'package:turismo_app/screens/screens.dart';
-import 'package:turismo_app/components/components.dart';
+import 'package:turismo_app/widgets/widgets.dart';
 
 class ExplorarScreen extends StatefulWidget {
   @override
@@ -127,7 +125,7 @@ class _ExplorarScreenState extends State<ExplorarScreen> {
             if (state.filteredAlojamientos.isEmpty && 
                 state.filteredGastronomicos.isEmpty) {
               return EmptyWidget(
-                title: 'No se encontraron favoritos para los filtros seleccionados.',
+                title: 'No se encontraron establecimientos para los filtros seleccionados.',
                 uri: 'assets/images/undraw_taken.svg',
                 button: {
                   'title': 'Ir a filtros',
@@ -139,7 +137,7 @@ class _ExplorarScreenState extends State<ExplorarScreen> {
             int filtrados = state.activeFilters['filtrados'];
             return Column(
               children: [
-                ( filtrados > 0
+                /* ( filtrados > 0
                   ? SnackBarWidget(
                       message: ( filtrados == 1 
                         ? 'Se filtró 1 establecimiento.' 
@@ -148,7 +146,7 @@ class _ExplorarScreenState extends State<ExplorarScreen> {
                       type: SnackType.success,
                     )
                   : Container()
-                ),
+                ), */
                 Expanded(
                   child: _getCardList(
                     state.filteredAlojamientos, 

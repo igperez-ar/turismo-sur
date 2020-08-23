@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 enum SnackType {
   success,
@@ -6,7 +7,38 @@ enum SnackType {
   info,
 }
 
-class SnackBarWidget extends StatefulWidget {
+class SnackBarWidget {
+
+  static Map<SnackType, Color> typeColor = {
+    SnackType.success: Colors.green[400],
+    SnackType.danger: Colors.red[400],
+    SnackType.info: Colors.blue[400]
+  };
+
+  static show(BuildContext context, String message, SnackType type, {SnackBarAction action, bool persistent = true}) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      Scaffold.of(context).hideCurrentSnackBar();
+      Scaffold.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          action: action ?? SnackBarAction(
+            label: action != null ? action.label : 'Ocultar',
+            textColor: Colors.white,
+            onPressed: () {
+              Scaffold.of(context).hideCurrentSnackBar();
+            },
+          ),
+          backgroundColor: typeColor[type],
+          behavior: SnackBarBehavior.floating,
+          duration: persistent ? Duration(hours: 1) : Duration(seconds: 5),
+          elevation: 2,
+        )
+      );
+    });
+  }
+}
+
+/* class SnackBarWidget extends StatefulWidget {
   final String message;
   final Map<String, dynamic> button;
   final SnackType type;
@@ -116,3 +148,4 @@ class _SnackBarWidgetState extends State<SnackBarWidget> with TickerProviderStat
     return Container();
   }
 }
+ */

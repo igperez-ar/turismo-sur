@@ -10,7 +10,7 @@
     
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="turismo_app"
+        android:label="Turismo Sur"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
