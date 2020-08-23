@@ -56,14 +56,14 @@ class Alojamiento extends Equatable{
 
   factory Alojamiento.fromJson(Map<String, dynamic> json) => Alojamiento(
     id: json['id'],
-    nombre: _parseNombre(json['nombre'], Clasificacion.fromJson(json['clasificacion'])),
+    nombre: _parseNombre(json['nombre'], Clasificacion.fromJson(json['clasificacione'])),
     domicilio: json['domicilio'],
     lat: json['lat'].toDouble(),
     lng: json['lng'].toDouble(),
     foto: json['foto'],
     categoria: Categoria.fromJson(json['categoria']),
-    clasificacion: Clasificacion.fromJson(json['clasificacion']),
-    localidad: Localidad.fromJson(json['localidad']),
+    clasificacion: Clasificacion.fromJson(json['clasificacione']),
+    localidad: Localidad.fromJson(json['localidade']),
   );
 
   Map<String, dynamic> toJson() => {

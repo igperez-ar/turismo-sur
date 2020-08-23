@@ -1,1 +1,3 @@
-export './get_gastronomicos.dart';
+export 'query_gastronomico.dart';
+export 'query_alojamiento.dart';
+export 'query_usuario.dart';

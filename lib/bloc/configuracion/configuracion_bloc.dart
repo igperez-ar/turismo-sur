@@ -2,19 +2,16 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:turismo_app/bloc/bloc.dart';
-
-import 'package:turismo_app/models/models.dart';
 
 part 'configuracion_event.dart';
 part 'configuracion_state.dart';
 
-class ConfiguracionBloc extends HydratedBloc<ConfiguracionEvent, ConfiguracionState> {
+class ConfiguracionBloc extends Bloc<ConfiguracionEvent, ConfiguracionState> with HydratedMixin {
 
-  @override
-  ConfiguracionState get initialState {
-    return super.initialState ?? ConfiguracionInitial();
+  ConfiguracionBloc() : super(ConfiguracionInitial()) {
+    hydrate();
   }
 
   @override
@@ -49,7 +46,7 @@ class ConfiguracionBloc extends HydratedBloc<ConfiguracionEvent, ConfiguracionSt
       yield* _mapConfiguracionLoadedToState();
     } else if (event is UpdateConfiguracion) {
       yield* _mapConfiguracionUpdatedToState(event);
-    }
+    } 
   }
 
   Stream<ConfiguracionState> _mapConfiguracionLoadedToState() async* {
@@ -57,6 +54,7 @@ class ConfiguracionBloc extends HydratedBloc<ConfiguracionEvent, ConfiguracionSt
 
     try {
       final Map<String, Object> config = {
+        'splash-inicial': true,
         'dark-mode': false,
       };
         
@@ -71,15 +69,14 @@ class ConfiguracionBloc extends HydratedBloc<ConfiguracionEvent, ConfiguracionSt
     UpdateConfiguracion event
   ) async* {
 
-    if (state is ConfiguracionSuccess){
-      final MapEntry newEntry = event.config.entries.first;
-      final settings = Map<String, Object>.from((state as ConfiguracionSuccess).config
-        .map((key, value) {
-          return (key == newEntry.key ? newEntry : MapEntry(key, value));
-        })
-      );
+    if (state is ConfiguracionSuccess) {
+      final Map<String, Object> settings = Map.from((state as ConfiguracionSuccess).config);
+
+      for (var entry in event.config.entries) {
+        settings.update(entry.key, (value) => entry.value);
+      }
 
       yield ConfiguracionSuccess(settings);
     }
-  } 
+  }
 }

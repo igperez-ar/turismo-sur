@@ -3,9 +3,9 @@ import 'dart:convert';
 
 /* import 'package:bloc/bloc.dart'; */
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:turismo_app/bloc/bloc.dart';
 
 import 'package:turismo_app/models/models.dart';
 import 'package:turismo_app/repositories/repository.dart';
@@ -13,10 +13,10 @@ import 'package:turismo_app/repositories/repository.dart';
 part 'favoritos_event.dart';
 part 'favoritos_state.dart';
 
-class FavoritosBloc extends HydratedBloc<FavoritosEvent, FavoritosState> {
-  @override
-  FavoritosState get initialState {
-    return super.initialState ?? FavoritosInitial();
+class FavoritosBloc extends Bloc<FavoritosEvent, FavoritosState> with HydratedMixin {
+
+  FavoritosBloc() : super(FavoritosInitial()) {
+    hydrate();
   }
 
   @override
@@ -105,12 +105,6 @@ class FavoritosBloc extends HydratedBloc<FavoritosEvent, FavoritosState> {
   ) async* {
     if (state is FavoritosSuccess){
       final List<Favorito> updatedFavoritos = List.from((state as FavoritosSuccess).favoritos);
-       /*  .map((favorito) { 
-          return (favorito.id == event.favorito.id 
-             && favorito.tipo == event.favorito.tipo)
-            ? event.favorito
-            : favorito;})
-        .toList(); */
       final index = updatedFavoritos.indexOf(event.favorito);
       final favorito = Favorito(
         id: event.favorito.id,

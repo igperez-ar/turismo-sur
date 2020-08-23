@@ -12,16 +12,19 @@ class FiltrosInitial extends FiltrosState {}
 class FiltrosFetching extends FiltrosState {}
 
 class FiltrosSuccess extends FiltrosState {
-  final List<Alojamiento> filteredAlojamientos;
-  final List<Gastronomico> filteredGastronomicos;
+  final Map<String, Object> filterData;
+  final Map<String, Object> activeFilters;
 
   const FiltrosSuccess({
-    @required this.filteredAlojamientos,
-    @required this.filteredGastronomicos
-  });
+    this.filterData,
+    this.activeFilters
+  }); 
 
   @override
-  List<Object> get props => [filteredAlojamientos, filteredGastronomicos];
+  List<Object> get props => [
+    filterData,
+    activeFilters
+  ];
 }
 
 class FiltrosFailure extends FiltrosState {}

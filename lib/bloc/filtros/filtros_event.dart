@@ -11,9 +11,11 @@ class FetchFiltros extends FiltrosEvent {
   List<Object> get props => [];
 }
 
-class EstablecimientosUpdated extends FiltrosEvent {
-  const EstablecimientosUpdated();
+class UpdateFiltrosActivos extends FiltrosEvent {
+  final Map<String, Object> newFilters;
+
+  const UpdateFiltrosActivos(this.newFilters);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [newFilters];
 }

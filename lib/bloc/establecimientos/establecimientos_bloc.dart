@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:turismo_app/bloc/bloc.dart';
 
 import 'package:turismo_app/models/models.dart';
 import 'package:turismo_app/repositories/repository.dart';
@@ -14,10 +13,7 @@ part 'establecimientos_state.dart';
 class EstablecimientosBloc extends Bloc<EstablecimientosEvent, EstablecimientosState> {
   final EstablecimientosRepository repository;
 
-  EstablecimientosBloc({@required this.repository}) : assert(repository != null);
-
-  @override
-  EstablecimientosState get initialState => EstablecimientosInitial();
+  EstablecimientosBloc({@required this.repository}) : super(EstablecimientosInitial());
 
   Map<String, List> _getFilterData(
     List<Alojamiento> alojamientos, List<Gastronomico> gastronomicos
