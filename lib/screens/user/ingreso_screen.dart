@@ -71,10 +71,13 @@ class _IngresoScreenState extends State<IngresoScreen> {
           onTap: () => this.setState(() {
             this._selectedTab = 0;
           }),
-          child: Text('No tienes una cuenta? Registrate!', 
-            style: TextStyle(
-              color: Colors.grey[600]
-            ),
+          child: Padding(
+            padding: EdgeInsets.only(bottom: 20),
+            child: Text('No tienes una cuenta? Registrate!', 
+              style: TextStyle(
+                color: Colors.grey[600]
+              ),
+            )
           )
         )
       ],

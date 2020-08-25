@@ -52,7 +52,7 @@ class _SignInFormState extends State<SignInForm> {
               RaisedButton(
                 onPressed: () {
                   if (state is! AutenticacionLoading && _formKey.currentState.validate()) {
-                    _autenticationBloc.add(LoggedIn(
+                    _autenticationBloc.add(AutenticacionLoggedIn(
                       username: _usernameController.text,
                       password: _passwordController.text
                     ));

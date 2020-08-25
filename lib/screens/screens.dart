@@ -1,6 +1,7 @@
 export './explorar_screen.dart';
 export './mapa_screen.dart';
-export './chat_screen.dart';
+export 'chat/chat_index_screen.dart';
+export 'chat/chat_screen.dart';
 export 'user/perfil_screen.dart';
 export 'user/editar_perfil_screen.dart';
 export './favoritos_screen.dart';

@@ -18,7 +18,7 @@ class _RootScreenState extends State<RootScreen> {
   final List<Widget> _children =[
     ExplorarScreen(),
     MapaScreen(),
-    ChatScreen(),
+    ChatIndexScreen(),
     PerfilScreen(),
   ];
 

@@ -135,26 +135,21 @@ class _ExplorarScreenState extends State<ExplorarScreen> {
             }
 
             int filtrados = state.activeFilters['filtrados'];
-            return Column(
-              children: [
-                /* ( filtrados > 0
-                  ? SnackBarWidget(
-                      message: ( filtrados == 1 
-                        ? 'Se filtró 1 establecimiento.' 
-                        : 'Se filtraron $filtrados establecimientos.'
-                      ), 
-                      type: SnackType.success,
-                    )
-                  : Container()
-                ), */
-                Expanded(
-                  child: _getCardList(
-                    state.filteredAlojamientos, 
-                    state.filteredGastronomicos,
-                    state.activeFilters['filtrados']
-                  )
-                )
-              ],
+            if (filtrados > 0) {
+              SnackBarWidget.show(
+                context, 
+                (filtrados == 1 
+                  ? 'Se filtró 1 establecimiento.' 
+                  : 'Se filtraron $filtrados establecimientos.'
+                ), 
+                SnackType.success,
+                persistent: false
+              );
+            }
+            return _getCardList(
+              state.filteredAlojamientos, 
+              state.filteredGastronomicos,
+              state.activeFilters['filtrados']
             );
           }
         

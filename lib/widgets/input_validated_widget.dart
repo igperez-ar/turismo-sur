@@ -5,11 +5,14 @@ class InputValidatedWidget extends StatefulWidget {
 
   final TextEditingController controller;
   final String hintText;
+  final String initialValue;
   final IconData icon;
   final TextInputType inputType;
   final bool password;
   final TextEditingController validPassword;
   final bool email;
+  final bool optional;
+  final bool multiline;
   final TextCapitalization textCapitalization;
   final int max;
   final int min;
@@ -18,11 +21,14 @@ class InputValidatedWidget extends StatefulWidget {
     Key key,
     @required this.controller,
     this.hintText,
+    this.initialValue,
     this.icon,
     this.inputType = TextInputType.text,
     this.password = false,
     this.validPassword,
     this.email = false,
+    this.optional = false,
+    this.multiline = false,
     this.textCapitalization = TextCapitalization.none,
     this.max,
     this.min,
@@ -40,6 +46,7 @@ class _InputValidatedWidgetState extends State<InputValidatedWidget> {
   @override 
   void initState() {
     super.initState();
+    widget.controller.text = widget.initialValue;
     _focusNode = FocusNode();
     _focusNode.addListener(() => setState(() {
       focus = FocusScope.of(context).hasFocus;
@@ -71,7 +78,7 @@ class _InputValidatedWidgetState extends State<InputValidatedWidget> {
   }
 
   String _validateText(String value) {
-    if (value.isEmpty) {
+    if (!widget.optional && value.isEmpty) {
       return _hasError('El campo es obligatorio.');
     }
 
@@ -102,7 +109,7 @@ class _InputValidatedWidgetState extends State<InputValidatedWidget> {
         validator: (value) {
           return _validateText(value);
         },
-        maxLines: 1,
+        maxLines: widget.multiline ? null : 1,
         maxLength: widget.max,
         textAlign: TextAlign.left,
         textAlignVertical: TextAlignVertical.center,
@@ -111,15 +118,13 @@ class _InputValidatedWidgetState extends State<InputValidatedWidget> {
         obscureText: widget.password ?? false,
         keyboardType: widget.inputType,
         decoration: InputDecoration( 
+          counterText: _focusNode.hasFocus ? null : '',
           labelText: widget.hintText,
           labelStyle: TextStyle(
-            color: _focusNode.hasFocus ? null : Colors.grey[400],
+            color: _focusNode.hasFocus ? null : Colors.grey,
           ),
           alignLabelWithHint: true,
           contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 15),
-          hintStyle: TextStyle(
-            color: Colors.red[400]
-          ),
           fillColor: Colors.grey[200],
           filled: true,
           prefixIcon: ( widget.icon != null 
@@ -135,7 +140,7 @@ class _InputValidatedWidgetState extends State<InputValidatedWidget> {
             borderRadius: BorderRadius.circular(15),
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.grey),
+            borderSide: BorderSide(color: Colors.grey[400]),
             borderRadius: BorderRadius.circular(15),
           ),
           errorBorder: OutlineInputBorder(
@@ -147,7 +152,7 @@ class _InputValidatedWidgetState extends State<InputValidatedWidget> {
             borderRadius: BorderRadius.circular(15),
           ),
           disabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.grey),
+            borderSide: BorderSide(color: Colors.grey[400]),
             borderRadius: BorderRadius.circular(15),
           ),
         ),

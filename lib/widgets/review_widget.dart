@@ -85,7 +85,7 @@ class _ReviewWidgetState extends State<ReviewWidget> {
                   )
                 ]
               ),
-              Row(
+              /* Row(
                 children: <Widget>[
                   IconButton(
                     icon: Icon(Icons.thumb_up, color: (this.isUseful ? Colors.lightGreen : Colors.grey[400])),
@@ -96,7 +96,7 @@ class _ReviewWidgetState extends State<ReviewWidget> {
                     onPressed: _changeUseless
                   )
                 ],
-              )
+              ) */
             ],
           ),
           SizedBox(height: 10),

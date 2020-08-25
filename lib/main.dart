@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 import 'package:meta/meta.dart';
@@ -32,20 +33,10 @@ void main() async {
 
   HydratedBloc.storage = await HydratedStorage.build();
 
-  /* final EstablecimientosRepository repository = EstablecimientosRepository(); */
-
-  runApp(App(
-    /* repository: repository, */
-  ));
+  runApp(App());
 }
 
 class App extends StatelessWidget {
-  /* final EstablecimientosRepository repository;
-
-  App({
-    Key key, 
-    @required this.repository,
-  }) : super(key: key); */
   
   @override
   Widget build(BuildContext context) {
@@ -75,7 +66,9 @@ class App extends StatelessWidget {
           }
 
           if (state is ConfiguracionSuccess)
-            return MaterialApp(
+            return GraphQLProvider(
+            client: ValueNotifier(BaseProvider.initailizeClient()),
+            child: MaterialApp(
               title: 'Turismo Sur',
               debugShowCheckedModeBanner: false,
               themeMode: state.config['dark-mode'] ? ThemeMode.dark : ThemeMode.light,
@@ -86,6 +79,7 @@ class App extends StatelessWidget {
                 '/': (BuildContext context) => RootScreen(),
                 '/filtros': (BuildContext context) => FiltrosScreen()
               },
+            )
             );
         }
       )

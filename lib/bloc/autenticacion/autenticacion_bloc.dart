@@ -11,22 +11,22 @@ import 'package:turismo_app/repositories/usuario_repository.dart';
 part 'autenticacion_event.dart';
 part 'autenticacion_state.dart';
 
-class AutenticacionBloc extends Bloc<AutenticacionEvent, AutenticacionState> /* with HydratedMixin */ {
+class AutenticacionBloc extends Bloc<AutenticacionEvent, AutenticacionState> with HydratedMixin {
 
   final UsuarioRepository repository;
 
   AutenticacionBloc({
     @required this.repository
-  }) : super(AutenticacionInitial()); /* {
+  }) : super(AutenticacionInitial()) {
     hydrate();
-  } */
+  }
 
-  /* @override
-  AutenticacionState fromJson(Map<String, dynamic> json) {
+  @override
+  AutenticacionState fromJson(Map<String,dynamic> json) {
     try {
-      print('HydratedSettings loaded!');
-      final String config = json['Autenticacion'];
-      return AutenticacionSuccess(jsonDecode(config));
+      print('HydratedAutentication loaded!');
+      final Usuario usuario = Usuario.fromJson(jsonDecode(json['Autenticacion']));
+      return AutenticacionAuthenticated(usuario);
       
     } catch (_) {
       print(_);
@@ -36,30 +36,32 @@ class AutenticacionBloc extends Bloc<AutenticacionEvent, AutenticacionState> /* 
 
   @override
   Map<String,dynamic> toJson(AutenticacionState state) {
-    if (state is AutenticacionSuccess) {
-      print('HydratedSettings saved!');
-      return {'Autenticacion': jsonEncode(state.config)};
+    if (state is AutenticacionAuthenticated) {
+      print('HydratedAutentication saved!');
+      return {'Autenticacion': jsonEncode(state.usuario.toJson())};
 
     } else {
       return null;
     }
-  } */
+  }
 
 
   Stream<AutenticacionState> mapEventToState(
     AutenticacionEvent event
   ) async* {
-    if (event is LoggedIn) {
+    if (event is AutenticacionLoggedIn) {
       yield* _mapLoggedInToState(event);
-    } else if (event is LoggedOut) {
+    } else if (event is AutenticacionLoggedOut) {
       yield* _mapLoggedOutToState(event);
-    } else if (event is Register) {
+    } else if (event is AutenticacionRegister) {
       yield* _mapRegisterToState(event);
+    } else if (event is AutenticacionUpdate) {
+      yield* _mapUpdateToState(event);
     } 
   }
 
   Stream<AutenticacionState> _mapLoggedInToState(
-    LoggedIn event
+    AutenticacionLoggedIn event
   ) async* {
 
     yield AutenticacionLoading();
@@ -82,20 +84,42 @@ class AutenticacionBloc extends Bloc<AutenticacionEvent, AutenticacionState> /* 
   }
 
   Stream<AutenticacionState> _mapLoggedOutToState(
-    LoggedOut event
+    AutenticacionLoggedOut event
   ) async* {
-
+    this.clear();
     yield AutenticacionInitial();
   }
 
   Stream<AutenticacionState> _mapRegisterToState(
-    Register event
+    AutenticacionRegister event
   ) async* {
 
     yield AutenticacionLoading();
 
     try {
       final Usuario usuario = await repository.addUsuario(event.nombre, event.username, event.password, event.email);
+
+      if (usuario == null) { 
+        throw Exception();
+      
+      } else {
+        yield AutenticacionAuthenticated(usuario);
+      }
+
+    } catch (e) {
+      print(e);
+      yield AutenticacionUnauthenticated('Ocurrió un error inesperado');
+    }
+  }
+
+  Stream<AutenticacionState> _mapUpdateToState(
+    AutenticacionUpdate event
+  ) async* {
+
+    yield AutenticacionLoading();
+
+    try {
+      final Usuario usuario = await repository.updateUsuario(event.username, event.newUser);
 
       if (usuario == null) { 
         throw Exception();

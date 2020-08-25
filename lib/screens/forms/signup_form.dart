@@ -94,7 +94,7 @@ class _SignUpFormState extends State<SignUpForm> {
               RaisedButton(
                 onPressed: () {
                   if (state is! AutenticacionLoading && _formKey.currentState.validate()) {
-                    _autenticationBloc.add(Register(
+                    _autenticationBloc.add(AutenticacionRegister(
                       nombre: _nameController.text,
                       username: _usernameController.text,
                       password: _passwordController.text,

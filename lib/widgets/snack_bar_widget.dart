@@ -15,7 +15,7 @@ class SnackBarWidget {
     SnackType.info: Colors.blue[400]
   };
 
-  static show(BuildContext context, String message, SnackType type, {SnackBarAction action, bool persistent = true}) {
+  static show(BuildContext context, String message, SnackType type, {SnackBarAction action, bool persistent = true, Function onHide}) {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       Scaffold.of(context).hideCurrentSnackBar();
       Scaffold.of(context).showSnackBar(
@@ -26,6 +26,8 @@ class SnackBarWidget {
             textColor: Colors.white,
             onPressed: () {
               Scaffold.of(context).hideCurrentSnackBar();
+              if (onHide != null) 
+                onHide();
             },
           ),
           backgroundColor: typeColor[type],

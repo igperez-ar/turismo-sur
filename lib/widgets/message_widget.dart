@@ -70,6 +70,7 @@ class MessageWidget extends StatelessWidget {
   Widget _getMessage(context) {
     return Flex(
       direction: Axis.horizontal,
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
@@ -124,7 +125,7 @@ class MessageWidget extends StatelessWidget {
                       style: Theme.of(context).accentTextTheme.headline1
                     )
                   )
-                  : Container()
+                  : Container(width: 0)
                 ),
                 Text(this.message),
               ]

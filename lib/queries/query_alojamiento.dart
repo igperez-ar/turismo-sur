@@ -1,30 +1,28 @@
 class QueryAlojamiento {
   
-  String getAll() {
-    return """
-      {
-        alojamientos {
+  static String getAll = """
+    {
+      alojamientos {
+        id
+        nombre
+        domicilio
+        lat
+        lng
+        foto
+        categoria {
+          id
+          valor
+          estrellas
+        }
+        clasificacione {
           id
           nombre
-          domicilio
-          lat
-          lng
-          foto
-          categoria {
-            id
-            valor
-            estrellas
-          }
-          clasificacione {
-            id
-            nombre
-          }
-          localidade {
-            id
-            nombre
-          }
+        }
+        localidade {
+          id
+          nombre
         }
       }
-    """;
-  }
+    }
+  """;
 }

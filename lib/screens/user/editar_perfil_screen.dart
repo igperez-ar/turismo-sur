@@ -13,198 +13,79 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   bool darkMode;
   AutenticacionBloc _autenticacionBloc;
-  ConfiguracionBloc _configuracionBloc;
-
-  final List<String> iconsIndex = ['265', '266', '268', '270', '272', '274', '276', '277', '278', '279', '280', '281', '282', '283', '284', '285', '286', '287', '288', '289', '290', '291', '292', '293', '294', '295', '296', '297', '298', '299', '300', '301', '302', '303', '304', '305'];
+  EditUserForm _editUserForm;
 
   @override
   void initState() {
     super.initState();
 
     _autenticacionBloc = BlocProvider.of<AutenticacionBloc>(context);
-    _configuracionBloc = BlocProvider.of<ConfiguracionBloc>(context);
-  }
-
-  List<Widget> _icons() {
-    return iconsIndex.map<Widget>((item) {
-      var url = 'assets/profile_pics/pic_' + item + '.svg';
-
-      return GestureDetector(
-        onTap: () {
-          this.setState(() {
-            datos['image'] = item;
-          });
-          Navigator.pop(context);
-        },
-        child: SvgPicture.asset(
-          url,
-          width: 55,
-          height: 55,
-          )
-      );
-    }).toList();
-  }
-
-  Map<String, String> datos = {
-    'name': 'Ignacio Perez',
-    'username': 'igperez.ar',
-    'image': '270',
-    'bio': 'Work hard in silence. Let your success be the noise.',
-    'email': 'fikuse@odsov.mx',
-  };
-
-  _selectImage() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Seleccionar imagen'),
-          content: Wrap(
-            alignment: WrapAlignment.center,
-            runSpacing: 10,
-            spacing: 10, 
-            children: _icons()
-          ),
-          actions: <Widget>[
-            FlatButton(
-              child: Text("Cancel"),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            )
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _getField(String title, String data) {
-    TextEditingController _textEditingController = TextEditingController();
-    _textEditingController.text = data;
-
-    return Container(
-      margin: EdgeInsets.only(top: 10),
-      padding: EdgeInsets.symmetric(horizontal: 30),
-      child: Column(
-        children: <Widget>[ 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Flexible(
-                fit: FlexFit.loose,
-                flex: 1,
-                child: Text(title, style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 18
-                  )
-                ),
-              ),
-              Flexible(
-                fit: FlexFit.tight,
-                flex: 3,
-                child: TextField(
-                  textAlign: TextAlign.right,
-                  textCapitalization: TextCapitalization.sentences,
-                  controller: _textEditingController,
-                  /* onEditingComplete: _processText, */ 
-                  decoration: InputDecoration( 
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    errorBorder: InputBorder.none,
-                    disabledBorder: InputBorder.none,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Divider(thickness: 2, color: Colors.grey[200],)
-        ]
-      )
-    );
+    _editUserForm = EditUserForm(autenticacionBloc: _autenticacionBloc);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Cuenta', 
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Container(
-              alignment: Alignment.center,
-              margin: EdgeInsets.only(top: 30),
-              height: 150,
-              width: 150,
-              child: Stack(
-                alignment: Alignment.bottomRight,
-                children: <Widget>[
-                  Container(  
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 5,
-                          spreadRadius: 2,
-                          offset: Offset(2,3)
-                        )
-                      ]
-                    ),
-                    child: SvgPicture.asset(
-                      'assets/profile_pics/pic_' + datos['image'] + '.svg',
-                      height: 150,
-                      width: 150,
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: BlocBuilder<AutenticacionBloc,AutenticacionState>(
+        builder: (context, state) {
+
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Cuenta', 
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              centerTitle: true,
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back, size: 30.0), 
+                onPressed: () => Navigator.of(context).pop()
+              ),
+              actions: [
+                (state is AutenticacionAuthenticated
+                  ? IconButton(
+                      icon: Icon(Icons.check, size: 30.0,),
+                      onPressed: () => _editUserForm.state.validateForm(),
                     )
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.teal[300],
-                      shape: BoxShape.circle
-                    ),
-                    child: IconButton(
-                      icon: Icon(Icons.camera_alt), 
-                      iconSize: 28,
-                      color: Colors.white,
-                      onPressed: _selectImage
-                    ),
+                  : Container(
+                    width: 57,
+                    padding: EdgeInsets.all(15),
+                    child: CircularProgressIndicator(backgroundColor: Colors.white,strokeWidth: 3.0,)
                   )
-                ]
-              ),
+                )
+              ],
             ),
-            SizedBox(height: 10),
-            EditUserForm(autenticacionBloc: _autenticacionBloc),
-            _getField('Usuario', datos['username']),
-            _getField('Nombre', datos['name']),
-            _getField('Bio', datos['bio']),
-            _getField('Correo', datos['email']),
-            RaisedButton(
-              onPressed: () {
-                _autenticacionBloc.add(LoggedOut());
-                Navigator.pop(context);
-              }, 
-              textColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20)
-              ),
-              child: Container(
-                width: 150,
-                height: 40,
-                alignment: Alignment.center,
-                child: Text('Cerrar sesión', style: TextStyle(fontSize: 16),)
+            body: Center(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    _editUserForm,
+                    RaisedButton(
+                      onPressed: () {
+                        _autenticacionBloc.add(AutenticacionLoggedOut());
+                        Navigator.pop(context);
+                      }, 
+                      textColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)
+                      ),
+                      child: Container(
+                        width: 150,
+                        height: 40,
+                        alignment: Alignment.center,
+                        child: Text('Cerrar sesión', style: TextStyle(fontSize: 16),)
+                      )
+                    ),
+                    SizedBox(height: 20)
+                  ],
+                )
               )
             ),
-          ],
-        )
-      ),
+          );
+        },
+      )
     );
   }
 }

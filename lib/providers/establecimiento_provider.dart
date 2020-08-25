@@ -7,13 +7,11 @@ class GetEstablecimientosRequestFailure implements Exception {}
 
 class EstablecimientoProvider {
     
-  GraphQLClient _graphQLClient = BaseProvider.create();
-  final QueryGastronomico _gQuery = QueryGastronomico();
-  final QueryAlojamiento _aQuery = QueryAlojamiento();
+  GraphQLClient _graphQLClient = BaseProvider.initailizeClient();
 
   Future<List<Gastronomico>> fetchGastronomicos() async {
     final result = await _graphQLClient.query(
-      QueryOptions(documentNode: gql(_gQuery.getAll())),
+      QueryOptions(documentNode: gql(QueryGastronomico.getAll)),
     );
     
     if (result.hasException) {
@@ -25,7 +23,7 @@ class EstablecimientoProvider {
 
   Future<List<Alojamiento>> fetchAlojamientos() async {
     final result = await _graphQLClient.query(
-      QueryOptions(documentNode: gql(_aQuery.getAll())),
+      QueryOptions(documentNode: gql(QueryAlojamiento.getAll)),
     );
 
     if (result.hasException) {

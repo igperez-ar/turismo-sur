@@ -14,4 +14,8 @@ class UsuarioRepository {
   Future<Usuario> addUsuario(String nombre, String username, String password, String email) async {
     return await _provider.addUsuario(nombre, username, password, email);
   }
+
+  Future<Usuario> updateUsuario(String username, Usuario newUser) async {
+    return await _provider.updateUsuario(username, newUser);
+  }
 }

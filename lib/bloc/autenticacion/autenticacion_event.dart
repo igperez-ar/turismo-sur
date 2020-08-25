@@ -4,11 +4,11 @@ abstract class AutenticacionEvent extends Equatable {
   const AutenticacionEvent();
 }
 
-class LoggedIn extends AutenticacionEvent {
+class AutenticacionLoggedIn extends AutenticacionEvent {
   final String username;
   final String password; 
 
-  const LoggedIn({
+  const AutenticacionLoggedIn({
     this.username,
     this.password
   });
@@ -17,13 +17,13 @@ class LoggedIn extends AutenticacionEvent {
   List<Object> get props => [this.username, this.password];
 }
 
-class Register extends AutenticacionEvent {
+class AutenticacionRegister extends AutenticacionEvent {
   final String nombre;
   final String username;
   final String password;
   final String email;
 
-  const Register({
+  const AutenticacionRegister({
     this.nombre,
     this.username,
     this.password,
@@ -34,8 +34,21 @@ class Register extends AutenticacionEvent {
   List<Object> get props => [this.nombre, this.username, this.password, this.email];
 }
 
-class LoggedOut extends AutenticacionEvent {
-  const LoggedOut();
+class AutenticacionUpdate extends AutenticacionEvent {
+  final String username;
+  final Usuario newUser;
+
+  const AutenticacionUpdate({
+    this.username,
+    this.newUser
+  });
+
+  @override
+  List<Object> get props => [this.username, this.newUser];
+}
+
+class AutenticacionLoggedOut extends AutenticacionEvent {
+  const AutenticacionLoggedOut();
 
   @override
   List<Object> get props => [];

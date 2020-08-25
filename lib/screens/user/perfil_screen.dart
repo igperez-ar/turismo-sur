@@ -120,156 +120,168 @@ class _PerfilScreenState extends State<PerfilScreen> {
   Widget build(BuildContext context) {
     final _width = MediaQuery.of(context).size.width;
    
-    return BlocBuilder<AutenticacionBloc,AutenticacionState>(
-      builder: (context, state) {
-        if (state is AutenticacionAuthenticated) {
-          Usuario usuario = state.usuario;
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      }, 
+      child: BlocBuilder<AutenticacionBloc,AutenticacionState>(
+        builder: (context, state) {
+          if (state is AutenticacionAuthenticated) {
+            Usuario usuario = state.usuario;
 
-          return Scaffold(
-            appBar: AppBar(
-              elevation: 0,
-              title: Text(usuario.username, 
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+            return Scaffold(
+              appBar: AppBar(
+                elevation: 0,
+                title: Text(usuario.username, 
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
+                backgroundColor: Colors.teal[300],
+                actions: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.favorite_border), 
+                    onPressed: () => Navigator.push(context,
+                      MaterialPageRoute(
+                        builder: (context) => FavoritosScreen()
+                      )
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.notifications), 
+                    onPressed: () {}
+                  )
+                ],
               ),
-              backgroundColor: Colors.teal[300],
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.favorite_border), 
-                  onPressed: () => Navigator.push(context,
-                    MaterialPageRoute(
-                      builder: (context) => FavoritosScreen()
-                    )
+              body: Stack(
+                children: [
+                  Container(
+                    width: _width,
+                    height: 300,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment(0, 0.5),
+                        colors: [Colors.teal[300], Colors.teal[100]])
+                    ),
                   ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.notifications), 
-                  onPressed: () {}
-                )
-              ],
-            ),
-            body: Stack(
-              children: [
-                Container(
-                  width: _width,
-                  height: 300,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment(0, 0.5),
-                      colors: [Colors.teal[300], Colors.teal[100]])
-                  ),
-                ),
-                ListView(
-                  children: [
-                    Column(
-                      children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.only(top: 30, bottom: 15),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
+                  ListView(
+                    children: [
+                      Column(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(top: 30, bottom: 15),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                            ),
+                            height: 100,
+                            width: 100,
+                            child: (usuario.foto != null
+                              ? SvgPicture.asset(
+                                  'assets/profile_pics/pic_${usuario.foto}.svg'
+                                )
+                              : Container()
+                            )
                           ),
-                          height: 100,
-                          width: 100,
-                          child: SvgPicture.asset(
-                            'assets/profile_pics/pic_277.svg'
-                          ),
-                        ),
-                        Text(usuario.nombre, 
-                          style: TextStyle(
-                            fontSize: 27,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                            shadows: [
-                              Shadow(
-                                color: Colors.black38,
-                                blurRadius: 3,
-                                offset: Offset(1.5, 1.5)
-                              )
-                            ]
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 70),
-                          child: Text('Work hard in silence. Let your success be the noise.', style: TextStyle(
+                          Text(usuario.nombre, 
+                            style: TextStyle(
+                              fontSize: 27,
                               color: Colors.white,
+                              fontWeight: FontWeight.w500,
                               shadows: [
                                 Shadow(
                                   color: Colors.black38,
-                                  blurRadius: 2,
-                                  offset: Offset(1.3, 1.3)
+                                  blurRadius: 3,
+                                  offset: Offset(1.5, 1.5)
                                 )
                               ]
                             ),
                             textAlign: TextAlign.center,
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical: 20, horizontal: 70),
+                            child: (usuario.descripcion != null 
+                              ? Text(usuario.descripcion, 
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    shadows: [
+                                      Shadow(
+                                        color: Colors.black38,
+                                        blurRadius: 2,
+                                        offset: Offset(1.3, 1.3)
+                                      )
+                                    ]
+                                  ),
+                                  textAlign: TextAlign.center,
+                                )
+                              : Container()
+                            )
+                          ),
+                        ],
+                      ),
+                      _getOptionsGroup([
+                        _getOption(
+                          icon: Icons.location_on,
+                          title: "Mi ubicación",
+                          onPress: () {}
+                        ),
+                        _getOption(
+                          icon: Icons.group,
+                          title: "Cuenta",
+                          onPress: () => Navigator.push(context,
+                            MaterialPageRoute(
+                              builder: (context) => EditProfileScreen()
+                            )
                           )
                         ),
-                      ],
-                    ),
-                    _getOptionsGroup([
-                      _getOption(
-                        icon: Icons.location_on,
-                        title: "Mi ubicación",
-                        onPress: () {}
-                      ),
-                      _getOption(
-                        icon: Icons.group,
-                        title: "Cuenta",
-                        onPress: () => Navigator.push(context,
-                          MaterialPageRoute(
-                            builder: (context) => EditProfileScreen()
-                          )
-                        )
-                      ),
-                    ]),
-                    BlocBuilder<ConfiguracionBloc, ConfiguracionState>(
-                      builder: (context, state) {
-                        if (state is ConfiguracionSuccess) {
-                          darkMode = state.config['dark-mode'];
+                      ]),
+                      BlocBuilder<ConfiguracionBloc, ConfiguracionState>(
+                        builder: (context, state) {
+                          if (state is ConfiguracionSuccess) {
+                            darkMode = state.config['dark-mode'];
+                          }
+                        
+                          return _getOptionsGroup([
+                            _getOption(
+                              icon: Icons.notifications,
+                              title: "Notificaciones",
+                              onPress: () {}
+                            ),
+                            _getOption(
+                              icon: Icons.devices,
+                              title: "Dispositivos",
+                              onPress: () {}
+                            ),
+                            _getOption(
+                              icon: Icons.chat_bubble,
+                              title: "Idioma",
+                              onPress: () {}
+                            ),
+                            _getOption(
+                              icon: Icons.lightbulb_outline,
+                              title: "Modo oscuro",
+                              value: darkMode, 
+                              onPress: () {
+                                setState(() {
+                                  darkMode = !darkMode;
+                                });
+                                _configuracionBloc.add(UpdateConfiguracion({'dark-mode': darkMode}));
+                              }
+                            ),
+                          ]);
                         }
-                      
-                        return _getOptionsGroup([
-                          _getOption(
-                            icon: Icons.notifications,
-                            title: "Notificaciones",
-                            onPress: () {}
-                          ),
-                          _getOption(
-                            icon: Icons.devices,
-                            title: "Dispositivos",
-                            onPress: () {}
-                          ),
-                          _getOption(
-                            icon: Icons.chat_bubble,
-                            title: "Idioma",
-                            onPress: () {}
-                          ),
-                          _getOption(
-                            icon: Icons.lightbulb_outline,
-                            title: "Modo oscuro",
-                            value: darkMode, 
-                            onPress: () {
-                              setState(() {
-                                darkMode = !darkMode;
-                              });
-                              _configuracionBloc.add(UpdateConfiguracion({'dark-mode': darkMode}));
-                            }
-                          ),
-                        ]);
-                      }
-                    )
-                  ],
-                )
-              ],
-            )
-          );
+                      )
+                    ],
+                  )
+                ],
+              )
+            );
         }
 
-      return IngresoScreen();
-    },
+        return IngresoScreen();
+        },
+      )
     );
   } 
   
