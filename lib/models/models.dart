@@ -9,3 +9,5 @@ export './mensaje_model.dart';
 export './categoria_model.dart';
 export './favorito_model.dart';
 export './establecimiento.dart';
+export './destacable_model.dart';
+export './calificacion_model.dart';

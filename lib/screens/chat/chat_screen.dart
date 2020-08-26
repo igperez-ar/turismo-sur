@@ -40,13 +40,25 @@ class _ChatScreenState extends State<ChatScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: (grupo != null
+        title: Text('Chat', 
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+        /* title: (grupo != null
           ? Row(
               children: [
-                Container(),
+                ProfileImage(
+                  image: grupo['foto'], 
+                  size: ProfileImageSize.small,
+                  group: !grupo['individual'],
+                ),
+                SizedBox(width: 10),
                 Text(grupo['nombre'], 
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -54,26 +66,29 @@ class _ChatScreenState extends State<ChatScreen> {
             )
           : Container()
         ),
+        titleSpacing: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white, size: 30.0,), 
+          icon: Icon(Icons.arrow_back, color: Colors.white, size: 25.0,), 
           onPressed: widget.onBack,
         ),
         actions: <Widget>[
           Container(
-            margin: EdgeInsets.only(right: 10),
-            child: DropdownButton(
-              icon: Icon(Icons.more_vert, color: Colors.white, size: 30.0), 
-              items: [
-                DropdownMenuItem(child: Text('Info. del grupo')),
-                DropdownMenuItem(child: Text('Salir del grupo')),
+            child: PopupMenuButton(
+              icon: Icon(Icons.more_vert, color: Colors.white, size: 25.0), 
+              onSelected: (_){} /* (result) => setState(() {_selection = result;}) */,
+              itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+                const PopupMenuItem(
+                  value: 1,
+                  child: Text('Info. del grupo'),
+                ),
+                const PopupMenuItem(
+                  value: 2,
+                  child: Text('Salir del grupo'),
+                ),
               ],
-              underline: Container(),
-              selectedItemBuilder: (context) => [Container(width: 110)],
-              itemHeight: 60,
-              onChanged: (value) {},
             )
           )
-        ],
+        ], */
       ),
       body: Query(
         options: QueryOptions(
@@ -113,7 +128,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     Subscription(
                       'getAll',
                       QueryMensajes.getAll,
-                      variables: {'grupo': 1},
+                      variables: {'grupo': widget.grupoId},
                       builder: ({
                         bool loading,
                         dynamic payload,
@@ -166,8 +181,12 @@ class _ChatScreenState extends State<ChatScreen> {
                         margin: EdgeInsets.only(right: 10, left: 10, top: 10, bottom: 15),
                         padding: EdgeInsets.only(left: 20),
                         decoration: BoxDecoration(
-                          color: Colors.grey[400],
-                          borderRadius: BorderRadius.circular(20)
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: Colors.grey[400],
+                            width: 1
+                          )
                         ),
                         child: Flex( 
                           direction: Axis.horizontal,
@@ -180,7 +199,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                 controller: _textEditingController,
                                 decoration: InputDecoration(
                                   hintText: 'Escribe un mensaje',
-                                  hintStyle: TextStyle(color: Colors.grey[800]),
+                                  hintStyle: TextStyle(color: Colors.grey[600]),
                                   border: InputBorder.none,
                                   focusedBorder: InputBorder.none,
                                   enabledBorder: InputBorder.none,
@@ -220,13 +239,17 @@ class _ChatScreenState extends State<ChatScreen> {
                 );
               }
 
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-            );
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          );
         }
-      )
+      ),
+      backgroundColor: (Theme.of(context).brightness == Brightness.light 
+        ? Colors.grey[200] 
+        : null
+      ),
     );
   }
 }

@@ -101,6 +101,10 @@ class _DefaultCardState extends State<DefaultCard> {
   Widget build(BuildContext context) {
     final _width = MediaQuery.of(context).size.width;
 
+    if (widget.establecimiento == null) {
+      return Text('algo anda mal');
+    }
+
     return GestureDetector(
       onTap: () => Navigator.push(context,
         MaterialPageRoute(

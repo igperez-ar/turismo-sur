@@ -9,6 +9,7 @@ import 'package:turismo_app/bloc/configuracion/configuracion_bloc.dart';
 import 'package:turismo_app/models/models.dart';
 import 'package:turismo_app/screens/screens.dart';
 import 'package:turismo_app/screens/user/ingreso_screen.dart';
+import 'package:turismo_app/widgets/widgets.dart';
 
 //icons 265-306
 
@@ -170,19 +171,12 @@ class _PerfilScreenState extends State<PerfilScreen> {
                     children: [
                       Column(
                         children: <Widget>[
-                          Container(
-                            margin: EdgeInsets.only(top: 30, bottom: 15),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
+                          Padding(
+                            padding: EdgeInsets.only(top: 30, bottom: 15),
+                            child: ProfileImage(
+                              image: usuario.foto, 
+                              size: ProfileImageSize.big
                             ),
-                            height: 100,
-                            width: 100,
-                            child: (usuario.foto != null
-                              ? SvgPicture.asset(
-                                  'assets/profile_pics/pic_${usuario.foto}.svg'
-                                )
-                              : Container()
-                            )
                           ),
                           Text(usuario.nombre, 
                             style: TextStyle(

@@ -148,26 +148,9 @@ class _EditUserFormState extends State<EditUserForm> {
                 child: Stack(
                   alignment: Alignment.bottomRight,
                   children: <Widget>[
-                    Container(  
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          /* BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 5,
-                            spreadRadius: 2,
-                            offset: Offset(2,3)
-                          ) */
-                        ]
-                      ),
-                      child: (image != null
-                        ? SvgPicture.asset(
-                            'assets/profile_pics/pic_$image.svg',
-                            height: 150,
-                            width: 150,
-                          )
-                        : Container()
-                      )
+                    ProfileImage(
+                      image: image, 
+                      size: ProfileImageSize.large
                     ),
                     Container(
                       decoration: BoxDecoration(

@@ -17,3 +17,4 @@ export './empty_widget.dart';
 export './snack_bar_widget.dart';
 export './calificacion_widget.dart';
 export './input_validated_widget.dart';
+export './profile_image.dart';

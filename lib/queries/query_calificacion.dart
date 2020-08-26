@@ -1,55 +1,25 @@
 class QueryCalificacion {
 
-  static String getAll = """
-    query getAll(\$usuarioId: bigint!) {
-      grupos(where: {id: {}, miembros: {usuario: {id: {_eq: \$usuarioId}}}}) {
-        id
-        nombre
-        descripcion
-        foto
-        individual
-        miembros {
-          id
-          role {
-            id
-            nombre
-            valor
-          }
-          usuario {
-            id
-            nombre
-            username
-            foto
-            descripcion
-          }
-        }
+  static String addCalificacion = """
+    mutation addCalificacion(\$puntaje: Int!, \$comentario: String!, \$usuarioId: Int!, \$alojamientoId: Int, \$gastronomicoId: Int, \$destacableId: Int) {
+      insert_calificaciones(objects: {puntaje: \$puntaje, comentario: \$comentario, usuario_id: \$usuarioId, alojamiento_id: \$alojamientoId, gastronomico_id: \$gastronomicoId, destacable_id: \$destacableId}) {
+        affected_rows
       }
     }
   """;
 
-  static String getOne = """
-    query getOne(\$grupo: Int!) {
-      grupos(where: {id: {_eq: \$grupo}}) {
-        id
-        nombre
-        descripcion
-        foto
-        individual
-        miembros {
-          id
-          role {
-            id
-            nombre
-            valor
-          }
-          usuario {
-            id
-            nombre
-            username
-            foto
-            descripcion
-          }
-        }
+  static String updateCalificacion = """
+    mutation updateCalificacion(\$calificacionId: Int!, \$puntaje: Int!, \$comentario: String!, \$destacableId: Int) {
+      update_calificaciones(where: {id: {_eq: \$calificacionId}}, _set: {puntaje: \$puntaje, comentario: \$comentario, destacable_id: \$destacableId}) {
+        affected_rows
+      }
+    }
+  """;
+
+  static String deleteCalificacion = """
+    mutation deleteCalificacion(\$calificacionId: Int!) {
+      delete_calificaciones(where: {id: {_eq: \$calificacionId}}) {
+        affected_rows
       }
     }
   """;

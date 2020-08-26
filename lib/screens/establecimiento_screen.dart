@@ -21,6 +21,27 @@ class EstablecimientoScreen extends StatefulWidget {
 
 class _EstablecimientoScreenState extends State<EstablecimientoScreen> {
 
+  final ScrollController _scrollController = ScrollController();
+  bool _isScrolled = false;
+
+  @override
+  void initState() {
+    _scrollController.addListener(_listenToScrollChange);
+    super.initState();
+  }
+
+  void _listenToScrollChange() {
+    if (_scrollController.offset >= 350.0) {
+      setState(() {
+        _isScrolled = true;
+      });
+    } else {
+      setState(() {
+        _isScrolled = false;
+      });
+    }
+  }
+
   List<Widget> _getWidget() {
     Widget _getChip(String title) => Container(
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -141,6 +162,138 @@ class _EstablecimientoScreenState extends State<EstablecimientoScreen> {
   @override
   Widget build(BuildContext context) {
     final _width = MediaQuery.of(context).size.width;
+
+    /* return Material(
+      child: CustomScrollView(
+      controller: _scrollController,
+      slivers: <Widget>[
+        SliverAppBar(
+          expandedHeight: 450.0,
+          pinned: true,
+          title: AnimatedOpacity(
+            duration: Duration(milliseconds: 300),
+            opacity: _isScrolled ? 1.0 : 0.0,
+            curve: Curves.ease,
+            child: Text('Las Hayas'),
+          ),
+          flexibleSpace: FlexibleSpaceBar(
+            background: Image.network(
+              widget.establecimiento.foto != null ? 
+                widget.establecimiento.foto 
+                :'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRVX4RgUYvaDyHQaEiejmjMy0ZbuEPqGkOwsxq9oAmPl3MQJIRC&usqp=CAU',
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        SliverList(
+          delegate: SliverChildListDelegate([
+            /* Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.vertical( 
+                  top: Radius.circular(30)
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 5,
+                    spreadRadius: 1,
+                    offset: Offset(0, -2)
+                  )
+                ]
+              ),
+              padding: EdgeInsets.only(left: 20, right: 20),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                     */Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.only(top: 20, bottom: 20),
+                          constraints: BoxConstraints(maxWidth: 280),
+                          child: Wrap(
+                            spacing: 5,
+                            runSpacing: 5,
+                            children: _getWidget()
+                          ),
+                        ),
+                        SizedBox(
+                          height: 60,
+                          child: FavButtonWidget(
+                            id: widget.establecimiento.id,
+                            type: widget.type,
+                            size: Size.big
+                          ),
+                        ),
+                      ],
+                    ), 
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      padding: EdgeInsets.only(bottom: 10),
+                      child: Text(widget.establecimiento.nombre, 
+                        style: Theme.of(context).textTheme.headline1,
+                      ),
+                    ),
+                    ( widget.type == Establecimiento.alojamiento
+                      ? Padding(
+                        padding: EdgeInsets.only(bottom: 10),
+                        child: CategoryWidget(count: widget.establecimiento.categoria.valor, 
+                            size: 30
+                          )
+                      )
+                      : Container()
+                    ),
+                    Divider(thickness: 1.5, height: 10),
+                    SizedBox(height: 40),
+                    ( widget.type == Establecimiento.gastronomico &&
+                      widget.establecimiento.especialidades.isNotEmpty
+                      ? _getEspecialidades()
+                      : Container()
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Icon(
+                          Icons.location_on,
+                          size: 30,
+                          color: Colors.grey[600],
+                        ),
+                        SizedBox(width: 5),
+                        Expanded(
+                          flex: 1,
+                          child: Text(
+                            widget.establecimiento.domicilio ?? 'Sin dirección', 
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 17
+                            ),
+                            overflow: TextOverflow.clip,
+                          )
+                        )
+                      ]
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                      child: MapCardWidget(
+                        type: widget.type,
+                        lat: widget.establecimiento.lat,
+                        lng: widget.establecimiento.lng
+                      )
+                    ),
+                    SizedBox(height: 40),
+                    ScoreReviewWidget(),
+                    MemoriesWidget(
+                      id: widget.establecimiento.id,
+                      type: widget.type,
+                    )
+                  ],
+                ), 
+              ),
+          ])
+        /* )
+      ], */
+    ); */
     
     return Scaffold(
       body: Stack(
@@ -151,9 +304,9 @@ class _EstablecimientoScreenState extends State<EstablecimientoScreen> {
               :'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRVX4RgUYvaDyHQaEiejmjMy0ZbuEPqGkOwsxq9oAmPl3MQJIRC&usqp=CAU',
             fit: BoxFit.cover,
             height: 450,
-            /* width: _width, */
           ),
           ListView(
+            controller: _scrollController,
             children: <Widget>[ 
               Container( 
                 height: 400.0,
@@ -168,7 +321,7 @@ class _EstablecimientoScreenState extends State<EstablecimientoScreen> {
                       height: 450,
                       width: _width,
                     ), */
-                    Container(
+                    /* Container(
                       alignment: Alignment.topLeft,
                       padding: EdgeInsets.all(20),
                       child: Row(
@@ -222,7 +375,7 @@ class _EstablecimientoScreenState extends State<EstablecimientoScreen> {
                           )
                         ],
                       ),
-                    ),
+                    ), */
                   ],
                 ),
               ),
@@ -321,7 +474,10 @@ class _EstablecimientoScreenState extends State<EstablecimientoScreen> {
                       )
                     ),
                     SizedBox(height: 40),
-                    ScoreReviewWidget(),
+                    ScoreReviewWidget(
+                      id: widget.establecimiento.id,
+                      type: widget.type,
+                    ),
                     MemoriesWidget(
                       id: widget.establecimiento.id,
                       type: widget.type,
@@ -330,6 +486,24 @@ class _EstablecimientoScreenState extends State<EstablecimientoScreen> {
                 ),
               ),
             ],
+          ),
+          Container(
+            height: 85,
+            child: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+            )
+          ),
+          AnimatedOpacity(
+            duration: Duration(milliseconds: 500),
+            opacity: _isScrolled ? 1.0 : 0.0,
+            curve: Curves.ease,
+            child: Container(
+              height: 85,
+              child: AppBar(
+                title: Text(widget.establecimiento.nombre),
+              )
+            ),
           ),
         ],
       ),

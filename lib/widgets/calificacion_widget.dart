@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-final List<Map<String, Object>> iconList = [
+final List<Map<String, Object>> puntajes = [
   {'id': 1,
    'name': Icons.sentiment_very_dissatisfied,
    'label': 'Pésimo',
@@ -62,7 +62,7 @@ class _CalificacionWidgetState extends State<CalificacionWidget> {
   List<Widget> _getIcons() {
     List<Widget> _children = [];
 
-    for (var item in iconList) {
+    for (var item in puntajes) {
       _children.add(
         IconButton(
           padding: EdgeInsets.zero,

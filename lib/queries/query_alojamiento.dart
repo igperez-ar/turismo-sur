@@ -25,4 +25,25 @@ class QueryAlojamiento {
       }
     }
   """;
+
+  static String getCalificaciones = """
+    query getCalificaciones(\$establecimientoId: Int!) {
+      calificaciones(where: {alojamiento_id: {_eq: \$establecimientoId}}) {
+        id
+        puntaje
+        comentario
+        usuario {
+          id
+          username
+          foto
+        }
+        destacable {
+          id
+          nombre
+          foto
+        }
+        created_at
+      }
+    }
+  """; 
 }

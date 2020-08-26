@@ -118,9 +118,9 @@ class _RootScreenState extends State<RootScreen> {
           decoration: BoxDecoration(
             boxShadow: [
               BoxShadow(
-                color: Colors.black12,
-                blurRadius: 10,
-                spreadRadius: 2,
+                color: Colors.black12.withOpacity(0.05),
+                blurRadius: 5,
+                spreadRadius: 1,
                 offset: Offset(0,-1)
               )
             ]

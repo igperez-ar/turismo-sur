@@ -32,12 +32,12 @@ class MessageWidget extends StatelessWidget {
                 topRight: (this.first ? Radius.zero : Radius.circular(10))
               ),
               boxShadow: [
-                BoxShadow(
+                /* BoxShadow(
                   color: Colors.black12,
                   blurRadius: 1,
                   spreadRadius: 1,
-                  offset: Offset(2,2)
-                )
+                  offset: Offset(1,1)
+                ) */
               ]
             ),
             child: Text(this.message),
@@ -52,12 +52,12 @@ class MessageWidget extends StatelessWidget {
                 color: Theme.of(context).primaryColorDark,
                 borderRadius: BorderRadius.only(bottomRight: Radius.elliptical(10, 10)),
                 boxShadow: [
-                  BoxShadow(
+                  /* BoxShadow(
                     color: Colors.black12,
                     blurRadius: 1,
                     spreadRadius: 1,
-                    offset: Offset(2,2)
-                  )
+                    offset: Offset(1,1)
+                  ) */
                 ]
               ),
             )
@@ -83,12 +83,12 @@ class MessageWidget extends StatelessWidget {
                 color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.only(bottomLeft: Radius.elliptical(10, 10)),
                 boxShadow: [
-                  BoxShadow(
+                  /* BoxShadow(
                     color: Colors.black12,
                     blurRadius: 1,
                     spreadRadius: 1,
-                    offset: Offset(2,2)
-                  )
+                    offset: Offset(-1,1)
+                  ) */
                 ]
               ),
             )
@@ -107,12 +107,12 @@ class MessageWidget extends StatelessWidget {
                 topLeft: (this.first ? Radius.zero : Radius.circular(10))
               ),
               boxShadow: [
-                BoxShadow(
+                /* BoxShadow(
                   color: Colors.black12,
                   blurRadius: 1,
                   spreadRadius: 1,
-                  offset: Offset(2,2)
-                )
+                  offset: Offset(1,1)
+                ) */
               ]
             ),
             child: Column(

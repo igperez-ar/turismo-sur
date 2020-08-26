@@ -33,19 +33,13 @@ class _ChatIndexScreenState extends State<ChatIndexScreen> {
       },
       child: Container(
         height: 60,
+        margin: EdgeInsets.symmetric(vertical: 10),
         child: Row(
           children: [
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.grey[400]
-              ),
-              child: Icon(
-                Icons.people,
-                color: Colors.white,
-              ),
+            ProfileImage(
+              image: chat['foto'], 
+              size: ProfileImageSize.medium,
+              group: true,
             ),
             Expanded(
               child: Container(
@@ -75,16 +69,11 @@ class _ChatIndexScreenState extends State<ChatIndexScreen> {
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            title: Row(
-              children: [
-                Container(),
-                Text('Chats', 
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+            title: Text('Chats', 
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             centerTitle: true,
             actions: <Widget>[
@@ -109,7 +98,7 @@ class _ChatIndexScreenState extends State<ChatIndexScreen> {
                   options: QueryOptions(
                     documentNode: gql(QueryGrupo.getAll),
                     variables: {
-                      'usuarioId': 1
+                      'usuarioId': state.usuario.id
                     },
                   ),
                   builder: (QueryResult result, {VoidCallback refetch, FetchMore fetchMore}) {
@@ -151,16 +140,55 @@ class _ChatIndexScreenState extends State<ChatIndexScreen> {
   @override
   Widget build(BuildContext context) {
 
-    return PageView(
-      controller: _pageController,
-      physics: NeverScrollableScrollPhysics(),
-      children: [
-        _buildIndex(),
-        ChatScreen(
-          grupoId: _grupoId,
-          onBack: () => _pageController.jumpToPage(0),
-        ),
-      ],
+    return BlocBuilder<AutenticacionBloc,AutenticacionState>(
+      builder: (context, state) {
+
+        if (state is AutenticacionLoading) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Chat', 
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              centerTitle: true,
+            ),
+            body: Center(child: CircularProgressIndicator()));
+        }
+
+        if (state is AutenticacionAuthenticated) {
+          return PageView(
+            controller: _pageController,
+            physics: NeverScrollableScrollPhysics(),
+            children: [
+              ChatScreen(
+                grupoId: 1,
+                onBack: () => _pageController.jumpToPage(0),
+              ),
+              _buildIndex(),
+            ],
+          );
+        }
+
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('Chat', 
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            centerTitle: true,
+          ),
+          body: Center(
+            child: EmptyWidget(
+              title: 'Debes acceder para poder utilizar el chat de la aplicación.', 
+              uri: 'assets/images/undraw_people.svg'
+            )
+          )
+        );
+      },
     );
   }
 }

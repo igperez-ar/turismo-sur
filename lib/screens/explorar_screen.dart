@@ -45,7 +45,7 @@ class _ExplorarScreenState extends State<ExplorarScreen> {
     return distance;
   }
 
-  Widget _getCardList(List<Alojamiento> alojamientos, List<Gastronomico> gastronomicos, int filtered) {
+  Widget _getCardList(List<Alojamiento> alojamientos, List<Gastronomico> gastronomicos) {
 
     return ListView.builder(
       padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
@@ -99,7 +99,21 @@ class _ExplorarScreenState extends State<ExplorarScreen> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.filter_list, color: Colors.white, size: 30.0,), 
-            onPressed: () => Navigator.pushNamed(context, '/filtros'),
+            onPressed: () => Navigator
+              .pushNamed(context, '/filtros')
+              /* .then((value) {
+                if (filtrados > 0) {
+                  SnackBarWidget.show(
+                    context, 
+                    (filtrados == 1 
+                      ? 'Se filtró 1 establecimiento.' 
+                      : 'Se filtraron $filtrados establecimientos.'
+                    ), 
+                    SnackType.success,
+                    persistent: false
+                  );
+                } 
+              }),*/
           )
         ],
       ),
@@ -135,7 +149,7 @@ class _ExplorarScreenState extends State<ExplorarScreen> {
             }
 
             int filtrados = state.activeFilters['filtrados'];
-            if (filtrados > 0) {
+            /* if (filtrados > 0) {
               SnackBarWidget.show(
                 context, 
                 (filtrados == 1 
@@ -145,11 +159,10 @@ class _ExplorarScreenState extends State<ExplorarScreen> {
                 SnackType.success,
                 persistent: false
               );
-            }
+            } */
             return _getCardList(
               state.filteredAlojamientos, 
-              state.filteredGastronomicos,
-              state.activeFilters['filtrados']
+              state.filteredGastronomicos
             );
           }
         
