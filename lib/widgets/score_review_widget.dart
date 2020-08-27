@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:turismo_app/bloc/autenticacion/autenticacion_bloc.dart';
+
+import 'package:turismo_app/bloc/bloc.dart';
 import 'package:turismo_app/models/models.dart';
 import 'package:turismo_app/queries/queries.dart';
-import 'package:turismo_app/queries/query_calificacion.dart';
 import 'package:turismo_app/widgets/widgets.dart';
-import 'package:turismo_app/screens/calificacion_screen.dart';
+import 'package:turismo_app/screens/screens.dart';
 
 class ScoreReviewWidget extends StatefulWidget {
 
@@ -270,7 +270,7 @@ class _ScoreReviewWidgetState extends State<ScoreReviewWidget> {
                                   children: [
                                     _icon(promedio.round(), min:false),
                                     SizedBox(width: 5),
-                                    Text(promedio.toString(),
+                                    Text(promedio.toStringAsPrecision(2),
                                       style: TextStyle(
                                         color: Colors.grey[600],
                                         fontSize: 35,

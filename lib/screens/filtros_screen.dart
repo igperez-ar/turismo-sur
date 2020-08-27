@@ -4,20 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:turismo_app/bloc/bloc.dart';
-import 'package:turismo_app/bloc/filtros/filtros_bloc.dart';
 import 'package:turismo_app/models/models.dart';
 import 'package:turismo_app/widgets/widgets.dart';
 
 
 class FiltrosScreen extends StatefulWidget {
-
-  /* final bool onFilter;
-
-  const FiltrosScreen({
-    Key key,
-    this.onFilter,
-  }) : super(key: key); */
-
 
   @override
   _FiltrosScreenState createState() => _FiltrosScreenState();

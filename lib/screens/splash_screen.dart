@@ -52,7 +52,7 @@ class SplashScreen extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.only(bottom: 70, right: 50),
                     height: _height * 0.2,
-                    child: Text('Para acceder a todas las funcionalidades que dispone la aplicación, es necesario registrarse.',
+                    child: Text('Para poder utilizar todas las funcionalidades que ofrece la aplicación, es necesario que inicies sesión en tu cuenta o crees una. Puedes omitir este paso y hacerlo más tarde.',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16
@@ -60,19 +60,6 @@ class SplashScreen extends StatelessWidget {
                       textAlign: TextAlign.left,
                     )
                   ),
-                  /* RaisedButton(
-                    onPressed: this.onSignin, 
-                    textColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)
-                    ),
-                    child: Container(
-                      width: 150,
-                      height: 40,
-                      alignment: Alignment.center,
-                      child: Text('Iniciar sesión', style: TextStyle(fontSize: 16),)
-                    )
-                  ), */
                   RaisedButton(
                     onPressed: this.onSignup, 
                     textColor: Colors.white,
@@ -83,7 +70,7 @@ class SplashScreen extends StatelessWidget {
                       width: 150,
                       height: 50,
                       alignment: Alignment.center,
-                      child: Text('Registrarse', style: TextStyle(fontSize: 16),)
+                      child: Text('Acceder', style: TextStyle(fontSize: 16),)
                     )
                   ),
                   SizedBox(height: 15),

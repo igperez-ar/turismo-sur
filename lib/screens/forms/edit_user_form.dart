@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:turismo_app/bloc/autenticacion/autenticacion_bloc.dart';
+
+import 'package:turismo_app/bloc/bloc.dart';
 import 'package:turismo_app/models/models.dart';
 import 'package:turismo_app/widgets/widgets.dart';
 
@@ -122,13 +123,13 @@ class _EditUserFormState extends State<EditUserForm> {
       ));
     }
 
-    Future.delayed(Duration(seconds: 1), () {
+    /* Future.delayed(Duration(seconds: 1), () {
       if (state is AutenticacionUnauthenticated)
         SnackBarWidget.show(context, state.error, SnackType.danger);
 
       if (state is AutenticacionAuthenticated)
         SnackBarWidget.show(context, 'La información se modificó con éxito.', SnackType.success, persistent: false);
-    });
+    }); */
   }
 
   @override

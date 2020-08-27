@@ -5,17 +5,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 
-import 'package:meta/meta.dart';
-import 'package:turismo_app/bloc/autenticacion/autenticacion_bloc.dart';
-
 import 'package:turismo_app/bloc/bloc.dart';
-import 'package:turismo_app/bloc/configuracion/configuracion_bloc.dart';
-import 'package:turismo_app/bloc/filtros/filtros_bloc.dart';
 import 'package:turismo_app/providers/providers.dart';
 import 'package:turismo_app/repositories/repository.dart';
-import 'package:turismo_app/repositories/usuario_repository.dart';
-import 'package:turismo_app/theme/style.dart';
 import 'package:turismo_app/screens/screens.dart';
+import 'package:turismo_app/theme/style.dart';
 
 
 class MyHttpOverrides extends HttpOverrides {

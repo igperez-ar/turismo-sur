@@ -2,37 +2,13 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:turismo_app/bloc/autenticacion/autenticacion_bloc.dart';
 
-import 'package:turismo_app/bloc/configuracion/configuracion_bloc.dart';
+import 'package:turismo_app/bloc/bloc.dart';
 import 'package:turismo_app/models/models.dart';
 import 'package:turismo_app/screens/screens.dart';
-import 'package:turismo_app/screens/user/ingreso_screen.dart';
 import 'package:turismo_app/widgets/widgets.dart';
 
-//icons 265-306
 
-/* class PerfilScreen extends StatelessWidget { */
-  /* final List<String> iconsIndex = ['265', '266', '268', '270', '272', '274', '276', '277', '278', '279', '280', '281', '282', '283', '284', '285', '286', '287', '288', '289', '290', '291', '292', '293', '294', '295', '296', '297', '298', '299', '300', '301', '302', '303', '304', '305', '306'];
-
-  List<Widget> _icons() {
-    List<Widget> children = [];
-
-    for (var item in iconsIndex) {
-      var url = 'assets/profile_pics/pic_' + item + '.svg';
-
-      children.add(
-        SvgPicture.asset(
-          url,
-          width: 55,
-          height: 55,
-        ),
-      );
-    }
-
-    return children;
-  }   */
 class PerfilScreen extends StatefulWidget {
   @override
   _PerfilScreenState createState() => _PerfilScreenState();
@@ -41,13 +17,11 @@ class PerfilScreen extends StatefulWidget {
 class _PerfilScreenState extends State<PerfilScreen> {
   bool darkMode;
   ConfiguracionBloc _configuracionBloc;
-  AutenticacionBloc _autenticacionBloc;
 
   @override 
   void initState() {
     super.initState();
 
-    _autenticacionBloc = BlocProvider.of<AutenticacionBloc>(context);
     _configuracionBloc = BlocProvider.of<ConfiguracionBloc>(context);
   }
 

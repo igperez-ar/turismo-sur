@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:turismo_app/bloc/bloc.dart';
-import 'package:turismo_app/screens/filtros_screen.dart';
 import 'package:turismo_app/widgets/widgets.dart';
 import 'package:turismo_app/models/models.dart';
 
@@ -73,27 +72,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                 'favoritos': true
               }
             ),
-          ),/* () => Navigator.push(context,
-                      MaterialPageRoute(
-                        builder: (context) => FiltrosScreen()
-                      )
-                    ).then((value) {
-                      if (filtered > 0) {
-                        SnackBarWidget.show(
-                          _scaffoldKey, 
-                          (filtered == 1 
-                            ? 'Se filtró 1 establecimiento.' 
-                            : 'Se filtraron $filtered establecimientos.'
-                          ), 
-                          SnackType.success,
-                          persistent: false
-                        );
-
-                      } else {
-                        _scaffoldKey.currentState.hideCurrentSnackBar();
-                      }
-                    }) */
-          
+          ),
           IconButton(
             icon: Icon(showMap ? Icons.format_list_bulleted : Icons.map, size: 30.0,), 
             onPressed: () { 

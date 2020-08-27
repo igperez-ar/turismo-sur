@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:turismo_app/models/models.dart';
-import 'package:turismo_app/queries/query_calificacion.dart';
-import 'package:turismo_app/widgets/widgets.dart';
 import 'package:intl/intl.dart';
+
+import 'package:turismo_app/models/models.dart';
+import 'package:turismo_app/queries/queries.dart';
+import 'package:turismo_app/widgets/widgets.dart';
 
 class ReviewWidget extends StatefulWidget {
 

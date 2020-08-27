@@ -2,14 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:turismo_app/bloc/autenticacion/autenticacion_bloc.dart';
-import 'package:turismo_app/models/models.dart';
-import 'package:turismo_app/providers/mensaje_provider.dart';
-import 'package:turismo_app/providers/providers.dart';
-import 'package:turismo_app/queries/queries.dart';
-import 'package:turismo_app/queries/query_grupo.dart';
-import 'package:turismo_app/screens/screens.dart';
 
+import 'package:turismo_app/bloc/bloc.dart';
+import 'package:turismo_app/queries/queries.dart';
+import 'package:turismo_app/screens/screens.dart';
 import 'package:turismo_app/widgets/widgets.dart';
 
 

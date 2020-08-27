@@ -1,7 +1,6 @@
 import 'package:dashed_container/dashed_container.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:turismo_app/bloc/bloc.dart';
+
 import 'package:turismo_app/widgets/widgets.dart';
 import 'package:turismo_app/models/models.dart';
 
@@ -161,7 +160,7 @@ class _EstablecimientoScreenState extends State<EstablecimientoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final _width = MediaQuery.of(context).size.width;
+    /* final _width = MediaQuery.of(context).size.width; */
 
     /* return Material(
       child: CustomScrollView(

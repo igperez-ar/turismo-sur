@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:location_permissions/location_permissions.dart';
+/* import 'package:location_permissions/location_permissions.dart'; */
 
 import 'package:turismo_app/screens/screens.dart';
-import 'package:turismo_app/screens/user/ingreso_screen.dart';
 
 
 class RootScreen extends StatefulWidget {
@@ -30,7 +28,7 @@ class _RootScreenState extends State<RootScreen> {
     });
   }
 
-  void _locationConfig() async {
+  /* void _locationConfig() async {
     final PermissionStatus permissionStatus = await LocationPermissions().checkPermissionStatus();
     print(permissionStatus);
 
@@ -44,11 +42,11 @@ class _RootScreenState extends State<RootScreen> {
       print(newPermissionStatus);
     }
 
-    /* if (serviceStatus != ServiceStatus.enabled) {
+    if (serviceStatus != ServiceStatus.enabled) {
       final isOpen = await LocationPermissions().openAppSettings();
       print(isOpen);
-    } */
-  }
+    }
+  } */
 
   @override
   void initState() {
@@ -57,7 +55,7 @@ class _RootScreenState extends State<RootScreen> {
     /* this._locationConfig(); */
   }
 
-  Widget _getTabItem(int id, IconData icon, String title) {
+  /* Widget _getTabItem(int id, IconData icon, String title) {
 
     if (_currentIndex == id) 
       return IconButton(
@@ -90,7 +88,7 @@ class _RootScreenState extends State<RootScreen> {
       ),
       onPressed: () => this.changeTabIndex(id),
     );
-  }
+  } */
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,4 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:turismo_app/models/models.dart';
 import 'package:turismo_app/providers/base_provider.dart';
 import 'package:turismo_app/queries/queries.dart';
 

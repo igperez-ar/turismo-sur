@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:turismo_app/bloc/autenticacion/autenticacion_bloc.dart';
-import 'package:turismo_app/queries/queries.dart';
-import 'package:turismo_app/queries/query_grupo.dart';
 
+import 'package:turismo_app/bloc/bloc.dart';
+import 'package:turismo_app/queries/queries.dart';
 import 'package:turismo_app/widgets/widgets.dart';
 
 
@@ -137,7 +136,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         if (payload != null) {
                           List mensajes = payload['mensajes'];
 
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                          /* WidgetsBinding.instance.addPostFrameCallback((_) {
                             if (_scrollController.hasClients) {
                               _scrollController.animateTo(
                                 _scrollController.position.maxScrollExtent,
@@ -145,7 +144,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                 curve: Curves.easeOut,
                               );
                             }
-                          });
+                          }); */
 
                           return Expanded(
                             child: ListView.builder(

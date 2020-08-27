@@ -1,9 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:turismo_app/bloc/autenticacion/autenticacion_bloc.dart';
-import 'package:turismo_app/bloc/configuracion/configuracion_bloc.dart';
-import 'package:turismo_app/screens/forms/forms.dart';
+
+import 'package:turismo_app/bloc/bloc.dart';
+import 'package:turismo_app/screens/screens.dart';
+import 'package:turismo_app/widgets/widgets.dart';
 
 class EditProfileScreen extends StatefulWidget {
   @override
@@ -11,8 +13,10 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool darkMode;
   AutenticacionBloc _autenticacionBloc;
+  StreamSubscription _autenticacionListener;
   EditUserForm _editUserForm;
 
   @override
@@ -23,6 +27,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _editUserForm = EditUserForm(autenticacionBloc: _autenticacionBloc);
   }
 
+  @override 
+  void dispose() {
+    if (_autenticacionListener != null)
+      _autenticacionListener.cancel();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -31,6 +41,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         builder: (context, state) {
 
           return Scaffold(
+            key: _scaffoldKey,
             appBar: AppBar(
               title: Text('Cuenta', 
                 style: TextStyle(
@@ -47,7 +58,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 (state is AutenticacionAuthenticated
                   ? IconButton(
                       icon: Icon(Icons.check, size: 30.0,),
-                      onPressed: () => _editUserForm.state.validateForm(),
+                      onPressed: () {
+                        _editUserForm.state.validateForm();
+                        _autenticacionListener = _autenticacionBloc.listen((state) {
+                          if (state is AutenticacionUnauthenticated)
+                            SnackBarWidget.show(_scaffoldKey, state.error, SnackType.danger);
+
+                          if (state is AutenticacionAuthenticated)
+                            SnackBarWidget.show(_scaffoldKey, 'La información se modificó con éxito.', SnackType.success, persistent: false);
+                          /* Future.delayed(Duration(seconds: 1), () {
+                            if (state is AutenticacionUnauthenticated)
+                              SnackBarWidget.show(context, state.error, SnackType.danger);
+
+                            if (state is AutenticacionAuthenticated)
+                              SnackBarWidget.show(context, 'La información se modificó con éxito.', SnackType.success, persistent: false);
+                          }); */
+                        });
+                      },
                     )
                   : Container(
                     width: 57,

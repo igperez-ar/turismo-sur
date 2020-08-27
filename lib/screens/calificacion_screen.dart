@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+
 import 'package:turismo_app/bloc/bloc.dart';
 import 'package:turismo_app/models/models.dart';
-import 'package:turismo_app/queries/query_calificacion.dart';
+import 'package:turismo_app/queries/queries.dart';
 import 'package:turismo_app/widgets/widgets.dart';
 
 

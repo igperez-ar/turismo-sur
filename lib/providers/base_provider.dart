@@ -20,18 +20,8 @@ class BaseProvider {
 
    static GraphQLClient initailizeClient() {
       return GraphQLClient(
-        cache: InMemoryCache()/* OptimisticCache(dataIdFromObject:typenameDataIdFromObject) */,
+        cache: InMemoryCache(),
         link: link,
       );
    }
-
-  /* static GraphQLClient create() {
-    final httpLink = HttpLink(uri: 'https://$url');
-    final link = Link.from([httpLink]);
-
-    return GraphQLClient(
-      cache: InMemoryCache(), 
-      link: link
-    );
-  } */
 }

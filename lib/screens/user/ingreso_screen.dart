@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:turismo_app/bloc/autenticacion/autenticacion_bloc.dart';
-import 'package:turismo_app/screens/forms/forms.dart';
-import 'package:turismo_app/screens/forms/signup_form.dart';
+
+import 'package:turismo_app/bloc/bloc.dart';
+import 'package:turismo_app/screens/screens.dart';
 import 'package:turismo_app/widgets/widgets.dart';
 
 class IngresoScreen extends StatefulWidget {
@@ -11,7 +11,7 @@ class IngresoScreen extends StatefulWidget {
 
   const IngresoScreen({
     Key key,
-    this.selectedTab = 0
+    this.selectedTab = 1
   }) : super(key: key);
 
   @override
