@@ -2,7 +2,7 @@ class QueryMensajes {
 
   static String getAll = """
     subscription getAll(\$grupo: Int!) {
-      mensajes(where: {grupo_id: {_eq: \$grupo}}) {
+      mensajes(where: {grupo_id: {_eq: \$grupo}}, order_by: {created_at: asc}) {
         id
         contenido
         eliminado

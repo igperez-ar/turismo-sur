@@ -9,11 +9,11 @@ abstract class FiltrosState extends Equatable {
 
 class FiltrosInitial extends FiltrosState {}
 
-class FiltrosFetching extends FiltrosState {}
+class FiltrosLoading extends FiltrosState {}
 
 class FiltrosSuccess extends FiltrosState {
-  final Map<String, Object> filterData;
-  final Map<String, Object> activeFilters;
+  final Map<String,dynamic> filterData;
+  final Map<String,dynamic> activeFilters;
 
   const FiltrosSuccess({
     this.filterData,

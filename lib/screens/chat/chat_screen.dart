@@ -157,6 +157,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                 return MessageWidget(
                                   name: (mensajes[index]['miembro']['usuario']['id'] == state.usuario.id ? null : mensajes[index]['miembro']['usuario']['username']),
                                   message: mensajes[index]['contenido'],
+                                  createdAt: mensajes[index]['created_at'],
                                   first: (index > 0 
                                     ? (mensajes[index-1]['miembro']['id'] != mensajes[index]['miembro']['id'])
                                     : true

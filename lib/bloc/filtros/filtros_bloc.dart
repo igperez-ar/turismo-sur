@@ -5,19 +5,58 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
 import 'package:turismo_app/bloc/bloc.dart';
-import 'package:turismo_app/bloc/filtered_establecimientos/filtered_establecimientos_bloc.dart';
 import 'package:turismo_app/models/models.dart';
 
 part 'filtros_event.dart';
 part 'filtros_state.dart';
 
 class FiltrosBloc extends Bloc<FiltrosEvent, FiltrosState> {
-  final FilteredEstablecimientosBloc filteredEstablecimientosBloc;
+  final EstablecimientosBloc establecimientosBloc;
+  final FavoritosBloc favoritosBloc;
   StreamSubscription establecimientosSubscription;
 
-  FiltrosBloc({@required this.filteredEstablecimientosBloc}) : super(FiltrosInitial());
+  FiltrosBloc({@required this.establecimientosBloc, @required this.favoritosBloc}) 
+    : super(initialState(establecimientosBloc.state)) {
+      establecimientosSubscription = establecimientosBloc.listen((_state) { 
+        if (this.state is FiltrosInitial && _state is EstablecimientosSuccess) {
+          add(EstablecimientosLoaded());
+        }
+      });
+  }
 
-  Map<String, List> _getFilterData(
+  static FiltrosState initialState(EstablecimientosState _state) {
+
+    if (_state is EstablecimientosSuccess) {
+      final _filterData = _getFilterData(
+        _state.alojamientos, 
+        _state.gastronomicos, 
+      );
+      return FiltrosSuccess(
+        filterData: _filterData,
+        activeFilters: {
+          'filtrados': {
+            'establecimientos': 0,
+            'favoritos': 0
+          },
+          'palabras': List<String>(),
+          'mostrar': Establecimiento.ambos,
+          'localidades': List<Localidad>(),
+          'clasificaciones': List<Clasificacion>(),
+          'categorias': List<Categoria>.from(_filterData['categorias']),
+          'actividades': List<Actividad>(),
+          'especialidades': List<Especialidad>()
+        }
+      );
+    }
+
+    if (_state is EstablecimientosFailure) {
+      return FiltrosFailure();
+    }
+
+    return FiltrosInitial();
+  }
+
+  static Map<String, List> _getFilterData(
     List<Alojamiento> alojamientos, List<Gastronomico> gastronomicos
   ) {
 
@@ -61,133 +100,184 @@ class FiltrosBloc extends Bloc<FiltrosEvent, FiltrosState> {
   Stream<FiltrosState> mapEventToState(
     FiltrosEvent event
   ) async* {
-    if (event is FetchFiltros) {
+    if (event is EstablecimientosLoaded) {
       yield* _mapFiltrosLoadedToState();
-    } /* else if (event is UpdateFiltrosActivos) {
+    } else if (event is UpdateFiltrosActivos) {
       yield* _mapUpdateActiveFiltersToState(event);
-    } */
+    } else if (event is ResetFiltros) {
+      yield* _mapFiltrosResetToState();
+    }
   }
 
   Stream<FiltrosState> _mapFiltrosLoadedToState() async* {
-    yield FiltrosFetching();
 
-    if (filteredEstablecimientosBloc.state is FilteredEstablecimientosSuccess) {
-      try {
-        final filteredState = (filteredEstablecimientosBloc.state as FilteredEstablecimientosSuccess);
-        final Map<String, Object> filterData = _getFilterData(filteredState.alojamientos, filteredState.gastronomicos);
-        final Map<String, Object> activeFilters = {
-          'filtrados': 0,
-          'palabras': List<String>(),
-          'mostrar': Establecimiento.ambos,
-          'localidades': List<Localidad>(),
-          'clasificaciones': List<Clasificacion>(),
-          'categorias': List<Categoria>.from(filterData['categorias']),
-          'actividades': List<Actividad>(),
-          'especialidades': List<Especialidad>()
-        };
-          
-        yield FiltrosSuccess(
-          filterData: filterData,
-          activeFilters: activeFilters
-        );
-      } catch (e) {
-        print(e);
-        yield FiltrosFailure();
-      }
+    yield FiltrosLoading();
+
+    if (establecimientosBloc.state is EstablecimientosSuccess) {
+      final establecimientoState = (establecimientosBloc.state as EstablecimientosSuccess);
+      final Map<String, Object> filterData = _getFilterData(
+        establecimientoState.alojamientos, 
+        establecimientoState.gastronomicos
+      );
+      final Map<String, Object> activeFilters = {
+        'filtrados': {
+          'establecimientos': 0,
+          'favoritos': 0
+        },
+        'palabras': List<String>(),
+        'mostrar': Establecimiento.ambos,
+        'localidades': List<Localidad>(),
+        'clasificaciones': List<Clasificacion>(),
+        'categorias': List<Categoria>.from(filterData['categorias']),
+        'actividades': List<Actividad>(),
+        'especialidades': List<Especialidad>()
+      };
+        
+      yield FiltrosSuccess(
+        filterData: filterData,
+        activeFilters: activeFilters
+      );
     }
   }
 
-/*   Stream<FiltrosState> _mapUpdateActiveFiltersToState(
+  Stream<FiltrosState> _mapUpdateActiveFiltersToState(
     UpdateFiltrosActivos event
   ) async* {
 
-    if (state is FiltrosSuccess){
-      final _state = (state as FiltrosSuccess);
-      List<Alojamiento> _newAlojamientos;
-      List<Gastronomico> _newGastronomicos;
-      Map _filters = event.newFilters;
+    yield FiltrosLoading();
 
-      /* try { */
-        if ( _filters['mostrar'] == Establecimiento.alojamiento ||
-             _filters['mostrar'] == Establecimiento.ambos ){
-          _newAlojamientos = _state
-            .alojamientos
-            .where((element) => (
-                (_filters['clasificaciones'].isNotEmpty 
-                  ? _filters['clasificaciones'].contains(element.clasificacion)
-                  : true
-                )
-              &&(_filters['categorias'].isNotEmpty 
-                  ? _filters['categorias'].contains(element.categoria)
-                  : true
-                )
-              &&(_filters['localidades'].isNotEmpty
-                  ? _filters['localidades'].contains(element.localidad)
-                  : true
-                )
-              &&(_filters['palabras'].isNotEmpty
-                  ? _filters['palabras'].any(
-                    (word) => (element.nombre
-                        .toLowerCase()
-                        .contains(word.toLowerCase()))
-                    )
-                  : true
-                )
-            ))
-            .toList();
-        } else {
-          _newAlojamientos = [];
-        }
+    if (state is FiltrosSuccess && establecimientosBloc.state is EstablecimientosSuccess){
+      final filtrosState = (state as FiltrosSuccess);
+      final favoritoState = (favoritosBloc.state);
+      final establecimientosState = (establecimientosBloc.state as EstablecimientosSuccess);
+      List<Alojamiento> newAlojamientos;
+      List<Gastronomico> newGastronomicos;
+      Map newFilters = event.newFilters;
 
-        if ( _filters['mostrar'] == Establecimiento.gastronomico || 
-             _filters['mostrar'] == Establecimiento.ambos){
-          _newGastronomicos = _state
-            .gastronomicos
-            .where((element) => (
-                (_filters['actividades'].isNotEmpty 
-                  ? _filters['actividades'].any((act) => element.actividades.contains(act)) 
-                  : true
-                )
-              &&(_filters['especialidades'].isNotEmpty
-                  ? _filters['especialidades'].any((esp) => element.especialidades.contains(esp))
-                  : true
-                )
-              &&(_filters['localidades'].isNotEmpty
-                  ? _filters['localidades'].contains(element.localidad)
-                  : true
-                )
-              &&(_filters['palabras'].isNotEmpty
-                  ? _filters['palabras'].any(
-                      (word) => (word
-                        .toString()
-                        .toLowerCase()
-                        .contains(element.nombre.toLowerCase())))
-                  : true
-                )
-            ))
-            .toList();
-        } else {
-          _newGastronomicos = [];
-        }
+      if ( newFilters['mostrar'] == Establecimiento.alojamiento ||
+           newFilters['mostrar'] == Establecimiento.ambos ){
+        newAlojamientos = establecimientosState
+          .alojamientos
+          .where((element) => (
+              (newFilters['clasificaciones'].isNotEmpty 
+                ? newFilters['clasificaciones'].contains(element.clasificacion)
+                : true
+              )
+            &&(newFilters['categorias'].isNotEmpty 
+                ? newFilters['categorias'].contains(element.categoria)
+                : true
+              )
+            &&(newFilters['localidades'].isNotEmpty
+                ? newFilters['localidades'].contains(element.localidad)
+                : true
+              )
+            &&(newFilters['palabras'].isNotEmpty
+                ? newFilters['palabras'].any(
+                  (word) => (element.nombre
+                      .toLowerCase()
+                      .contains(word.toLowerCase()))
+                  )
+                : true
+              )
+          ))
+          .toList();
+      } else {
+        newAlojamientos = [];
+      }
 
-        _filters['filtrados'] = (_state.alojamientos.length + _state.gastronomicos.length)
-                              - (_newAlojamientos.length + _newGastronomicos.length);
+      if ( newFilters['mostrar'] == Establecimiento.gastronomico || 
+           newFilters['mostrar'] == Establecimiento.ambos){
+        newGastronomicos = establecimientosState
+          .gastronomicos
+          .where((element) => (
+              (newFilters['actividades'].isNotEmpty 
+                ? newFilters['actividades'].any((act) => element.actividades.contains(act)) 
+                : true
+              )
+            &&(newFilters['especialidades'].isNotEmpty
+                ? newFilters['especialidades'].any((esp) => element.especialidades.contains(esp))
+                : true
+              )
+            &&(newFilters['localidades'].isNotEmpty
+                ? newFilters['localidades'].contains(element.localidad)
+                : true
+              )
+            &&(newFilters['palabras'].isNotEmpty
+                ? newFilters['palabras'].any(
+                    (word) => (word
+                      .toString()
+                      .toLowerCase()
+                      .contains(element.nombre.toLowerCase())))
+                : true
+              )
+          ))
+          .toList();
+      } else {
+        newGastronomicos = [];
+      }
 
-        yield FiltrosSuccess(
-          filterData: _state.filterData,
-          activeFilters: _filters
-        );
+      newFilters['filtrados']['establecimientos'] = (
+        establecimientosState.alojamientos.length + 
+        establecimientosState.gastronomicos.length
+      ) - (newAlojamientos.length + newGastronomicos.length);
 
-      /* } catch (e) {
-        print(e); */
-        /* yield FiltrosFailure(); */
-      /* } */
-      
-        
-      
+      if (favoritoState is FavoritosSuccess) {
+        final int newCount = favoritoState.favoritos
+          .where((element) {
+            if (element.tipo == Establecimiento.alojamiento 
+             && newAlojamientos.any((e) => e.id == element.id)) 
+              return true;
+
+            if (element.tipo == Establecimiento.gastronomico 
+             && newGastronomicos.any((e) => e.id == element.id))
+              return true;
+
+            return false;
+          })
+          .toList()
+          .length;
+        newFilters['filtrados']['favoritos'] = favoritoState.favoritos.length - newCount; 
+
+      } else {
+        newFilters['filtrados']['favoritos'] = 0;
+      }
+
+      establecimientosBloc.add(
+        UpdateFilteredEstablecimientos(
+          newAlojamientos, 
+          newGastronomicos
+        )
+      );
+
+      yield FiltrosSuccess(
+        filterData: filtrosState.filterData,
+        activeFilters: newFilters
+      );
     }
   } 
- */
+
+  Stream<FiltrosState> _mapFiltrosResetToState() async* {
+
+    if (state is FiltrosSuccess) {
+      final _state = (state as FiltrosSuccess);
+      final Map<String, Object> resetActiveFilters = {
+        'filtrados': {
+          'establecimientos': 0,
+          'favoritos': 0
+        },
+        'palabras': List<String>(),
+        'mostrar': Establecimiento.ambos,
+        'localidades': List<Localidad>(),
+        'clasificaciones': List<Clasificacion>(),
+        'categorias': List<Categoria>.from(_state.filterData['categorias']),
+        'actividades': List<Actividad>(),
+        'especialidades': List<Especialidad>()
+      }; 
+
+      this.add(UpdateFiltrosActivos(resetActiveFilters));
+    }
+  }  
+
   @override 
   Future<void> close() {
     establecimientosSubscription.cancel();

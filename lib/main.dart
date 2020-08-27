@@ -10,6 +10,7 @@ import 'package:turismo_app/bloc/autenticacion/autenticacion_bloc.dart';
 
 import 'package:turismo_app/bloc/bloc.dart';
 import 'package:turismo_app/bloc/configuracion/configuracion_bloc.dart';
+import 'package:turismo_app/bloc/filtros/filtros_bloc.dart';
 import 'package:turismo_app/providers/providers.dart';
 import 'package:turismo_app/repositories/repository.dart';
 import 'package:turismo_app/repositories/usuario_repository.dart';
@@ -27,6 +28,7 @@ class MyHttpOverrides extends HttpOverrides {
 
 void main() async { 
   WidgetsFlutterBinding.ensureInitialized();
+  Bloc.observer = SimpleBlocObserver();
   // Soluciona error de carga de NetworkImages
   // limitando las peticiones simultáneas
   HttpOverrides.global = MyHttpOverrides();
@@ -49,6 +51,12 @@ class App extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => FavoritosBloc(),
+        ),
+        BlocProvider(
+          create: (context) => FiltrosBloc(
+            establecimientosBloc: BlocProvider.of<EstablecimientosBloc>(context),
+            favoritosBloc: BlocProvider.of<FavoritosBloc>(context)
+          ),
         ),
         BlocProvider(
           create: (context) => ConfiguracionBloc(),
@@ -74,13 +82,14 @@ class App extends StatelessWidget {
               themeMode: state.config['dark-mode'] ? ThemeMode.dark : ThemeMode.light,
               theme: AppTheme.lightTheme,
               darkTheme: AppTheme.darkTheme,
+              /* home: RootScreen(), */
               initialRoute: '/',
               routes: <String, WidgetBuilder>{
                 '/': (BuildContext context) => RootScreen(),
                 '/filtros': (BuildContext context) => FiltrosScreen()
               },
             )
-            );
+          );
         }
       )
     );

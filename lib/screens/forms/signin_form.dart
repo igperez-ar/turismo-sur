@@ -7,10 +7,12 @@ import 'package:turismo_app/widgets/widgets.dart';
 class SignInForm extends StatefulWidget {
 
   final AutenticacionBloc autenticacionBloc;
+  final Function onSubmit;
 
   const SignInForm({
     Key key,
-    @required this.autenticacionBloc
+    @required this.autenticacionBloc,
+    this.onSubmit
   }) : super(key: key);
 
   @override
@@ -21,9 +23,6 @@ class _SignInFormState extends State<SignInForm> {
 
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
-
-  void _processText() {
-  }
 
   final _formKey = GlobalKey<FormState>();
 
@@ -56,6 +55,8 @@ class _SignInFormState extends State<SignInForm> {
                       username: _usernameController.text,
                       password: _passwordController.text
                     ));
+                    if (widget.onSubmit != null)
+                      widget.onSubmit();
                   }
                 },
                 textColor: Colors.white,

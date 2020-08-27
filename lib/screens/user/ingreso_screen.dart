@@ -19,6 +19,7 @@ class IngresoScreen extends StatefulWidget {
 }
 
 class _IngresoScreenState extends State<IngresoScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   AutenticacionBloc _autenticacionBloc;
   int _selectedTab;
 
@@ -38,7 +39,9 @@ class _IngresoScreenState extends State<IngresoScreen> {
       builder: (context, state) {
         return Column(
           children: [
-            SignUpForm(autenticacionBloc: _autenticacionBloc),
+            SignUpForm(
+              autenticacionBloc: _autenticacionBloc
+            ),
             SizedBox(height: 10),
             GestureDetector(
               onTap: () => this.setState(() {
@@ -65,7 +68,16 @@ class _IngresoScreenState extends State<IngresoScreen> {
 
     return Column(
       children: [
-        SignInForm(autenticacionBloc: _autenticacionBloc),
+        SignInForm(
+          autenticacionBloc: _autenticacionBloc,
+          onSubmit: () {
+            _autenticacionBloc.listen((state) {
+              if (state is AutenticacionUnauthenticated) {
+                SnackBarWidget.show(_scaffoldKey, state.error, SnackType.danger);
+              }
+            });
+          },
+        ),
         SizedBox(height: 15),
         GestureDetector(
           onTap: () => this.setState(() {
@@ -89,6 +101,7 @@ class _IngresoScreenState extends State<IngresoScreen> {
     double _height = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(this._selectedTab == 1 ? 'Iniciar sesión' : 'Registrarse', 
           style: TextStyle(
@@ -102,8 +115,6 @@ class _IngresoScreenState extends State<IngresoScreen> {
         child: Center(
           child: BlocBuilder<AutenticacionBloc, AutenticacionState>(
             builder: (context, state) {
-              if (state is AutenticacionUnauthenticated)
-                SnackBarWidget.show(context, state.error, SnackType.danger);
 
               return SingleChildScrollView(
                 child: Column(

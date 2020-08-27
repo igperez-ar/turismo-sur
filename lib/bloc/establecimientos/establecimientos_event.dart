@@ -11,18 +11,18 @@ class FetchEstablecimientos extends EstablecimientosEvent {
   List<Object> get props => [];
 }
 
-class FilterEstablecimientos extends EstablecimientosEvent {
-  final Map<String, Object> filters;
+class UpdateFilteredEstablecimientos extends EstablecimientosEvent {
+  final List<Alojamiento> newFilteredAlojamientos;
+  final List<Gastronomico> newFilteredGastronomicos;
 
-  const FilterEstablecimientos(this.filters);
-
-  @override
-  List<Object> get props => [filters];
-}
-
-class ResetFiltros extends EstablecimientosEvent {
-  const ResetFiltros();
+  const UpdateFilteredEstablecimientos(
+    this.newFilteredAlojamientos,
+    this.newFilteredGastronomicos
+  );
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [
+    this.newFilteredAlojamientos,
+    this.newFilteredGastronomicos
+  ];
 }

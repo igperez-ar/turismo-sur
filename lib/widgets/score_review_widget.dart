@@ -66,7 +66,7 @@ class _ScoreReviewWidgetState extends State<ScoreReviewWidget> {
     return Icon(
       iconList[number-1]['name'],
       color: iconList[number-1]['color'],
-      size: (min ? 24 : 65),
+      size: (min ? 24 : 55),
     );
   }
 
@@ -226,6 +226,10 @@ class _ScoreReviewWidgetState extends State<ScoreReviewWidget> {
             ],
           );
         }
+        
+        final double promedio = calificaciones
+          .map((e) => e['puntaje'])
+          .reduce((value, element) => value + element) / calificaciones.length;
 
         return Column(
           children: [
@@ -262,12 +266,23 @@ class _ScoreReviewWidgetState extends State<ScoreReviewWidget> {
                             flex: 2,
                             child: Column(
                               children: <Widget>[
-                                _icon(5, min:false),
+                                Row(
+                                  children: [
+                                    _icon(promedio.round(), min:false),
+                                    SizedBox(width: 5),
+                                    Text(promedio.toString(),
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 35,
+                                        fontWeight: FontWeight.bold
+                                      ),
+                                    ),
+                                  ],
+                                ),
                                 SizedBox(height: 5),
                                 Text(calificaciones.length.toString(),
                                   style: TextStyle(
                                     color: Colors.grey[600],
-                                    fontSize: 16
                                   ),
                                 )
                               ],

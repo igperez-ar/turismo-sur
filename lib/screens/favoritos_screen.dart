@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:turismo_app/bloc/bloc.dart';
+import 'package:turismo_app/screens/filtros_screen.dart';
 import 'package:turismo_app/widgets/widgets.dart';
 import 'package:turismo_app/models/models.dart';
 
@@ -12,6 +13,8 @@ class FavoritosScreen extends StatefulWidget {
 }
 
 class _FavoritosScreenState extends State<FavoritosScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  int filtered;
   bool showMap = false;
 
   List<SmallCard> _getFavoritos(
@@ -21,14 +24,18 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
 
     for (var item in favoritos) {
       var establecimiento;
-      int index;
 
       if (item.tipo == Establecimiento.alojamiento) {
-        index = alojamientos.indexWhere((element) => element.id == item.id);
-        establecimiento = index >= 0 ? alojamientos[index] : null;
+        establecimiento = alojamientos.singleWhere(
+          (element) => element.id == item.id,
+          orElse: () => null  
+        );
+
       } else {
-        index = gastronomicos.indexWhere((element) => element.id == item.id);
-        establecimiento = index >= 0 ? gastronomicos[index] : null;
+        establecimiento = gastronomicos.singleWhere(
+          (element) => element.id == item.id,
+          orElse: () => null  
+        );
       }
 
       if (establecimiento != null)
@@ -47,6 +54,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Favoritos', 
           style: TextStyle(
@@ -58,8 +66,34 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.filter_list, color: Colors.white, size: 30.0,), 
-            onPressed: () => Navigator.pushNamed(context, '/filtros'),
-          ),
+            onPressed: () => Navigator.pushNamed(
+              context, '/filtros', 
+              arguments: {
+                'scaffoldKey': _scaffoldKey,
+                'favoritos': true
+              }
+            ),
+          ),/* () => Navigator.push(context,
+                      MaterialPageRoute(
+                        builder: (context) => FiltrosScreen()
+                      )
+                    ).then((value) {
+                      if (filtered > 0) {
+                        SnackBarWidget.show(
+                          _scaffoldKey, 
+                          (filtered == 1 
+                            ? 'Se filtró 1 establecimiento.' 
+                            : 'Se filtraron $filtered establecimientos.'
+                          ), 
+                          SnackType.success,
+                          persistent: false
+                        );
+
+                      } else {
+                        _scaffoldKey.currentState.hideCurrentSnackBar();
+                      }
+                    }) */
+          
           IconButton(
             icon: Icon(showMap ? Icons.format_list_bulleted : Icons.map, size: 30.0,), 
             onPressed: () { 
@@ -104,32 +138,16 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                           uri: 'assets/images/undraw_taken.svg',
                           button: {
                             'title': 'Ir a filtros',
-                            'action': () => Navigator.pushNamed(context, '/filtros')
+                            'action': () => Navigator.pushNamed(context, '/filtros', arguments: {'scaffoldKey': _scaffoldKey})
                           },
                         );
                       }
 
-                      int filtrados = favState.favoritos.length - cardsFavoritos.length;
-
-                      return Column(
-                        children: <Widget>[
-                          /* (filtrados > 0
-                            ? SnackBarWidget(
-                                message: ( filtrados == 1 
-                                  ? 'Se filtró 1 favorito.' 
-                                  : 'Se filtraron $filtrados favoritos.'
-                                ), 
-                                type: SnackType.success,
-                              )
-                            : Container()
-                          ), */
-                          Expanded(
-                            child: ListView(
-                              padding: EdgeInsets.only(left: 15, right: 15, bottom: 15, top: 5),
-                              children: cardsFavoritos,
-                            )
-                          )
-                        ],
+                      return ListView(
+                        reverse: true,
+                        shrinkWrap: true,
+                        padding: EdgeInsets.only(left: 15, right: 15, bottom: 15, top: 5),
+                        children: cardsFavoritos,
                       );
                     } else {
 

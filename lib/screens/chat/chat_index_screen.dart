@@ -184,7 +184,7 @@ class _ChatIndexScreenState extends State<ChatIndexScreen> {
           body: Center(
             child: EmptyWidget(
               title: 'Debes acceder para poder utilizar el chat de la aplicación.', 
-              uri: 'assets/images/undraw_people.svg'
+              uri: 'assets/images/undraw_chat.svg'
             )
           )
         );

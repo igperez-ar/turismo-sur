@@ -4,8 +4,8 @@ abstract class FiltrosEvent extends Equatable {
   const FiltrosEvent();
 }
 
-class FetchFiltros extends FiltrosEvent {
-  const FetchFiltros();
+class EstablecimientosLoaded extends FiltrosEvent {
+  const EstablecimientosLoaded();
 
   @override
   List<Object> get props => [];
@@ -17,5 +17,12 @@ class UpdateFiltrosActivos extends FiltrosEvent {
   const UpdateFiltrosActivos(this.newFilters);
 
   @override
-  List<Object> get props => [newFilters];
+  List<Object> get props => [this.newFilters];
 }
+
+class ResetFiltros extends FiltrosEvent {
+  const ResetFiltros();
+
+  @override
+  List<Object> get props => [];
+} 

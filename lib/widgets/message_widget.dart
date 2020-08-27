@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class MessageWidget extends StatelessWidget {
 
   final String name;
   final String message;
   final bool first;
+  final String createdAt;
 
   const MessageWidget({
     Key key,
     @required this.message,
     @required this.name,
+    @required this.createdAt,
     this.first=false
   }) : super(key: key);
 
@@ -22,7 +25,7 @@ class MessageWidget extends StatelessWidget {
         Flexible(
           child: Container(
             margin: EdgeInsets.only(top: (this.first ? 10 : 3), left: 50),
-            padding: EdgeInsets.all(10),
+            padding: EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 5),
             decoration: BoxDecoration(
               color: Theme.of(context).primaryColorDark,
               borderRadius: BorderRadius.only(
@@ -40,7 +43,24 @@ class MessageWidget extends StatelessWidget {
                 ) */
               ]
             ),
-            child: Text(this.message),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Flexible(
+                  child: Container(
+                    padding: EdgeInsets.only(bottom:5, right: 10),
+                    child: Text(this.message)
+                  )
+                ),
+                Text(DateFormat('Hm').format(DateTime.parse(createdAt)),
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 13
+                  ),
+                )
+              ],
+            )
           )
         ),
         ( this.first ? 
@@ -97,7 +117,7 @@ class MessageWidget extends StatelessWidget {
         Flexible(
           child: Container(
             margin: EdgeInsets.only(top: (this.first ? 10 : 3), right: 50),
-            padding: EdgeInsets.all(10),
+            padding: EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 5),
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.only(
@@ -127,7 +147,24 @@ class MessageWidget extends StatelessWidget {
                   )
                   : Container(width: 0)
                 ),
-                Text(this.message),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Flexible(
+                      child: Container(
+                        padding: EdgeInsets.only(bottom:5, right: 10),
+                        child: Text(this.message)
+                      )
+                    ),
+                    Text(DateFormat('Hm').format(DateTime.parse(createdAt)),
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 13
+                      ),
+                    )
+                  ],
+                ),
               ]
             )
           )
@@ -139,6 +176,7 @@ class MessageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     if (this.name != null) 
       return this._getMessage(context);
     

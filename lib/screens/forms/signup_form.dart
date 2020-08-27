@@ -7,10 +7,12 @@ import 'package:turismo_app/widgets/widgets.dart';
 class SignUpForm extends StatefulWidget {
 
   final AutenticacionBloc autenticacionBloc;
+  final Function onSubmit;
 
   const SignUpForm({
     Key key,
-    @required this.autenticacionBloc
+    @required this.autenticacionBloc,
+    this.onSubmit,
   }) : super(key: key);
 
   @override
@@ -100,6 +102,8 @@ class _SignUpFormState extends State<SignUpForm> {
                       password: _passwordController.text,
                       email: _emailController.text
                     ));
+                    if (widget.onSubmit != null) 
+                      widget.onSubmit();
                   }
                 },
                 textColor: Colors.white,

@@ -15,6 +15,7 @@ class ExplorarScreen extends StatefulWidget {
 }
 
 class _ExplorarScreenState extends State<ExplorarScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   EstablecimientosBloc _establecimientoBloc;
   FavoritosBloc _favoritoBloc;
   Position userPosition;
@@ -88,6 +89,7 @@ class _ExplorarScreenState extends State<ExplorarScreen> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Explorar', 
           style: TextStyle(
@@ -99,21 +101,7 @@ class _ExplorarScreenState extends State<ExplorarScreen> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.filter_list, color: Colors.white, size: 30.0,), 
-            onPressed: () => Navigator
-              .pushNamed(context, '/filtros')
-              /* .then((value) {
-                if (filtrados > 0) {
-                  SnackBarWidget.show(
-                    context, 
-                    (filtrados == 1 
-                      ? 'Se filtró 1 establecimiento.' 
-                      : 'Se filtraron $filtrados establecimientos.'
-                    ), 
-                    SnackType.success,
-                    persistent: false
-                  );
-                } 
-              }),*/
+            onPressed: () => Navigator.pushNamed(context, '/filtros', arguments: {'scaffoldKey': _scaffoldKey})
           )
         ],
       ),
@@ -143,23 +131,11 @@ class _ExplorarScreenState extends State<ExplorarScreen> {
                 uri: 'assets/images/undraw_taken.svg',
                 button: {
                   'title': 'Ir a filtros',
-                  'action': () => Navigator.pushNamed(context, '/filtros')
+                  'action': () => Navigator.pushNamed(context, '/filtros', arguments: {'scaffoldKey': _scaffoldKey})
                 },
               );
             }
 
-            int filtrados = state.activeFilters['filtrados'];
-            /* if (filtrados > 0) {
-              SnackBarWidget.show(
-                context, 
-                (filtrados == 1 
-                  ? 'Se filtró 1 establecimiento.' 
-                  : 'Se filtraron $filtrados establecimientos.'
-                ), 
-                SnackType.success,
-                persistent: false
-              );
-            } */
             return _getCardList(
               state.filteredAlojamientos, 
               state.filteredGastronomicos

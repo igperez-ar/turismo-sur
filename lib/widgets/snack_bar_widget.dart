@@ -15,17 +15,17 @@ class SnackBarWidget {
     SnackType.info: Colors.blue[400]
   };
 
-  static show(BuildContext context, String message, SnackType type, {SnackBarAction action, bool persistent = true, Function onHide}) {
+  static show(scaffoldKey, String message, SnackType type, {SnackBarAction action, bool persistent = true, Function onHide}) {
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      Scaffold.of(context).hideCurrentSnackBar();
-      Scaffold.of(context).showSnackBar(
+      scaffoldKey.currentState.hideCurrentSnackBar();
+      scaffoldKey.currentState.showSnackBar(
         SnackBar(
           content: Text(message),
           action: action ?? SnackBarAction(
             label: action != null ? action.label : 'Ocultar',
             textColor: Colors.white,
             onPressed: () {
-              Scaffold.of(context).hideCurrentSnackBar();
+              scaffoldKey.currentState.hideCurrentSnackBar();
               if (onHide != null) 
                 onHide();
             },
