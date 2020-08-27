@@ -28,6 +28,7 @@ class CalificacionScreen extends StatefulWidget {
 
 class _CalificacionScreenState extends State<CalificacionScreen> {
   Map<String, Object> selected;
+  bool _isDisabled = false;
   int destacableSelected;
   TextEditingController _textEditingController = TextEditingController();
 
@@ -52,6 +53,11 @@ class _CalificacionScreenState extends State<CalificacionScreen> {
         _textEditingController.text = calificacion.comentario;
       });
     }
+
+    if (selected == null || _textEditingController.text.isEmpty)
+      setState(() {
+        _isDisabled = true;
+      });
   }
 
   Widget _getDestacables() {
@@ -185,6 +191,11 @@ class _CalificacionScreenState extends State<CalificacionScreen> {
                               textCapitalization: TextCapitalization.sentences,
                               maxLength: 500,
                               controller: _textEditingController,
+                              onChanged: (_) {
+                                setState(() {
+                                  _isDisabled = _textEditingController.text.isEmpty;
+                                });
+                              },
                               decoration: InputDecoration(
                                 hintText: 'Describe tu experiencia',
                                 hintStyle: TextStyle(color: Colors.grey),
@@ -216,6 +227,7 @@ class _CalificacionScreenState extends State<CalificacionScreen> {
                       height: 150,
                       child: _getDestacables()
                     ),
+                    SizedBox(height: 20),
                     Mutation(
                       options: MutationOptions(
                         documentNode: gql(widget.update != null
@@ -226,34 +238,39 @@ class _CalificacionScreenState extends State<CalificacionScreen> {
                       ),
                       builder: (RunMutation runMutation, QueryResult result) {
 
-                        return FlatButton(
-                          onPressed: () {
-                            if (widget.update != null) {
-                              runMutation({
-                                "calificacionId": widget.update.id,
-                                "puntaje": selected['id'],
-                                "comentario": _textEditingController.text,
-                                "destacableId": destacableSelected
-                              });
+                        return RaisedButton(
+                          textColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)
+                          ),
+                          child: Container(
+                            width: 150,
+                            height: 40,
+                            alignment: Alignment.center,
+                            child: Text('Publicar', style: TextStyle(fontSize: 16),)
+                          ),
+                          onPressed: (_isDisabled || selected == null) 
+                            ? null 
+                            : () {
+                              if (widget.update != null) {
+                                runMutation({
+                                  "calificacionId": widget.update.id,
+                                  "puntaje": selected['id'],
+                                  "comentario": _textEditingController.text,
+                                  "destacableId": destacableSelected
+                                });
 
-                            } else {
-                              runMutation({
-                                "puntaje": selected['id'],
-                                "comentario": _textEditingController.text,
-                                "usuarioId": state.usuario.id,
-                                "alojamientoId": (widget.type == Establecimiento.alojamiento ? widget.id : null),
-                                "gastronomicoId": (widget.type == Establecimiento.gastronomico ? widget.id : null),
-                                "destacableId": destacableSelected
-                              });
-                            }
+                              } else {
+                                runMutation({
+                                  "puntaje": selected['id'],
+                                  "comentario": _textEditingController.text,
+                                  "usuarioId": state.usuario.id,
+                                  "alojamientoId": (widget.type == Establecimiento.alojamiento ? widget.id : null),
+                                  "gastronomicoId": (widget.type == Establecimiento.gastronomico ? widget.id : null),
+                                  "destacableId": destacableSelected
+                                });
+                              }
                           },
-                          padding: EdgeInsets.zero,
-                          textColor: Colors.teal,
-                          child: Text('Publicar', 
-                            style: TextStyle(
-                              fontSize: 16
-                            ),
-                          )
                         );
                       },
                     )
