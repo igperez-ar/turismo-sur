@@ -245,48 +245,56 @@ class _MemoriesWidgetState extends State<MemoriesWidget> with TickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<FavoritosBloc, FavoritosState>(
+
+    return BlocBuilder<AutenticacionBloc,AutenticacionState>(
       builder: (context, state) {
 
-        if (state is FavoritosSuccess) {
-          final Favorito _favorito = state.favoritos.firstWhere(
-            (element) => (element.id == widget.id 
-                       && element.tipo == widget.type),
-            orElse: () => null
+        if (state is AutenticacionAuthenticated) {
+
+          return BlocBuilder<FavoritosBloc, FavoritosState>(
+            builder: (context, state) {
+
+              if (state is FavoritosSuccess) {
+              final Favorito _favorito = state.favoritos.firstWhere(
+                (element) => (element.id == widget.id 
+                          && element.tipo == widget.type),
+                orElse: () => null
+              );
+                if (_favorito != null) {
+                _images = List.from(_favorito.recuerdos);
+                  return DetailSectionWidget(
+                  title: 'Recuerdos',
+                  actions: [
+                    {'icon': Icons.camera_alt,
+                    'onPressed': () => _getCameraImage(_favorito),
+                    },
+                    {'icon': Icons.photo_library,
+                    'onPressed': () => _getGalleryImage(_favorito),
+                    },
+                    _images.isNotEmpty 
+                      ? {'icon': _deleting ? Icons.delete_forever : Icons.delete,
+                        'onPressed': () => _changeDeleting(),
+                        }
+                      : {}
+                  ],
+                  child: ( _favorito.recuerdos.isNotEmpty 
+                    ? _getMemories(_favorito)
+                    : _getEmptyMemories(context)
+                  )
+                );
+                } else {
+                  return Container();
+                }
+              }
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
           );
-
-          if (_favorito != null) {
-            _images = List.from(_favorito.recuerdos);
-
-            return DetailSectionWidget(
-              title: 'Recuerdos',
-              actions: [
-                {'icon': Icons.camera_alt,
-                'onPressed': () => _getCameraImage(_favorito),
-                },
-                {'icon': Icons.photo_library,
-                'onPressed': () => _getGalleryImage(_favorito),
-                },
-                _images.isNotEmpty 
-                  ? {'icon': _deleting ? Icons.delete_forever : Icons.delete,
-                     'onPressed': () => _changeDeleting(),
-                    }
-                  : {}
-              ],
-              child: ( _favorito.recuerdos.isNotEmpty 
-                ? _getMemories(_favorito)
-                : _getEmptyMemories(context)
-              )
-            );
-          } else {
-            return Container();
-          }
         }
 
-        return Center(
-          child: CircularProgressIndicator(),
-        );
-      }
+        return Container();
+      },
     );
   }
 }

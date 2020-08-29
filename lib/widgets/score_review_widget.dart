@@ -208,8 +208,11 @@ class _ScoreReviewWidgetState extends State<ScoreReviewWidget> {
         }
 
         if (result.loading) {
-          return Center(
-            child: CircularProgressIndicator(),
+          return Container(
+            margin: EdgeInsets.only(bottom: 40),
+            child: Center(
+              child: CircularProgressIndicator(),
+            )
           );
         }
 
