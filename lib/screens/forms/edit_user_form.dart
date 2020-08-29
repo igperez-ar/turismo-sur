@@ -122,14 +122,6 @@ class _EditUserFormState extends State<EditUserForm> {
         newUser: newUser,
       ));
     }
-
-    /* Future.delayed(Duration(seconds: 1), () {
-      if (state is AutenticacionUnauthenticated)
-        SnackBarWidget.show(context, state.error, SnackType.danger);
-
-      if (state is AutenticacionAuthenticated)
-        SnackBarWidget.show(context, 'La información se modificó con éxito.', SnackType.success, persistent: false);
-    }); */
   }
 
   @override

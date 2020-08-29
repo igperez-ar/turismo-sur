@@ -4,21 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:turismo_app/widgets/widgets.dart';
 import 'package:turismo_app/models/models.dart';
 
-class EstablecimientoScreen extends StatefulWidget {
+class EstablecimientoShowScreen extends StatefulWidget {
    final establecimiento;
    final Establecimiento type;
 
-  const EstablecimientoScreen({
+  const EstablecimientoShowScreen({
     Key key, 
     this.establecimiento,
     this.type,
   }): super(key: key);
 
   @override
-  _EstablecimientoScreenState createState() => _EstablecimientoScreenState();
+  _EstablecimientoShowScreenState createState() => _EstablecimientoShowScreenState();
 }
 
-class _EstablecimientoScreenState extends State<EstablecimientoScreen> {
+class _EstablecimientoShowScreenState extends State<EstablecimientoShowScreen> {
 
   final ScrollController _scrollController = ScrollController();
   bool _isScrolled = false;

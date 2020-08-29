@@ -23,7 +23,6 @@ class MapaScreen extends StatefulWidget {
 }
 
 class MapaScreenState extends State<MapaScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   List<SmallCard> _getCards(List<Alojamiento> alojamientos, List<Gastronomico> gastronomicos) {
     final List<SmallCard> cards = [];
@@ -54,7 +53,6 @@ class MapaScreenState extends State<MapaScreen> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(widget.title, 
           style: TextStyle(
@@ -65,10 +63,14 @@ class MapaScreenState extends State<MapaScreen> {
         centerTitle: true,
         actions: 
           (widget.carrousel ? 
-            <Widget>[
-              IconButton(
-                icon: Icon(Icons.filter_list, color: Colors.white, size: 30.0,), 
-                onPressed: () => Navigator.pushNamed(context, '/filtros', arguments: {'scaffoldKey': _scaffoldKey}),
+            [
+              Builder(
+                builder: (context) {
+                  return IconButton(
+                    icon: Icon(Icons.filter_list, color: Colors.white, size: 30.0,), 
+                    onPressed: () => Navigator.pushNamed(context, '/filtros', arguments: {'context': context}),
+                  );
+                },
               )
             ]
             : null

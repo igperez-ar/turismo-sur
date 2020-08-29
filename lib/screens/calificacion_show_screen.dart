@@ -8,14 +8,14 @@ import 'package:turismo_app/queries/queries.dart';
 import 'package:turismo_app/widgets/widgets.dart';
 
 
-class CalificacionScreen extends StatefulWidget {
+class CalificacionShowScreen extends StatefulWidget {
 
   final Map<String, Object> selected;
   final int id;
   final Establecimiento type;
   final Calificacion update;
 
-  const CalificacionScreen({
+  const CalificacionShowScreen({
     Key key,
     this.selected,
     @required this.id,
@@ -24,10 +24,10 @@ class CalificacionScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _CalificacionScreenState createState() => _CalificacionScreenState();
+  _CalificacionShowScreenState createState() => _CalificacionShowScreenState();
 }
 
-class _CalificacionScreenState extends State<CalificacionScreen> {
+class _CalificacionShowScreenState extends State<CalificacionShowScreen> {
   Map<String, Object> selected;
   bool _isDisabled = false;
   int destacableSelected;
@@ -213,7 +213,7 @@ class _CalificacionScreenState extends State<CalificacionScreen> {
                         ]
                       )
                     ),
-                    Container(
+                    /* Container(
                       alignment: Alignment.centerLeft,
                       margin: EdgeInsets.all(20),
                       child: Text('¿Qué destacarías?', 
@@ -227,7 +227,7 @@ class _CalificacionScreenState extends State<CalificacionScreen> {
                     Container(
                       height: 150,
                       child: _getDestacables()
-                    ),
+                    ), */
                     SizedBox(height: 20),
                     Mutation(
                       options: MutationOptions(

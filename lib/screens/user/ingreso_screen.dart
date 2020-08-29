@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -19,8 +21,8 @@ class IngresoScreen extends StatefulWidget {
 }
 
 class _IngresoScreenState extends State<IngresoScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   AutenticacionBloc _autenticacionBloc;
+  StreamSubscription _autenticacionListener;
   int _selectedTab;
 
   @override 
@@ -29,6 +31,13 @@ class _IngresoScreenState extends State<IngresoScreen> {
 
     _autenticacionBloc = BlocProvider.of<AutenticacionBloc>(context);
     _selectedTab = widget.selectedTab;
+  }
+
+  @override
+  void dispose() {
+    if (_autenticacionListener != null)
+      _autenticacionListener.cancel();
+    super.dispose();
   }
 
   Widget _renderSignup() {
@@ -71,9 +80,9 @@ class _IngresoScreenState extends State<IngresoScreen> {
         SignInForm(
           autenticacionBloc: _autenticacionBloc,
           onSubmit: () {
-            _autenticacionBloc.listen((state) {
+            _autenticacionListener = _autenticacionBloc.listen((state) {
               if (state is AutenticacionUnauthenticated) {
-                SnackBarWidget.show(_scaffoldKey, state.error, SnackType.danger);
+                SnackBarWidget.show(context, state.error, SnackType.danger);
               }
             });
           },
@@ -101,7 +110,6 @@ class _IngresoScreenState extends State<IngresoScreen> {
     double _height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(this._selectedTab == 1 ? 'Iniciar sesión' : 'Registrarse', 
           style: TextStyle(

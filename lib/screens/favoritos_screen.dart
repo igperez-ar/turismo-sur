@@ -12,7 +12,6 @@ class FavoritosScreen extends StatefulWidget {
 }
 
 class _FavoritosScreenState extends State<FavoritosScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int filtered;
   bool showMap = false;
 
@@ -53,7 +52,6 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Favoritos', 
           style: TextStyle(
@@ -63,15 +61,19 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
         ),
         centerTitle: true,
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.filter_list, color: Colors.white, size: 30.0,), 
-            onPressed: () => Navigator.pushNamed(
-              context, '/filtros', 
-              arguments: {
-                'scaffoldKey': _scaffoldKey,
-                'favoritos': true
-              }
-            ),
+          Builder(
+            builder: (context) {
+              return IconButton(
+                icon: Icon(Icons.filter_list, color: Colors.white, size: 30.0,), 
+                onPressed: () => Navigator.pushNamed(
+                  context, '/filtros', 
+                  arguments: {
+                    'context': context,
+                    'favoritos': true
+                  }
+                ),
+              );
+            }
           ),
           IconButton(
             icon: Icon(showMap ? Icons.format_list_bulleted : Icons.map, size: 30.0,), 
@@ -117,7 +119,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                           uri: 'assets/images/undraw_taken.svg',
                           button: {
                             'title': 'Ir a filtros',
-                            'action': () => Navigator.pushNamed(context, '/filtros', arguments: {'scaffoldKey': _scaffoldKey})
+                            'action': () => Navigator.pushNamed(context, '/filtros', arguments: {'context': context})
                           },
                         );
                       }

@@ -24,7 +24,7 @@ class ProfileImage extends StatelessWidget {
   double _iconSize() {
     switch (size) {
       case ProfileImageSize.small:
-        return 45;
+        return 40;
         break;
       case ProfileImageSize.medium:
         return 55;

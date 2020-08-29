@@ -146,23 +146,30 @@ class _ChatScreenState extends State<ChatScreen> {
                             }
                           }); */
 
-                          return Expanded(
-                            child: ListView.builder(
-                              controller: _scrollController,
-                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                              itemCount: mensajes.length,
-                              itemBuilder: (context, index) {
-                                
-                                return MessageWidget(
-                                  name: (mensajes[index]['miembro']['usuario']['id'] == state.usuario.id ? null : mensajes[index]['miembro']['usuario']['username']),
-                                  message: mensajes[index]['contenido'],
-                                  createdAt: mensajes[index]['created_at'],
-                                  first: (index > 0 
-                                    ? (mensajes[index-1]['miembro']['id'] != mensajes[index]['miembro']['id'])
-                                    : true
-                                  ),
-                                );  
-                              })
+                          return Mutation(
+                            options: MutationOptions(
+                                documentNode: gql(QueryMensajes.addMensaje),
+                              ),
+                            builder: (RunMutation deleteMensaje, QueryResult result) {
+                              return Expanded(
+                                child: ListView.builder(
+                                  controller: _scrollController,
+                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                  itemCount: mensajes.length,
+                                  itemBuilder: (context, index) {
+                                    
+                                    return MessageWidget(
+                                      name: (mensajes[index]['miembro']['usuario']['id'] == state.usuario.id ? null : mensajes[index]['miembro']['usuario']['username']),
+                                      message: mensajes[index]['contenido'],
+                                      createdAt: mensajes[index]['created_at'],
+                                      first: (index > 0 
+                                        ? (mensajes[index-1]['miembro']['id'] != mensajes[index]['miembro']['id'])
+                                        : true
+                                      ),
+                                    );  
+                                  })
+                              );
+                            }
                           );
 
                         } else {

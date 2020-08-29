@@ -22,7 +22,7 @@ class DetailSectionWidget extends StatelessWidget{
         icon: Icon(
           action['icon'],
           size: 26,
-          color: Colors.grey[400],
+          color: Colors.grey,
         ),
         alignment: Alignment.centerRight,
         onPressed: action['onPressed'],

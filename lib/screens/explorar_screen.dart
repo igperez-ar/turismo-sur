@@ -15,7 +15,6 @@ class ExplorarScreen extends StatefulWidget {
 }
 
 class _ExplorarScreenState extends State<ExplorarScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   EstablecimientosBloc _establecimientoBloc;
   FavoritosBloc _favoritoBloc;
   Position userPosition;
@@ -89,7 +88,6 @@ class _ExplorarScreenState extends State<ExplorarScreen> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Explorar', 
           style: TextStyle(
@@ -99,9 +97,13 @@ class _ExplorarScreenState extends State<ExplorarScreen> {
         ),
         centerTitle: true,
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.filter_list, color: Colors.white, size: 30.0,), 
-            onPressed: () => Navigator.pushNamed(context, '/filtros', arguments: {'scaffoldKey': _scaffoldKey})
+          Builder(
+            builder: (context) {
+              return IconButton(
+                icon: Icon(Icons.filter_list, color: Colors.white, size: 30.0,), 
+                onPressed: () => Navigator.pushNamed(context, '/filtros', arguments: {'context': context})
+              );
+            },
           )
         ],
       ),
@@ -131,7 +133,7 @@ class _ExplorarScreenState extends State<ExplorarScreen> {
                 uri: 'assets/images/undraw_taken.svg',
                 button: {
                   'title': 'Ir a filtros',
-                  'action': () => Navigator.pushNamed(context, '/filtros', arguments: {'scaffoldKey': _scaffoldKey})
+                  'action': () => Navigator.pushNamed(context, '/filtros', arguments: {'context': context})
                 },
               );
             }

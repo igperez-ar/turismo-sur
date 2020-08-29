@@ -104,7 +104,7 @@ class _ScoreReviewWidgetState extends State<ScoreReviewWidget> {
               animation: false,
               onPress: (item) => Navigator.push(context,
                 MaterialPageRoute(
-                  builder: (context) => CalificacionScreen(
+                  builder: (context) => CalificacionShowScreen(
                     id: widget.id,
                     type: widget.type,
                     selected: item,
@@ -116,7 +116,7 @@ class _ScoreReviewWidgetState extends State<ScoreReviewWidget> {
           FlatButton(
             onPressed: () => Navigator.push(context,
               MaterialPageRoute(
-                builder: (context) => CalificacionScreen(
+                builder: (context) => CalificacionShowScreen(
                   id: widget.id,
                   type: widget.type
                 )
@@ -150,7 +150,7 @@ class _ScoreReviewWidgetState extends State<ScoreReviewWidget> {
           FlatButton(
             onPressed: () => Navigator.push(context,
               MaterialPageRoute(
-                builder: (context) => CalificacionScreen(
+                builder: (context) => CalificacionShowScreen(
                   id: widget.id,
                   type: widget.type,
                   update: calificacion,
@@ -256,8 +256,21 @@ class _ScoreReviewWidgetState extends State<ScoreReviewWidget> {
             ),
             DetailSectionWidget(
               title: "Calificaciones y reseñas",
+              actions: calificaciones.length > 2 
+                ? [{
+                    'icon': Icons.arrow_forward,
+                    'onPressed': () => Navigator.push(context,
+                      MaterialPageRoute(
+                        builder: (context) => CalificacionesScreen(
+                          calificaciones: calificaciones,
+                        )
+                      )
+                    ),
+                  }] 
+                : null,
               child: Flex(
                 direction: Axis.vertical,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[ 
                     Container(
                       child: Row(
@@ -297,23 +310,47 @@ class _ScoreReviewWidgetState extends State<ScoreReviewWidget> {
                     ),
                     SizedBox(height: 10),
                     Column(
-                      children: calificaciones.map<Widget>((e) {
-                        if (selfUsuario == null || e['usuario']['id'] != selfUsuario.id)
-                          return Column(
-                            children: [
-                              Divider(height: 30, thickness: 1.5, color: Colors.grey[300],),
-                              Container(
-                                margin: EdgeInsets.symmetric(vertical: 10),
-                                padding: EdgeInsets.symmetric(horizontal: 10),
-                                child: ReviewWidget(
-                                  calificacion: Calificacion.fromJson(e)
+                      children: calificaciones
+                        .getRange(0, (calificaciones.length > 2 ? 2 : calificaciones.length))
+                        .map<Widget>((e) {
+                          if (selfUsuario == null || e['usuario']['id'] != selfUsuario.id)
+                            return Column(
+                              children: [
+                                Divider(height: 30, thickness: 1.5, color: Colors.grey[300],),
+                                Container(
+                                  margin: EdgeInsets.symmetric(vertical: 10),
+                                  padding: EdgeInsets.symmetric(horizontal: 10),
+                                  child: ReviewWidget(
+                                    calificacion: Calificacion.fromJson(e)
+                                  )
+                                )
+                              ],
+                            );
+
+                          return Container();
+                      }).toList(),
+                    ),
+                    (calificaciones.length > 2
+                      ? Container(
+                        margin: EdgeInsets.only(top: 10),
+                        child: FlatButton(
+                            onPressed: () => Navigator.push(context,
+                              MaterialPageRoute(
+                                builder: (context) => CalificacionesScreen(
+                                  calificaciones: calificaciones,
                                 )
                               )
-                            ],
-                          );
-
-                        return Container();
-                      }).toList(),
+                            ),
+                            padding: EdgeInsets.zero,
+                            textColor: Colors.teal,
+                            child: Text('Ver todas las reseñas', 
+                              style: TextStyle(
+                                fontSize: 16
+                              ),
+                            )
+                          )
+                      )
+                      : Container()
                     )
                   ],
               )

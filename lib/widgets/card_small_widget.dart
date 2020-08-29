@@ -53,7 +53,7 @@ class _SmallCardState extends State<SmallCard> {
     return GestureDetector(
       onTap: () => Navigator.push(context,
         MaterialPageRoute(
-          builder: (context) => EstablecimientoScreen(
+          builder: (context) => EstablecimientoShowScreen(
             type: widget.type,
             establecimiento: widget.establecimiento
           )

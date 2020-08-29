@@ -13,7 +13,6 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool darkMode;
   AutenticacionBloc _autenticacionBloc;
   StreamSubscription _autenticacionListener;
@@ -41,7 +40,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         builder: (context, state) {
 
           return Scaffold(
-            key: _scaffoldKey,
             appBar: AppBar(
               title: Text('Cuenta', 
                 style: TextStyle(
@@ -55,32 +53,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 onPressed: () => Navigator.of(context).pop()
               ),
               actions: [
-                (state is AutenticacionAuthenticated
-                  ? IconButton(
+                BlocBuilder<AutenticacionBloc,AutenticacionState>(
+                  builder: (context, state) {
+                    
+                    if (state is AutenticacionLoading)
+                      return Container(
+                        width: 57,
+                        padding: EdgeInsets.all(15),
+                        child: CircularProgressIndicator(backgroundColor: Colors.white,strokeWidth: 3.0,)
+                      );
+
+                    return IconButton(
                       icon: Icon(Icons.check, size: 30.0,),
                       onPressed: () {
                         _editUserForm.state.validateForm();
-                        _autenticacionListener = _autenticacionBloc.listen((state) {
-                          if (state is AutenticacionUnauthenticated)
-                            SnackBarWidget.show(_scaffoldKey, state.error, SnackType.danger);
-
-                          if (state is AutenticacionAuthenticated)
-                            SnackBarWidget.show(_scaffoldKey, 'La información se modificó con éxito.', SnackType.success, persistent: false);
-                          /* Future.delayed(Duration(seconds: 1), () {
-                            if (state is AutenticacionUnauthenticated)
-                              SnackBarWidget.show(context, state.error, SnackType.danger);
-
-                            if (state is AutenticacionAuthenticated)
-                              SnackBarWidget.show(context, 'La información se modificó con éxito.', SnackType.success, persistent: false);
-                          }); */
+                        _autenticacionListener = _autenticacionBloc.listen((_state) {
+                          if (_state is AutenticacionUnauthenticated)
+                            SnackBarWidget.show(context, _state.error, SnackType.danger, persistent: true);
+                          if (_state is AutenticacionAuthenticated)
+                            SnackBarWidget.show(context, 'La información se modificó con éxito.', SnackType.success);
                         });
                       },
-                    )
-                  : Container(
-                    width: 57,
-                    padding: EdgeInsets.all(15),
-                    child: CircularProgressIndicator(backgroundColor: Colors.white,strokeWidth: 3.0,)
-                  )
+                    );
+                  },
                 )
               ],
             ),

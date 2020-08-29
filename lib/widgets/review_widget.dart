@@ -126,6 +126,7 @@ class _ReviewWidgetState extends State<ReviewWidget> {
                     ),
                     builder: (RunMutation deleteCalificacion, QueryResult result) {
                       return PopupMenuButton(
+                        padding: EdgeInsets.zero,
                         icon: Icon(Icons.more_vert, color: Colors.grey[400]),
                         onSelected: (value) {
                           deleteCalificacion({
@@ -136,6 +137,7 @@ class _ReviewWidgetState extends State<ReviewWidget> {
                         },
                         itemBuilder: (context) => <PopupMenuEntry>[
                           const PopupMenuItem(
+                            height: 35,
                             value: 1,
                             child: Text('Eliminar'),
                           ),
@@ -164,7 +166,7 @@ class _ReviewWidgetState extends State<ReviewWidget> {
             children: <Widget>[
               _icon(calificacion.puntaje),
               SizedBox(width: 5),
-              Text(createdAt, style: Theme.of(context).textTheme.headline3)
+              Text(createdAt, style: TextStyle(color: Colors.grey[600]),)
             ],
           ),
           SizedBox(height: 10),

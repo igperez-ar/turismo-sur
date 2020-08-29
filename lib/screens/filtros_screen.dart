@@ -273,30 +273,28 @@ class _FiltrosScreenState extends State<FiltrosScreen> {
                     if (favoritos ?? false) {
                       if (favfiltrados > 0)
                         SnackBarWidget.show(
-                          arguments['scaffoldKey'], 
+                          arguments['context'], 
                           (favfiltrados == 1 
                             ? 'Se filtró 1 favorito.' 
                             : 'Se filtraron $favfiltrados favoritos.'
                           ), 
                           SnackType.success,
-                          persistent: false
                         );
                       else 
-                        arguments['scaffoldKey'].currentState.hideCurrentSnackBar();
+                        Scaffold.of(arguments['context']).hideCurrentSnackBar();
 
                     } else { 
                       if (estfiltrados > 0) 
                         SnackBarWidget.show(
-                          arguments['scaffoldKey'], 
+                          arguments['context'], 
                           (estfiltrados == 1 
                             ? 'Se filtró 1 establecimiento.' 
                             : 'Se filtraron $estfiltrados establecimientos.'
                           ), 
                           SnackType.success,
-                          persistent: false
                         );
                       else
-                        arguments['scaffoldKey'].currentState.hideCurrentSnackBar();
+                        Scaffold.of(arguments['context']).hideCurrentSnackBar();
                     }
                     Navigator.pop(context);
                   } 
@@ -314,7 +312,7 @@ class _FiltrosScreenState extends State<FiltrosScreen> {
                 onPressed: () {
                   _filtrosBloc.add(ResetFiltros());
                   final Map<String,dynamic> arguments = ModalRoute.of(context).settings.arguments;
-                  arguments['scaffoldKey'].currentState.hideCurrentSnackBar();
+                  Scaffold.of(arguments['context']).hideCurrentSnackBar();
                   Navigator.pop(context);
                 }
               ),

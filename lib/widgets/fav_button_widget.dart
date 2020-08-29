@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:turismo_app/bloc/bloc.dart';
 import 'package:turismo_app/models/models.dart';
+import 'package:turismo_app/widgets/widgets.dart';
 
 
 enum Size {
@@ -29,6 +30,7 @@ class FavButtonWidget extends StatefulWidget {
 
 class _FavButtonWidgetState extends State<FavButtonWidget> with TickerProviderStateMixin {
   FavoritosBloc _favoritoBloc;
+  AutenticacionBloc _autenticacionBloc;
 
   var squareScale = 1.0;
   AnimationController _animationController;
@@ -50,6 +52,7 @@ class _FavButtonWidgetState extends State<FavButtonWidget> with TickerProviderSt
     super.initState();
 
     _favoritoBloc = BlocProvider.of<FavoritosBloc>(context);
+    _autenticacionBloc = BlocProvider.of<AutenticacionBloc>(context);
   }
 
   @override
@@ -60,46 +63,55 @@ class _FavButtonWidgetState extends State<FavButtonWidget> with TickerProviderSt
 
   void _changeFavorite(Favorito favorito) {
 
-    if (favorito != null) {
-      if (favorito.recuerdos.isNotEmpty) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Confirmar'),
-              content: Text('Esta acción eliminará los recuerdos añadidos a este lugar.'),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text("Cancelar"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                FlatButton(
-                  padding: EdgeInsets.only(right: 20),
-                  child: Text("Aceptar"),
-                  onPressed: () {
-                    _favoritoBloc.add(RemoveFavorito(favorito));
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            );
-          },
-        );
+    if (_autenticacionBloc is AutenticacionAuthenticated) {
+      if (favorito != null) {
+        if (favorito.recuerdos.isNotEmpty) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Confirmar'),
+                content: Text('Esta acción eliminará los recuerdos añadidos a este lugar.'),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text("Cancelar"),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  FlatButton(
+                    padding: EdgeInsets.only(right: 20),
+                    child: Text("Aceptar"),
+                    onPressed: () {
+                      _favoritoBloc.add(RemoveFavorito(favorito));
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          _favoritoBloc.add(RemoveFavorito(favorito));
+        }
       } else {
-        _favoritoBloc.add(RemoveFavorito(favorito));
-      }
-    } else {
-      _animationController.forward().whenComplete(() => _animationController.reverse());
+        _animationController.forward().whenComplete(() => _animationController.reverse());
 
-      _favoritoBloc.add(AddFavorito(
-        Favorito(
-          id: widget.id, 
-          tipo: widget.type,
-          recuerdos: List<String>()
-        )
-      ));
+        _favoritoBloc.add(AddFavorito(
+          Favorito(
+            id: widget.id, 
+            tipo: widget.type,
+            recuerdos: List<String>()
+          )
+        ));
+      }
+
+    } else {
+      SnackBarWidget.show(
+        context,
+        'Debes acceder para usar esta funcionalidad.', 
+        SnackType.danger
+      );
     }
   }
 
@@ -142,7 +154,7 @@ class _FavButtonWidgetState extends State<FavButtonWidget> with TickerProviderSt
             builder: (context, state) {
               Favorito favorito; 
               
-              if (state is FavoritosSuccess) {
+              if (state is FavoritosSuccess && _autenticacionBloc.state is AutenticacionAuthenticated) {
                 favorito = state.favoritos.firstWhere(
                   (element) => element.id == widget.id
                             && element.tipo == widget.type,
