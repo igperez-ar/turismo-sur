@@ -41,11 +41,10 @@ class _IngresoScreenState extends State<IngresoScreen> {
   }
 
   Widget _renderSignup() {
-    if (this._selectedTab != 0) 
-      return Container();
 
     return BlocBuilder<AutenticacionBloc,AutenticacionState>(
       builder: (context, state) {
+
         return Column(
           children: [
             SignUpForm(
@@ -53,8 +52,8 @@ class _IngresoScreenState extends State<IngresoScreen> {
             ),
             SizedBox(height: 10),
             GestureDetector(
-              onTap: () => this.setState(() {
-                this._selectedTab = 1;
+              onTap: () => setState(() {
+                _selectedTab = 1;
               }),
               child: Padding(
                 padding: EdgeInsets.only(bottom: 20),
@@ -71,9 +70,7 @@ class _IngresoScreenState extends State<IngresoScreen> {
     );
   }
 
-  Widget _renderSignin() {
-    if (this._selectedTab != 1) 
-      return Container();
+  Widget _renderSignin(BuildContext context) {
 
     return Column(
       children: [
@@ -89,8 +86,8 @@ class _IngresoScreenState extends State<IngresoScreen> {
         ),
         SizedBox(height: 15),
         GestureDetector(
-          onTap: () => this.setState(() {
-            this._selectedTab = 0;
+          onTap: () => setState(() {
+            _selectedTab = 0;
           }),
           child: Padding(
             padding: EdgeInsets.only(bottom: 20),
@@ -111,7 +108,7 @@ class _IngresoScreenState extends State<IngresoScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(this._selectedTab == 1 ? 'Iniciar sesión' : 'Registrarse', 
+        title: Text(_selectedTab == 1 ? 'Iniciar sesión' : 'Registrarse', 
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -128,7 +125,7 @@ class _IngresoScreenState extends State<IngresoScreen> {
                 child: Column(
                   children: <Widget>[
                     Container(
-                      height: this._selectedTab == 1 ? null : 0,
+                      height: _selectedTab == 1 ? null : 0,
                       padding: EdgeInsets.symmetric(horizontal: 30),
                       child: SvgPicture.asset(
                         'assets/images/undraw_sign_in.svg',
@@ -136,7 +133,7 @@ class _IngresoScreenState extends State<IngresoScreen> {
                       )
                     ),
                     Container(
-                      height: this._selectedTab == 0 ? null : 0,
+                      height: _selectedTab == 0 ? null : 0,
                       padding: EdgeInsets.symmetric(horizontal: 30),
                       child: SvgPicture.asset(
                         'assets/images/undraw_register.svg',
@@ -144,8 +141,14 @@ class _IngresoScreenState extends State<IngresoScreen> {
                       )
                     ),
                     SizedBox(height: 10),
-                    _renderSignin(),
-                    _renderSignup()
+                    Builder(
+                      builder: (context) {
+                        if (_selectedTab == 0) 
+                          return _renderSignup();
+
+                        return _renderSignin(context);
+                    },
+                    )
                   ]
                 )
               );
